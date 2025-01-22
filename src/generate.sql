@@ -18,12 +18,16 @@ begin
 
   set needsNewToken = watsonx.ShouldGetNewToken();
   if (needsNewToken = 'Y') then
-    return '*PLSAUTH';
+    signal sqlstate '38001' set message_text = 'Please authenticate first.';
+    return '*ERROR';
   end if;
 
   if parameters is null then
     set parameters = watsonx.parameters(max_new_tokens => 100, time_limit => 1000);
   end if;
+
+  -- todo: support this url:
+  -- watsonx.geturl('/' concat id_or_name concat '/text/generation'),
 
   select RESPONSE_MESSAGE, RESPONSE_HTTP_HEADER
   into response_message, response_header
@@ -36,7 +40,7 @@ begin
   set response_code = json_value(response_header, '$.HTTP_STATUS_CODE');
 
   if (response_code <> 200) then
-    -- TODO: write to job log?
+    signal sqlstate '38002' set message_text = 'Add error has occured. Check the job log.';
     return '*ERROR';
   end if;
 
@@ -48,5 +52,3 @@ begin
   
   return json_object('response_message': response_message format json, 'response_header': response_header format json);
 end;
-
-call 
