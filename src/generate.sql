@@ -9,9 +9,11 @@ create or replace function watsonx.generate(
   set option usrprf = *user, dynusrprf = *user, commit = *none
 begin
 
+  -- https://cloud.ibm.com/apidocs/watsonx-ai#text-generation
   declare response_header Varchar(10000) CCSID 1208;
   declare response_message Varchar(10000) CCSID 1208;
   declare watsonx_response Varchar(10000) CCSID 1208;
+  declare response_code int default 0;
   declare needsNewToken char(1) default 'Y';
 
   set needsNewToken = watsonx.ShouldGetNewToken();
@@ -31,16 +33,20 @@ begin
     json_object('headers': json_object('Authorization': 'Bearer ' concat watsonx.JobBearerToken, 'Content-Type': 'application/json', 'Accept': 'application/json'))
   )) x;
   
-  
-  -- select ltrim("generated_text") into watsonx_response
-  -- from json_table(response_message, 'lax $.results[*]'
-  -- columns(
-  --   "generated_text" varchar(10000) ccsid 1208
-  -- ));
+  set response_code = json_value(response_header, '$.HTTP_STATUS_CODE');
 
-  -- if (watsonx_response is null) then
-  --   return '*ERROR';
-  -- end if;
+  if (response_code <> 200) then
+    -- TODO: write to job log?
+    return '*ERROR';
+  end if;
+
+  set watsonx_response = json_value(response_message, '$.results[0].generated_text');
+
+  if (watsonx_response is not null) then
+    return watsonx_response;
+  end if;
   
   return json_object('response_message': response_message format json, 'response_header': response_header format json);
 end;
+
+call 
