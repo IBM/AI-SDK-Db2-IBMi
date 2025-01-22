@@ -1,5 +1,4 @@
 
-create schema watsonx;
 create or replace variable watsonx.region varchar(16) ccsid 1208 default 'us-south';
 create or replace variable watsonx.apiVersion varchar(10) ccsid 1208 default '2023-07-07';
 create or replace variable watsonx.apikey varchar(100) ccsid 1208 default '';
