@@ -39,16 +39,16 @@ begin
   
   set response_code = json_value(response_header, '$.HTTP_STATUS_CODE');
 
-  if (response_code <> 200) then
-    signal sqlstate '38002' set message_text = 'Add error has occured. Check the job log.';
-    return '*ERROR';
+  if (response_code = 200) then
+    set watsonx_response = json_value(response_message, '$.results[0].generated_text');
+
+    if (watsonx_response is not null) then
+      return watsonx_response;
+    end if;
   end if;
 
-  set watsonx_response = json_value(response_message, '$.results[0].generated_text');
-
-  if (watsonx_response is not null) then
-    return watsonx_response;
-  end if;
+  signal sqlstate '38002' set message_text = 'Add error has occured. Check the job log.';
+  call qsys2.lprintf(json_object('response_message': response_message format json, 'response_header': response_header format json));
   
-  return json_object('response_message': response_message format json, 'response_header': response_header format json);
+  return '*ERROR';
 end;
