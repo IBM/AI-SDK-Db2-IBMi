@@ -1,7 +1,7 @@
 
 SCHEMA=watsonx
 
-all: $(SCHEMA).schema install.sql auth.sql models.sql generate.sql
+all: $(SCHEMA).schema conf.sql auth.sql models.sql generate.sql
 
 %.schema:
 	-system -s "RUNSQL SQL('CREATE SCHEMA $*') COMMIT(*NONE)"
