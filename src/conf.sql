@@ -17,6 +17,7 @@ create or replace table watsonx.conf
           watsonx_apiVersion varchar(10) ccsid 1208 default '2023-07-07',
           watsonx_apikey varchar(100) ccsid 1208 default NULL,
           watsonx_projectid varchar(100) ccsid 1208 default NULL,
+          ollama_protocol varchar(1000) ccsid 16 default 'http',
           ollama_server varchar(1000) ccsid 1208 default 'localhost',
           ollama_port INT default 11434,
           ollama_model varchar(1000) ccsid 1208 default 'granite3.2:8b',

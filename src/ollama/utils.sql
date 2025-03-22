@@ -101,3 +101,37 @@ begin
       live.ollama_model)
   WHEN MATCHED THEN UPDATE SET (usrprf, ollama_model) = (live.usrprf, live.ollama_model);
 end;
+
+create or replace function watsonx.ollama_getprotocol(protocol varchar(1000) ccsid 1208 default NULL) 
+  returns varchar(1000) ccsid 1208
+  modifies sql data
+begin
+  declare returnval varchar(1000) ccsid 1208;
+  call watsonx.conf_initialize();
+  set returnval = protocol;
+  if (returnval is not null) then return returnval;end if;
+  set returnval = watsonx.ollama_protocol;
+  if (returnval is not null) then return returnval;end if;
+  set returnval = (select ollama_protocol from watsonx.conf where USRPRF = CURRENT_USER);
+  if (returnval is not null) then return returnval;end if;
+  set returnval = (select ollama_protocol from watsonx.conf where USRPRF = '*DEFAULT');
+  return returnval;
+end;
+
+create or replace procedure watsonx.ollama_setprotocolforjob(protocol varchar(1000) ccsid 1208 default NULL) 
+  modifies SQL DATA
+begin
+  set watsonx.ollama_protocol= protocol;
+end;
+create or replace procedure watsonx.ollama_setprotocolforme(protocol varchar(1000) ccsid 1208 default NULL) 
+  MODIFIES SQL DATA
+begin
+  MERGE INTO watsonx.conf tt USING (
+    SELECT CURRENT_USER AS usrprf, protocol AS ollama_protocol
+      FROM sysibm.sysdummy1
+  ) live
+  ON tt.usrprf = live.usrprf
+  WHEN NOT MATCHED THEN INSERT (usrprf, ollama_protocol) VALUES (live.usrprf,
+      live.ollama_protocol)
+  WHEN MATCHED THEN UPDATE SET (usrprf, ollama_protocol) = (live.usrprf, live.ollama_protocol);
+end;
