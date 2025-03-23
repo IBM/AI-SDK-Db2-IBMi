@@ -39,7 +39,7 @@ create or replace table watsonx.conf
           openai_port INT default 443,
           kafka_protocol varchar(16) ccsid 1208 default 'http',
           kafka_broker varchar(1000) ccsid 1208 default 'localhost',
-          kafka_port int default 992,
+          kafka_port int default 8082,
           kafka_topic varchar(1000) ccsid 1208 default NULL,
           slack_clientsecret varchar(1000) ccsid 1208 default NULL,
           slack_clientid varchar(1000) ccsid 1208 default NULL,
