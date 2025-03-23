@@ -15,8 +15,8 @@ begin
   declare http_options varchar(32400) ccsid 1208 default '{"header":"Content-Type,application/vnd.kafka.json.v2+json" ,
                                                            "header":"Accept,application/vnd.kafka.v2+json" 
                                                           }';
-  set fullUrl = watsonx.kafka_getprotocol() concat '://' concat watsonx.kafka_getbroker() concat ':' concat watsonx.kafka_getport() concat '/topics/' concat topic;
-  
+  set fullUrl = watsonx.kafka_getprotocol() concat '://' concat watsonx.kafka_getbroker() concat ':' concat watsonx.kafka_getport() concat '/topics/' concat watsonx.kafka_gettopic(topic);
+
   select RESPONSE_MESSAGE, RESPONSE_HTTP_HEADER
   into response_message, response_header
   from table(QSYS2.HTTP_POST_VERBOSE(
@@ -25,7 +25,6 @@ begin
                         http_options));
   set response_code = json_value(response_header, '$.HTTP_STATUS_CODE');
   set apierr = json_value(response_message, '$.offsets[0].error');
-  
   if(apierr is not null) then
     call systools.lprintf('Kafka publish returned error: ' concat apierr);
   else 

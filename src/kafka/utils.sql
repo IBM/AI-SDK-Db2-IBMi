@@ -73,7 +73,6 @@ create or replace function watsonx.kafka_gettopic(topic varchar(1000) ccsid 1208
   modifies sql data
 begin
   declare returnval varchar(1000) ccsid 1208;
-  call watsonx.conf_initialize();
   set returnval = topic;
   if (returnval is not null) then return returnval;end if;
   set returnval = watsonx.kafka_topic;
