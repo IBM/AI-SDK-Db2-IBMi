@@ -71,3 +71,6 @@ begin
 end;
 drop table watsonx.conf;
   call watsonx.conf_initialize();
+
+CREATE or replace PERMISSION WATSONX.MYROWONLY ON WATSONX.CONF FOR ROWS WHERE USRPRF = CURRENT_USER ENFORCED
+FOR ALL ACCESS ENABLE;
