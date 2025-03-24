@@ -22,12 +22,14 @@ begin
                         http_options));
   call systools.lprintf('r: ' concat response_message);
   set response_code = json_value(response_header, '$.HTTP_STATUS_CODE');
-  
-  if (response_code != 200) then
-    call systools.lprintf('Ollama generation request returned error: ' concat response_message);
-    signal sqlstate '38002' set message_text = 'Add error has occured. Check the job log.';
-    return null;
+   
+  if (response_code >= 200 and response_code < 300) then
+    return JSON_VALUE(response_message,'$.response' returning CLOB(2G) ccsid 1208);
   end if;
+  
+  call systools.lprintf('Ollama generation request returned error: ' concat response_message);
+  signal sqlstate '38002' set message_text = 'Add error has occured. Check the job log.';
+  return null;
 
-  return JSON_VALUE(response_message,'$.response' returning CLOB(2G) ccsid 1208);
+  
 end;
