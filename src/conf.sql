@@ -1,32 +1,32 @@
 
 --variables for watsonx
-create or replace variable watsonx.region varchar(16) ccsid 1208 default NULL;
-create or replace variable watsonx.apiVersion varchar(10) ccsid 1208 default NULL;
-create or replace variable watsonx.apikey varchar(100) ccsid 1208 default NULL;
-create or replace variable watsonx.projectid varchar(100) ccsid 1208 default NULL;
-create or replace variable watsonx.JobBearerToken varchar(10000) ccsid 1208 default null;
-create or replace variable watsonx.JobTokenExpires timestamp;
+create or replace variable watsonx.region              varchar(16) ccsid 1208 default NULL;
+create or replace variable watsonx.apiVersion          varchar(10) ccsid 1208 default NULL;
+create or replace variable watsonx.apikey              varchar(100) ccsid 1208 default NULL;
+create or replace variable watsonx.projectid           varchar(100) ccsid 1208 default NULL;
+create or replace variable watsonx.JobBearerToken      varchar(10000) ccsid 1208 default null;
+create or replace variable watsonx.JobTokenExpires     timestamp;
 
 -- variables for ollama
-create or replace variable watsonx.ollama_protocol varchar(16)   ccsid 1208 default null;
-create or replace variable watsonx.ollama_server   varchar(1000) ccsid 1208 default null;
-create or replace variable watsonx.ollama_port     INT                      default NULL;
-create or replace variable watsonx.ollama_model    varchar(1000) ccsid 1208 default NULL;
+create or replace variable watsonx.ollama_protocol     varchar(16)   ccsid 1208 default null;
+create or replace variable watsonx.ollama_server       varchar(1000) ccsid 1208 default null;
+create or replace variable watsonx.ollama_port         INT                      default NULL;
+create or replace variable watsonx.ollama_model        varchar(1000) ccsid 1208 default NULL;
 
 
 -- variables for kafka
-create or replace variable watsonx.kafka_protocol varchar(16)   ccsid 1208 default null;
-create or replace variable watsonx.kafka_broker   varchar(1000) ccsid 1208 default null;
-create or replace variable watsonx.kafka_port     INT                      default NULL;
-create or replace variable watsonx.kafka_topic    varchar(1000) ccsid 1208 default NULL;
+create or replace variable watsonx.kafka_protocol     varchar(16)   ccsid 1208 default null;
+create or replace variable watsonx.kafka_broker       varchar(1000) ccsid 1208 default null;
+create or replace variable watsonx.kafka_port         INT                      default NULL;
+create or replace variable watsonx.kafka_topic        varchar(1000) ccsid 1208 default NULL;
 
 -- variables for Slack
-create or replace variable watsonx.slack_webhook  varchar(1000) ccsid 1208 default NULL;
+create or replace variable watsonx.slack_webhook      varchar(1000) ccsid 1208 default NULL;
 
--- variables for 
-create or replace variable watsonx.twilio_number       varchar(1000) ccsid 1208 default NULL;
-create or replace variable watsonx.twilio_sid          varchar(1000) ccsid 1208 default NULL;
-create or replace variable watsonx.twilio_authtoken    varchar(1000) ccsid 1208 default NULL;
+-- variables for Twilio
+create or replace variable watsonx.twilio_number      varchar(1000) ccsid 1208 default NULL;
+create or replace variable watsonx.twilio_sid         varchar(1000) ccsid 1208 default NULL;
+create or replace variable watsonx.twilio_authtoken   varchar(1000) ccsid 1208 default NULL;
 
 create or replace table watsonx.conf
       (
@@ -69,5 +69,5 @@ create or replace procedure watsonx.conf_initialize()
 begin
   call watsonx.conf_register_user('*DEFAULT');
 end;
-
+drop table watsonx.conf;
   call watsonx.conf_initialize();
