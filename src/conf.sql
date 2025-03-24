@@ -21,8 +21,7 @@ create or replace variable watsonx.kafka_port     INT                      defau
 create or replace variable watsonx.kafka_topic    varchar(1000) ccsid 1208 default NULL;
 
 -- variables for Slack
-create or replace variable watsonx.slack_clientsecret  varchar(1000) ccsid 1208 default NULL;
-create or replace variable watsonx.slack_clientid      varchar(1000) ccsid 1208 default NULL;
+create or replace variable watsonx.slack_webhook  varchar(1000) ccsid 1208 default NULL;
 
 -- variables for 
 create or replace variable watsonx.twilio_number       varchar(1000) ccsid 1208 default NULL;
@@ -46,8 +45,7 @@ create or replace table watsonx.conf
           kafka_broker varchar(1000) ccsid 1208 default 'localhost',
           kafka_port int default 8082,
           kafka_topic varchar(1000) ccsid 1208 default NULL,
-          slack_clientsecret varchar(1000) ccsid 1208 default NULL,
-          slack_clientid varchar(1000) ccsid 1208 default NULL,
+          slack_webhook varchar(1000) ccsid 1208 default NULL,
           twilio_number varchar(1000) ccsid 1208 default NULL,
           twilio_sid varchar(1000) ccsid 1208 default NULL,
           twilio_authtoken varchar(1000) ccsid 1208 default NULL,
