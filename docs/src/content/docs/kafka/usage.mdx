@@ -14,18 +14,45 @@ Hello, Kafka is great, eh?
 <LinkButton href="../requisites">Set up requisite software</LinkButton></Aside>
 
 ----
-
 ### function: `kafka_publish`
-
 Description: publishes a message to the kafka topic
-
 Input parameters:
 - `TOPIC` (optional): The topic to publish the message on.
 - `KEY` (required): The message to publish.
 - `MSGDATA` (required): The message to publish.
-
 Return type: 
 - `varchar(32000) ccsid 1208`
-
 Return value:
 - API error, if any was encountered
+### procedure: `kafka_setbrokerforjob`
+Description: sets the Kafka broker to be used for this job
+Input parameters:
+- `HOSTNAME` (required): The broker hostname or IP address.
+### procedure: `kafka_setbrokerforjob`
+Description: sets the Kafka broker to be used persistently for the current user profile.
+Input parameters:
+- `HOSTNAME` (required): The broker hostname or IP address.
+### procedure: `kafka_setportforjob`
+Description: sets the Kafka broker's port to be used for this job
+Input parameters:
+- `PORT` (required): The port number.
+### procedure: `kafka_setportforme`
+Description: sets the Kafka broker's port to be used persistently for the current user profile
+Input parameters:
+- `PORT` (required): The port number.
+### procedure: `kafka_settopicforjob`
+Description: sets the Kafka topic to be used for this job
+Input parameters:
+- `TOPIC` (required): The topic name.
+### procedure: `kafka_settopicforme`
+Description: sets the Kafka topic to be persistently used for the current user profile
+Input parameters:
+- `TOPIC` (required): The topic name.
+### procedure: `kafka_setprotocolforjob`
+Description: sets the Kafka protocol to be used for this job
+Input parameters:
+- `PROTOCOL` (required): `http` or `https`.
+### procedure: `kafka_setprotocolforjob`
+Description: sets the Kafka protocol to be used persistently for this user profile.
+Input parameters:
+- `PROTOCOL` (required): `http` or `https`.

@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
+    "preprocess": "node preprocess.cjs preprocess.conf",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
