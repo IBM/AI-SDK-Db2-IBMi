@@ -1,0 +1,31 @@
+---
+title: Usage 
+description: Usage
+sidebar:
+    order: 2
+---
+import { Aside, LinkButton } from '@astrojs/starlight/components';
+
+
+Hello, Kafka is great, eh?
+
+
+<Aside type="note">This requires the confluent platform to be installed. <br/>
+<LinkButton href="../requisites">Set up requisite software</LinkButton></Aside>
+
+----
+
+### function: `kafka_publish`
+
+Description: publishes a message to the kafka topic
+
+Input parameters:
+- `TOPIC` (optional): The topic to publish the message on.
+- `KEY` (required): The message to publish.
+- `MSGDATA` (required): The message to publish.
+
+Return type: 
+- `varchar(32000) ccsid 1208`
+
+Return value:
+- API error, if any was encountered

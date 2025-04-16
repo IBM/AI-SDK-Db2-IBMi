@@ -1,0 +1,35 @@
+---
+title: Examples 
+description: Examples
+sidebar:
+    order: 3
+---
+
+
+### Publish a message 
+Then at some future time (even a different session):
+```sql
+values(watsonx.kafka_publish( TOPIC   => 'fun_facts',
+                              KEY     => 'baritone43', 
+                              MSGDATA => 'The baritone is a very interesting musical instrument!'));
+```
+
+### Publish a message with a per-job topic
+Then at some future time (even a different session):
+```sql
+call watsonx.kafka_settopicforjob('fun_facts');
+values(watsonx.kafka_publish( KEY     => 'baritone43', 
+                              MSGDATA => 'The baritone is a very interesting musical instrument!'));
+```
+
+### Publish a message with a persistent topic
+call once:
+```sql
+call watsonx.kafka_settopicforme('fun_facts');
+```
+
+Then at some future time (even a different session):
+```sql
+values(watsonx.kafka_publish( KEY     => 'baritone43', 
+                              MSGDATA => 'The baritone is a very interesting musical instrument!'));
+```

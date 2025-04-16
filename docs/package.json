@@ -1,0 +1,17 @@
+{
+  "name": "ai-ibmi-guide",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.28.3",
+    "ai-ibmi-guide": "file:",
+    "astro": "^4.16.7"
+  }
+}
