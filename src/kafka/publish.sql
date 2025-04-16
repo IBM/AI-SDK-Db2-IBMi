@@ -1,4 +1,18 @@
 
+-- ### function: `kafka_publish`
+
+-- Description: publishes a message to the kafka topic
+
+-- Input parameters:
+-- - `TOPIC` (optional): The topic to publish the message on.
+-- - `KEY` (required): The message to publish.
+-- - `MSGDATA` (required): The message to publish.
+
+-- Return type: 
+-- - `varchar(32000) ccsid 1208`
+
+-- Return value:
+-- - API error, if any was encountered
 create or replace function watsonx.kafka_publish(msgdata varchar(32000) ccsid 1208 default NULL, topic varchar(1000) ccsid 1208 default NULL, key varchar(1000) ccsid 1208 default NULL)
   RETURNS varchar(32000) ccsid 1208
   modifies sql data
