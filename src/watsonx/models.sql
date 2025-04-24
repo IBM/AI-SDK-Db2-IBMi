@@ -1,5 +1,27 @@
+-- ## Model list 
+--
+-- ### function: `watsonx_getmodels`
+--
+-- Description: Calls [watsonx.ai](http://watsonx.ai) to list available model ids for use with this API. 
+-- 
+-- <Aside type="note">No authentication is needed for this function. </Aside>
 
-create or replace procedure watsonx.GetModels()
+-- Input parameters:
+-- - `TEXT` (required): The prompt text for the LLM.
+-- - `MODEL_ID` (optional): The watsonx model ID to use (default: `meta-llama/llama-2-13b-chat`).
+-- - `PARAMETERS` (optional): Extra parameters to the watsonx generation APIs.
+-- 
+-- Return type: 
+-- - Result set with the following columns:
+--    - `model_id`: The model ID.
+--    - `label`: The model label.
+--    - `provider` : The model provider.
+--    - `short_description`: A short description of the model.
+--
+-- Return value:
+-- - The list of available models
+
+create or replace procedure watsonx.watsonx_getmodels()
   DYNAMIC RESULT SETS 1
   program type sub
   set option usrprf = *user, dynusrprf = *user, commit = *none

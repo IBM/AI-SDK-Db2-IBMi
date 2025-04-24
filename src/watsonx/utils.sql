@@ -1,64 +1,82 @@
 
+-- ## Utility functions
+
 create or replace function watsonx.GetUrl(route varchar(1000))
   returns varchar(256) ccsid 1208
 begin
   declare finalUrl varchar(256) ccsid 1208;
 
-  set finalUrl = 'https://' concat watsonx.region concat '.ml.cloud.ibm.com/ml/v1' concat route;
+  set finalUrl = 'https://' concat watsonx.watsonx_region concat '.ml.cloud.ibm.com/ml/v1' concat route;
 
-  if (watsonx.apiVersion is not null and watsonx.apiVersion != '') then
-    set finalUrl = finalUrl concat '?version=' concat watsonx.apiVersion;
+  if (watsonx.watsonx_apiVersion is not null and watsonx.watsonx_apiVersion != '') then
+    set finalUrl = finalUrl concat '?version=' concat watsonx.watsonx_apiVersion;
   end if;
 
   return finalUrl;
 end;
 
-create or replace procedure watsonx.SetApiKeyForJob(apikey varchar(100))
+-- ### function: `watsonx_SetApiKeyForJob`
+-- 
+-- Description: Sets the watsonx API key to be used for the current job
+-- 
+-- Input parameters:
+-- - `APIKEY` (required): The API key.
+create or replace procedure watsonx.watsonx_SetApiKeyForJob(apikey varchar(100))
   program type sub
   set option usrprf = *user, dynusrprf = *user, commit = *none
 begin
-  set watsonx.apikey = apikey;
+  set watsonx.watsonx_apikey = apikey;
 end;
 
-create or replace procedure watsonx.SetProjectIdForJob(projectid varchar(100))
+-- ### function: `watsonx_SetProjectIdForJob`
+-- 
+-- Description: Sets the watsonx project ID to be used for the current job
+-- 
+-- Input parameters:
+-- - `PROJECTID` (required): The project ID.
+create or replace procedure watsonx.watsonx_SetProjectIdForJob(projectid varchar(100))
   program type sub
   set option usrprf = *user, dynusrprf = *user, commit = *none
 begin
-  set watsonx.projectid = projectid;
+  set watsonx.watsonx_projectid = projectid;
 end;
 
-create or replace procedure watsonx.SetBearerTokenForJob(bearer_token varchar(10000), expires integer)
+create or replace procedure watsonx.watsonx_SetBearerTokenForJob(bearer_token varchar(10000), expires integer)
   modifies sql data
   program type sub
   set option usrprf = *user, dynusrprf = *user, commit = *none
 begin
-  set watsonx.JobBearerToken = bearer_token;
+  set watsonx.watsonx_JobBearerToken = bearer_token;
   -- We subtract 60 seconds from the expiration time to ensure we don't cut it too close
-  set watsonx.JobTokenExpires = current timestamp + expires seconds - 60 seconds;
+  set watsonx.watsonx_JobTokenExpires = current timestamp + expires seconds - 60 seconds;
 end;
 
-create or replace function watsonx.ShouldGetNewToken() 
+create or replace function watsonx.watsonx_ShouldGetNewToken() 
   returns char(1)
 begin
-  if (watsonx.JobBearerToken is null) then
+  if (watsonx.watsonx_JobBearerToken is null) then
     return 'Y';
   end if;
-  if (watsonx.JobTokenExpires is null) then
+  if (watsonx.watsonx_JobTokenExpires is null) then
     return 'Y';
   end if;
-  if (current timestamp > watsonx.JobTokenExpires) then
+  if (current timestamp > watsonx.watsonx_JobTokenExpires) then
     return 'Y';
   end if;
   return 'N';
 end;
 
-create or replace procedure watsonx.logoutJob()
+-- ### function: `watsonx_logoutJob`
+-- 
+-- Description: Log out from teh current job.
+-- 
+create or replace procedure watsonx.watsonx_logoutJob()
   program type sub
   modifies sql data
   set option usrprf = *user, dynusrprf = *user, commit = *none
 begin
-  set watsonx.JobBearerToken = null;
-  set watsonx.JobTokenExpires = null;
+  set watsonx.watsonx_JobBearerToken = null;
+  set watsonx.watsonx_JobTokenExpires = null;
 end;
 
 create or replace function watsonx.parameters(

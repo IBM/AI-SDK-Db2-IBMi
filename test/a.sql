@@ -3,8 +3,8 @@
 ------
 
 call watsonx.logoutjob();
-call watsonx.setapikeyforjob('');
-call watsonx.setprojectidforjob('');
+call watsonx.watsonx_setapikeyforjob('');
+call watsonx.watsonx_setprojectidforjob('');
 
 -- Should return Y
 values watsonx.ShouldGetNewToken();
@@ -23,7 +23,7 @@ values watsonx.generate('Hello world', model_id => 'meta-llama/llama-2-13b-chat'
 ------
 
 call watsonx.logoutjob();
-call watsonx.setapikeyforjob('-BAD');
+call watsonx.watsonx_setapikeyforjob('-BAD');
 
 -- Should return Y
 values watsonx.ShouldGetNewToken();

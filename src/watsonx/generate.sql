@@ -1,4 +1,21 @@
-create or replace function watsonx.generate(
+-- ## watsonx main functionality 
+
+
+-- ### function: `watsonx_generate`
+
+-- Description: calls a large language model in [watsonx.ai](http://watsonx.ai) to generate a response based on the input message.
+
+-- Input parameters:
+-- - `TEXT` (required): The prompt text for the LLM.
+-- - `MODEL_ID` (optional): The watsonx model ID to use (default: `meta-llama/llama-2-13b-chat`).
+-- - `PARAMETERS` (optional): Extra parameters to the watsonx generation APIs.
+-- 
+-- Return type: 
+-- - `varchar(10000) ccsid 1208`
+-- 
+-- Return value:
+-- - The generated text
+create or replace function watsonx.watsonx_generate(
   text varchar(1000) ccsid 1208,
   model_id varchar(128) ccsid 1208 default 'meta-llama/llama-2-13b-chat',
   parameters varchar(1000) ccsid 1208 default null
@@ -33,8 +50,8 @@ begin
   into response_message, response_header
   from table(HTTP_POST_VERBOSE(
     watsonx.geturl('/text/generation'),
-    json_object('model_id': model_id, 'input': text, 'parameters': parameters format json, 'project_id': watsonx.projectid),
-    json_object('headers': json_object('Authorization': 'Bearer ' concat watsonx.JobBearerToken, 'Content-Type': 'application/json', 'Accept': 'application/json'))
+    json_object('model_id': model_id, 'input': text, 'parameters': parameters format json, 'project_id': watsonx.watsonx_projectid),
+    json_object('headers': json_object('Authorization': 'Bearer ' concat watsonx.watsonx_JobBearerToken, 'Content-Type': 'application/json', 'Accept': 'application/json'))
   )) x;
   
   set response_code = json_value(response_header, '$.HTTP_STATUS_CODE');
