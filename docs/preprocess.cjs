@@ -7,8 +7,8 @@ console.log('Arguments:', args);
 
 let destFile = args[0];
 if (destFile === undefined) {
-    console.error("No preprocess configuration file specified");
-    process.exit(-1);
+  console.error("No preprocess configuration file specified");
+  process.exit(-1);
 }
 
 console.log(`Preprocessing files based on the configuration defined in ${destFile}....`);
@@ -30,25 +30,25 @@ try {
     let origFileLines = fs.readFileSync(path.join(__dirname, destFile), 'utf8').split(/\r?\n/);
     let outputContent = '';
 
-    for(const origFileLine of origFileLines){ 
-      if(origFileLine.trim() == '----') {
-        outputContent += '----\n';
+    for (const origFileLine of origFileLines) {
+      if (origFileLine.trim() == '----') {
         break;
-      } 
-        outputContent += (origFileLine + '\n');
+      }
+      outputContent += (origFileLine + '\n');
     }
 
     let inputFile = undefined;
-    while(inputFile = parts.shift()) {
+    while (inputFile = parts.shift()) {
       console.log(`  Processing input file: ${inputFile}`);
-      
+
       let inFileLines = fs.readFileSync(path.join(__dirname, inputFile), 'utf8').split(/\r?\n/);
-      for(const line of inFileLines) {
-        if(line.startsWith('-- ')) {
+      outputContent += '----\n';
+      for (const line of inFileLines) {
+        if (line.startsWith('-- ')) {
           outputContent += (line.slice(3) + '\n');
         }
       }
-      
+
       fs.writeFileSync(path.join(__dirname, destFile), outputContent, 'utf8');
     }
   }
