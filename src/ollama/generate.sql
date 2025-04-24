@@ -1,18 +1,18 @@
 
 -- ## Ollama main functionality
 
--- ### function: `ollama_generate`
+-- #### **Function:** `ollama_generate`
 
--- Description: Uses ollama to generate a reply to the given prompt
+-- **Description:** Uses ollama to generate a reply to the given prompt
 -- 
--- Input parameters:
+-- **Input parameters:**
 -- - `PROMPT` (required): The input prompt for the LLM.
 -- - `model_id` (optional): The ollama identifier of the model to use for generation.
 -- 
--- Return type: 
+-- **Return type:** 
 -- - `clob(2G) ccsid 1208`
 -- 
--- Return value:
+-- **Return value:**
 -- - The generated reply.
 
 create or replace function watsonx.ollama_generate(prompt varchar(1000) ccsid 1208, model_id varchar(1000) ccsid 1208 default NULL) 

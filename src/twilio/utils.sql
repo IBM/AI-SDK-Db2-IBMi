@@ -50,11 +50,11 @@ begin
   return returnval;
 end;
 
--- ### function: `twilio_setsidforjob`
+-- #### **Function:** `twilio_setsidforjob`
 -- 
--- Description: Sets the Twilio Account SID for the current job
+-- **Description:** Sets the Twilio Account SID for the current job
 -- 
--- Input parameters:
+-- **Input parameters:**
 -- - `ACCOUNT_SID` (required): The Twilio Account SID.
 create or replace procedure watsonx.twilio_setsidforjob(account_sid varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
@@ -63,11 +63,11 @@ begin
 end;
 
 
--- ### function: `twilio_setsidforme`
+-- #### **Function:** `twilio_setsidforme`
 -- 
--- Description: Sets the Twilio Account SID for the current user profile (persists across jobs)
+-- **Description:** Sets the Twilio Account SID for the current user profile (persists across jobs)
 -- 
--- Input parameters:
+-- **Input parameters:**
 -- - `ACCOUNT_SID` (required): The Twilio Account SID.
 create or replace procedure watsonx.twilio_setsidforme(account_sid varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
@@ -104,11 +104,11 @@ begin
   return returnval;
 end;
 
--- ### function: `twilio_setauthtokenforjob`
+-- #### **Function:** `twilio_setauthtokenforjob`
 -- 
--- Description: Sets the Twilio authentication token for the current job
+-- **Description:** Sets the Twilio authentication token for the current job
 -- 
--- Input parameters:
+-- **Input parameters:**
 -- - `AUTHTOKEN` (required): The Twilio authentication token.
 create or replace procedure watsonx.twilio_setauthtokenforjob(authtoken varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
@@ -117,11 +117,11 @@ begin
 end;
 
 
--- ### function: `twilio_setauthtokenforme`
+-- #### **Function:** `twilio_setauthtokenforme`
 -- 
--- Description: Sets the Twilio authentication token for the current user profile (persists across jobs)
+-- **Description:** Sets the Twilio authentication token for the current user profile (persists across jobs)
 -- 
--- Input parameters:
+-- **Input parameters:**
 -- - `AUTHTOKEN` (required): The Twilio authentication token.
 create or replace procedure watsonx.twilio_setauthtokenforme(authtoken varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA

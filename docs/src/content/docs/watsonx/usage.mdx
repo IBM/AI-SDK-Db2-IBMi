@@ -1,6 +1,6 @@
 ---
 title: Usage 
-description: Usage
+Description: Usage
 sidebar:
     order: 1
 ---
@@ -8,68 +8,68 @@ import { Aside, LinkButton } from '@astrojs/starlight/components';
 
 ----
 ## watsonx main functionality 
-### function: `watsonx_generate`
-Description: calls a large language model in [watsonx.ai](http://watsonx.ai) to generate a response based on the input message.
-Input parameters:
+### **Function:** `watsonx_generate`
+**Description:** calls a large language model in [watsonx.ai](http://watsonx.ai) to generate a response based on the input message.
+**Input parameters:**
 - `TEXT` (required): The prompt text for the LLM.
 - `MODEL_ID` (optional): The watsonx model ID to use (default: `meta-llama/llama-2-13b-chat`).
 - `PARAMETERS` (optional): Extra parameters to the watsonx generation APIs.
 
-Return type: 
+**Return type:** 
 - `varchar(10000) ccsid 1208`
 
-Return value:
+**Return value:**
 - The generated text
 ----
 ## Model list 
 
-### function: `watsonx_getmodels`
+### **Function:** `watsonx_getmodels`
 
-Description: Calls [watsonx.ai](http://watsonx.ai) to list available model ids for use with this API. 
+**Description:** Calls [watsonx.ai](http://watsonx.ai) to list available model ids for use with this API. 
 
 <Aside type="note">No authentication is needed for this function. </Aside>
-Input parameters:
+**Input parameters:**
 - `TEXT` (required): The prompt text for the LLM.
 - `MODEL_ID` (optional): The watsonx model ID to use (default: `meta-llama/llama-2-13b-chat`).
 - `PARAMETERS` (optional): Extra parameters to the watsonx generation APIs.
 
-Return type: 
+**Return type:** 
 - Result set with the following columns:
    - `model_id`: The model ID.
    - `label`: The model label.
    - `provider` : The model provider.
    - `short_description`: A short description of the model.
 
-Return value:
+**Return value:**
 - The list of available models
 ----
 ## Authorization functions
 
-### function: `watsonx_authenticate`
-Description: authenticates to the watsonx service and acquires an access token.
+### **Function:** `watsonx_authenticate`
+**Description:** authenticates to the watsonx service and acquires an access token.
 
-Return type: 
+**Return type:** 
 - `char(1) ccsid 1208`
 
-Return value:
+**Return value:**
 - Either `Y` or `N`, depending on whether the authentication was successful.
 
 
 ----
 ## Utility functions
-### function: `watsonx_SetApiKeyForJob`
+### **Function:** `watsonx_SetApiKeyForJob`
 
-Description: Sets the watsonx API key to be used for the current job
+**Description:** Sets the watsonx API key to be used for the current job
 
-Input parameters:
+**Input parameters:**
 - `APIKEY` (required): The API key.
-### function: `watsonx_SetProjectIdForJob`
+### **Function:** `watsonx_SetProjectIdForJob`
 
-Description: Sets the watsonx project ID to be used for the current job
+**Description:** Sets the watsonx project ID to be used for the current job
 
-Input parameters:
+**Input parameters:**
 - `PROJECTID` (required): The project ID.
-### function: `watsonx_logoutJob`
+### **Function:** `watsonx_logoutJob`
 
-Description: Log out from teh current job.
+**Description:** Log out from teh current job.
 

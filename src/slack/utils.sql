@@ -18,9 +18,9 @@ end;
 
 -- ### procedure: `slack_setwebhookforjob`
 
--- Description: sets the Slack webhook to be used for this job
+-- **Description:** sets the Slack webhook to be used for this job
 
--- Input parameters:
+-- **Input parameters:**
 -- - `webhook` (required): the Slack webhook URL.
 create or replace procedure watsonx.slack_setwebhookforjob(webhook varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
@@ -30,9 +30,9 @@ end;
 
 -- ### procedure: `slack_setwebhookforme`
 
--- Description: sets the Slack webhook to be used for the current user profile (persists across jobs).
+-- **Description:** sets the Slack webhook to be used for the current user profile (persists across jobs).
 
--- Input parameters:
+-- **Input parameters:**
 -- - `webhook` (required): the Slack webhook URL.
 create or replace procedure watsonx.slack_setwebhookforme(webhook varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA

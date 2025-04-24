@@ -1,19 +1,19 @@
 -- ## watsonx main functionality 
 
 
--- ### function: `watsonx_generate`
+-- #### **Function:** `watsonx_generate`
 
--- Description: calls a large language model in [watsonx.ai](http://watsonx.ai) to generate a response based on the input message.
+-- **Description:** calls a large language model in [watsonx.ai](http://watsonx.ai) to generate a response based on the input message.
 
--- Input parameters:
+-- **Input parameters:**
 -- - `TEXT` (required): The prompt text for the LLM.
 -- - `MODEL_ID` (optional): The watsonx model ID to use (default: `meta-llama/llama-2-13b-chat`).
 -- - `PARAMETERS` (optional): Extra parameters to the watsonx generation APIs.
 -- 
--- Return type: 
+-- **Return type:** 
 -- - `varchar(10000) ccsid 1208`
 -- 
--- Return value:
+-- **Return value:**
 -- - The generated text
 create or replace function watsonx.wx_generate(
   text varchar(1000) ccsid 1208,

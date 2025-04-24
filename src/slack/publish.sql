@@ -1,17 +1,17 @@
 -- ## Slack main functionality
 -- 
--- ### function: `slack_sendmessage`
+-- #### **Function:** `slack_sendmessage`
 -- 
--- Description: Sends a slack message
+-- **Description:** Sends a slack message
 -- 
--- Input parameters:
+-- **Input parameters:**
 -- - `MSG` (required): The message to send.
 -- - `WEBHOOK` (optional): The Slack webhook address.
 -- 
--- Return type: 
+-- **Return type:** 
 -- - `varchar(32000) ccsid 1208`
 -- 
--- Return value:
+-- **Return value:**
 -- - Response message from underlying Slack API, if there was one
 
 create or replace function watsonx.slack_sendmessage(msg varchar(32000) ccsid 1208 default NULL, webhook varchar(1000) ccsid 1208 default NULL)

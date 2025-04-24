@@ -1,14 +1,14 @@
 
 -- ## Authorization functions
 --
--- ### function: `watsonx_authenticate`
+-- #### **Function:** `watsonx_authenticate`
 
--- Description: authenticates to the watsonx service and acquires an access token.
+-- **Description:** authenticates to the watsonx service and acquires an access token.
 -- 
--- Return type: 
+-- **Return type:** 
 -- - `char(1) ccsid 1208`
 -- 
--- Return value:
+-- **Return value:**
 -- - Either `Y` or `N`, depending on whether the authentication was successful.
 create or replace function watsonx.wx_authenticate() 
   returns char(1) ccsid 1208

@@ -1,6 +1,6 @@
 ---
 title: Usage 
-description: Usage
+Description: Usage
 sidebar:
     order: 1
 ---
@@ -11,51 +11,51 @@ import { Aside, LinkButton } from '@astrojs/starlight/components';
 
 ----
 ## Ollama main functionality
-### function: `ollama_generate`
-Description: Uses ollama to generate a reply to the given prompt
+### **Function:** `ollama_generate`
+**Description:** Uses ollama to generate a reply to the given prompt
 
-Input parameters:
+**Input parameters:**
 - `PROMPT` (required): The input prompt for the LLM.
 - `model_id` (optional): The ollama identifier of the model to use for generation.
 
-Return type: 
+**Return type:** 
 - `clob(2G) ccsid 1208`
 
-Return value:
+**Return value:**
 - The generated reply.
 ----
 ## Ollama utility functions
 ### procedure: `ollama_setserverforjob`
-Description: sets the ollama server to be used for this job
-Input parameters:
+**Description:** sets the ollama server to be used for this job
+**Input parameters:**
 - `HOSTNAME` (required): The IP address or hostname of the ollama server.
 ### procedure: `ollama_setserverforme`
-Description: sets the ollama server to be used for this user profile (persists across jobs)
-Input parameters:
+**Description:** sets the ollama server to be used for this user profile (persists across jobs)
+**Input parameters:**
 - `HOSTNAME` (required): The IP address or hostname of the ollama server.
 ### procedure: `ollama_setportforjob`
-Description: sets the ollama server port to be used for this job
-Input parameters:
+**Description:** sets the ollama server port to be used for this job
+**Input parameters:**
 - `PORT` (required): The ollama server port.
 ### procedure: `ollama_setportforme`
-Description: sets the ollama server port to be used for this user profile (persists across jobs).
-Input parameters:
+**Description:** sets the ollama server port to be used for this user profile (persists across jobs).
+**Input parameters:**
 - `PORT` (required): The ollama server port.
 ### procedure: `ollama_setmodelforjob`
-Description: sets the large language model (LLM) to be used for this job
-Input parameters:
+**Description:** sets the large language model (LLM) to be used for this job
+**Input parameters:**
 - `MODEL` (required): The ollama identifier of the model to use.
 ### procedure: `ollama_setmodelforme`
-Description: sets the large language model (LLM) to be used for this user profile (persists across jobs)
-Input parameters:
+**Description:** sets the large language model (LLM) to be used for this user profile (persists across jobs)
+**Input parameters:**
 - `MODEL` (required): The ollama identifier of the model to use.
 ### procedure: `ollama_setprotocolforjob`
-Description: sets the protocol to be used for this job
-Input parameters:
+**Description:** sets the protocol to be used for this job
+**Input parameters:**
 - `PROTOCOL` (required): `http`/`https`
 ### procedure: `ollama_setprotocolforjob`
 
-Description: sets the protocol to be used for this user profile (persists across jobs)
+**Description:** sets the protocol to be used for this user profile (persists across jobs)
 
-Input parameters:
+**Input parameters:**
 - `PROTOCOL` (required): `http`/`https`

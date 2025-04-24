@@ -19,9 +19,9 @@ end;
 
 -- ### procedure: `kafka_setbrokerforjob`
 
--- Description: sets the Kafka broker to be used for this job
+-- **Description:** sets the Kafka broker to be used for this job
 
--- Input parameters:
+-- **Input parameters:**
 -- - `HOSTNAME` (required): The broker hostname or IP address.
 create or replace procedure watsonx.kafka_setbrokerforjob(hostname varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
@@ -31,9 +31,9 @@ end;
 
 -- ### procedure: `kafka_setbrokerforjob`
 
--- Description: sets the Kafka broker to be used persistently for the current user profile.
+-- **Description:** sets the Kafka broker to be used persistently for the current user profile.
 
--- Input parameters:
+-- **Input parameters:**
 -- - `HOSTNAME` (required): The broker hostname or IP address.
 create or replace procedure watsonx.kafka_setbrokerforme(hostname varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
@@ -66,9 +66,9 @@ end;
 
 -- ### procedure: `kafka_setportforjob`
 
--- Description: sets the Kafka broker's port to be used for this job
+-- **Description:** sets the Kafka broker's port to be used for this job
 
--- Input parameters:
+-- **Input parameters:**
 -- - `PORT` (required): The port number.
 create or replace procedure watsonx.kafka_setportforjob(port INT default NULL) 
   modifies SQL DATA
@@ -79,9 +79,9 @@ end;
 
 -- ### procedure: `kafka_setportforme`
 
--- Description: sets the Kafka broker's port to be used persistently for the current user profile
+-- **Description:** sets the Kafka broker's port to be used persistently for the current user profile
 
--- Input parameters:
+-- **Input parameters:**
 -- - `PORT` (required): The port number.
 create or replace procedure watsonx.kafka_setportforme(port INT default NULL) 
   MODIFIES SQL DATA
@@ -114,9 +114,9 @@ end;
 
 -- ### procedure: `kafka_settopicforjob`
 
--- Description: sets the Kafka topic to be used for this job
+-- **Description:** sets the Kafka topic to be used for this job
 
--- Input parameters:
+-- **Input parameters:**
 -- - `TOPIC` (required): The topic name.
 create or replace procedure watsonx.kafka_settopicforjob(topic varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
@@ -126,9 +126,9 @@ end;
 
 -- ### procedure: `kafka_settopicforme`
 
--- Description: sets the Kafka topic to be persistently used for the current user profile
+-- **Description:** sets the Kafka topic to be persistently used for the current user profile
 
--- Input parameters:
+-- **Input parameters:**
 -- - `TOPIC` (required): The topic name.
 create or replace procedure watsonx.kafka_settopicforme(topic varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
@@ -161,9 +161,9 @@ end;
 
 -- ### procedure: `kafka_setprotocolforjob`
 
--- Description: sets the Kafka protocol to be used for this job
+-- **Description:** sets the Kafka protocol to be used for this job
 
--- Input parameters:
+-- **Input parameters:**
 -- - `PROTOCOL` (required): `http` or `https`.
 create or replace procedure watsonx.kafka_setprotocolforjob(protocol varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
@@ -173,9 +173,9 @@ end;
 
 -- ### procedure: `kafka_setprotocolforjob`
 
--- Description: sets the Kafka protocol to be used persistently for this user profile.
+-- **Description:** sets the Kafka protocol to be used persistently for this user profile.
 
--- Input parameters:
+-- **Input parameters:**
 -- - `PROTOCOL` (required): `http` or `https`.
 create or replace procedure watsonx.kafka_setprotocolforme(protocol varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA

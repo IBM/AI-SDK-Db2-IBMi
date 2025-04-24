@@ -1,18 +1,18 @@
 -- ## Twilio SMS main functionality
 -- 
--- ### function: `twilio_sendsms`
+-- #### **Function:** `twilio_sendsms`
 -- 
--- Description: Use Twilio to send an SMS message
+-- **Description:** Use Twilio to send an SMS message
 -- 
--- Input parameters:
+-- **Input parameters:**
 -- - `TO_CELL_NUMBER` (required): The destination cell phone number.
 -- - `MSG` (required): The SMS message body.
 -- - `TWILIO_NUMBER` (optional): The message to publish.
 -- 
--- Return type: 
+-- **Return type:** 
 -- - `varchar(32000) ccsid 1208`
 -- 
--- Return value:
+-- **Return value:**
 -- - Response message from API call
 create or replace function watsonx.twilio_sendsms(to_cell_number varchar(100) ccsid 1208 default NULL, msg varchar(110) ccsid 1208 default NULL, twilio_number varchar(100) ccsid 1208 default NULL)
   RETURNS varchar(32000) ccsid 1208

@@ -15,11 +15,11 @@ begin
   return finalUrl;
 end;
 
--- ### function: `watsonx_SetApiKeyForJob`
+-- #### **Function:** `watsonx_SetApiKeyForJob`
 -- 
--- Description: Sets the watsonx API key to be used for the current job
+-- **Description:** Sets the watsonx API key to be used for the current job
 -- 
--- Input parameters:
+-- **Input parameters:**
 -- - `APIKEY` (required): The API key.
 create or replace procedure watsonx.wx_SetApiKeyForJob(apikey varchar(100))
   program type sub
@@ -28,11 +28,11 @@ begin
   set watsonx.wx_apikey = apikey;
 end;
 
--- ### function: `watsonx_SetProjectIdForJob`
+-- #### **Function:** `watsonx_SetProjectIdForJob`
 -- 
--- Description: Sets the watsonx project ID to be used for the current job
+-- **Description:** Sets the watsonx project ID to be used for the current job
 -- 
--- Input parameters:
+-- **Input parameters:**
 -- - `PROJECTID` (required): The project ID.
 create or replace procedure watsonx.wx_SetProjectIdForJob(projectid varchar(100))
   program type sub
@@ -66,9 +66,9 @@ begin
   return 'N';
 end;
 
--- ### function: `watsonx_logoutJob`
+-- #### **Function:** `watsonx_logoutJob`
 -- 
--- Description: Log out from teh current job.
+-- **Description:** Log out from teh current job.
 -- 
 create or replace procedure watsonx.wx_logoutJob()
   program type sub
