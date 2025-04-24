@@ -21,19 +21,6 @@ Return type:
 Return value:
 - The generated text
 ----
-## Authorization functions
-
-### function: `watsonx_authenticate`
-Description: authenticates to the watsonx service and acquires an access token.
-
-Return type: 
-- `char(1) ccsid 1208`
-
-Return value:
-- Either `Y` or `N`, depending on whether the authentication was successful.
-
-
-----
 ## Model list 
 
 ### function: `watsonx_getmodels`
@@ -56,3 +43,33 @@ Return type:
 Return value:
 - The list of available models
 ----
+## Authorization functions
+
+### function: `watsonx_authenticate`
+Description: authenticates to the watsonx service and acquires an access token.
+
+Return type: 
+- `char(1) ccsid 1208`
+
+Return value:
+- Either `Y` or `N`, depending on whether the authentication was successful.
+
+
+----
+## Utility functions
+### function: `watsonx_SetApiKeyForJob`
+
+Description: Sets the watsonx API key to be used for the current job
+
+Input parameters:
+- `APIKEY` (required): The API key.
+### function: `watsonx_SetProjectIdForJob`
+
+Description: Sets the watsonx project ID to be used for the current job
+
+Input parameters:
+- `PROJECTID` (required): The project ID.
+### function: `watsonx_logoutJob`
+
+Description: Log out from teh current job.
+
