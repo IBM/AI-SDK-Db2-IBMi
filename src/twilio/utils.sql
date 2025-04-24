@@ -1,5 +1,5 @@
-
-
+-- ## Twilio SMS utility functions
+-- 
 create or replace function watsonx.twilio_getnumber(phnum varchar(1000) ccsid 1208 default NULL) 
   returns varchar(1000) ccsid 1208
   modifies sql data
@@ -50,11 +50,25 @@ begin
   return returnval;
 end;
 
+-- ### function: `twilio_setsidforjob`
+-- 
+-- Description: Sets the Twilio Account SID for the current job
+-- 
+-- Input parameters:
+-- - `ACCOUNT_SID` (required): The Twilio Account SID.
 create or replace procedure watsonx.twilio_setsidforjob(account_sid varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
 begin
   set watsonx.twilio_sid= account_sid;
 end;
+
+
+-- ### function: `twilio_setsidforme`
+-- 
+-- Description: Sets the Twilio Account SID for the current user profile (persists across jobs)
+-- 
+-- Input parameters:
+-- - `ACCOUNT_SID` (required): The Twilio Account SID.
 create or replace procedure watsonx.twilio_setsidforme(account_sid varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin
@@ -90,11 +104,25 @@ begin
   return returnval;
 end;
 
+-- ### function: `twilio_setauthtokenforjob`
+-- 
+-- Description: Sets the Twilio authentication token for the current job
+-- 
+-- Input parameters:
+-- - `AUTHTOKEN` (required): The Twilio authentication token.
 create or replace procedure watsonx.twilio_setauthtokenforjob(authtoken varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
 begin
   set watsonx.twilio_authtoken= authtoken;
 end;
+
+
+-- ### function: `twilio_setauthtokenforme`
+-- 
+-- Description: Sets the Twilio authentication token for the current user profile (persists across jobs)
+-- 
+-- Input parameters:
+-- - `AUTHTOKEN` (required): The Twilio authentication token.
 create or replace procedure watsonx.twilio_setauthtokenforme(authtoken varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin
