@@ -1,3 +1,6 @@
+-- ## Slack utility functions
+
+
 create or replace function watsonx.slack_getwebhook(webhook varchar(1000) ccsid 1208 default NULL) 
   returns varchar(1000) ccsid 1208
   modifies sql data
@@ -13,11 +16,24 @@ begin
   return returnval;
 end;
 
+-- ### procedure: `slack_setwebhookforjob`
+
+-- Description: sets the Slack webhook to be used for this job
+
+-- Input parameters:
+-- - `webhook` (required): the Slack webhook URL.
 create or replace procedure watsonx.slack_setwebhookforjob(webhook varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
 begin
   set watsonx.slack_webhook= webhook;
 end;
+
+-- ### procedure: `slack_setwebhookforme`
+
+-- Description: sets the Slack webhook to be used for the current user profile (persists across jobs).
+
+-- Input parameters:
+-- - `webhook` (required): the Slack webhook URL.
 create or replace procedure watsonx.slack_setwebhookforme(webhook varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin

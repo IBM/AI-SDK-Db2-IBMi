@@ -1,5 +1,20 @@
+-- ## Slack main functionality
+-- 
+-- ### function: `slack_sendmessage`
+-- 
+-- Description: Sends a slack message
+-- 
+-- Input parameters:
+-- - `MSG` (required): The message to send.
+-- - `WEBHOOK` (optional): The Slack webhook address.
+-- 
+-- Return type: 
+-- - `varchar(32000) ccsid 1208`
+-- 
+-- Return value:
+-- - Response message from underlying Slack API, if there was one
 
-create or replace function watsonx.slack_sendmessage(msg varchar(32000) ccsid 1208 default NULL)
+create or replace function watsonx.slack_sendmessage(msg varchar(32000) ccsid 1208 default NULL, webhook varchar(1000) ccsid 1208 default NULL)
   RETURNS varchar(32000) ccsid 1208
   modifies sql data
   not deterministic
@@ -13,7 +28,7 @@ begin
   select RESPONSE_MESSAGE, RESPONSE_HTTP_HEADER
   into response_message, response_header
   from table(QSYS2.HTTP_POST_VERBOSE(
-                        watsonx.slack_getwebhook(),
+                        watsonx.slack_getwebhook(webhook),
                         json_object('text': msg),
                         json_object('header': 'Content-type,application/json')
                         ));

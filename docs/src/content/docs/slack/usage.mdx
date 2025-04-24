@@ -10,3 +10,30 @@ Hello, Kafka is great, eh?
 
 
 <Aside type="caution">Some cautionary content.</Aside>
+
+----
+## Slack main functionality
+
+### function: `slack_sendmessage`
+
+Description: Sends a slack message
+
+Input parameters:
+- `MSG` (required): The message to send.
+- `WEBHOOK` (optional): The Slack webhook address.
+
+Return type: 
+- `varchar(32000) ccsid 1208`
+
+Return value:
+- Response message from underlying Slack API, if there was one
+----
+## Ollama utility functions
+### procedure: `slack_setwebhookforjob`
+Description: sets the Slack webhook to be used for this job
+Input parameters:
+- `webhook` (required): the Slack webhook URL.
+### procedure: `slack_setwebhookforme`
+Description: sets the Slack webhook to be used for the current user profile (persists across jobs).
+Input parameters:
+- `webhook` (required): the Slack webhook URL.
