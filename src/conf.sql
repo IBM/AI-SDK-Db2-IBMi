@@ -1,11 +1,11 @@
 
 --variables for watsonx
-create or replace variable watsonx.watsonx_region              varchar(16) ccsid 1208 default NULL;
-create or replace variable watsonx.watsonx_apiVersion          varchar(10) ccsid 1208 default NULL;
-create or replace variable watsonx.watsonx_apikey              varchar(100) ccsid 1208 default NULL;
-create or replace variable watsonx.watsonx_projectid           varchar(100) ccsid 1208 default NULL;
-create or replace variable watsonx.watsonx_JobBearerToken      varchar(10000) ccsid 1208 default null;
-create or replace variable watsonx.watsonx_JobTokenExpires     timestamp;
+create or replace variable watsonx.wx_region              varchar(16) ccsid 1208 default NULL;
+create or replace variable watsonx.wx_apiVersion          varchar(10) ccsid 1208 default NULL;
+create or replace variable watsonx.wx_apikey              varchar(100) ccsid 1208 default NULL;
+create or replace variable watsonx.wx_projectid           varchar(100) ccsid 1208 default NULL;
+create or replace variable watsonx.wx_JobBearerToken      varchar(10000) ccsid 1208 default null;
+create or replace variable watsonx.wx_JobTokenExpires     timestamp;
 
 -- variables for ollama
 create or replace variable watsonx.ollama_protocol     varchar(16)   ccsid 1208 default null;

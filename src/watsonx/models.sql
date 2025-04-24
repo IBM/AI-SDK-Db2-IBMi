@@ -21,7 +21,7 @@
 -- Return value:
 -- - The list of available models
 
-create or replace procedure watsonx.watsonx_getmodels()
+create or replace procedure watsonx.wx_getmodels()
   DYNAMIC RESULT SETS 1
   program type sub
   set option usrprf = *user, dynusrprf = *user, commit = *none

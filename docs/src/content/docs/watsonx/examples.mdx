@@ -10,33 +10,33 @@ sidebar:
 ### Login
 
 ```sql
-call watsonx.watsonx_logoutjob();
-call watsonx.watsonx_setapikeyforjob('x');
-call watsonx.watsonx_setprojectidforjob('y');
+call watsonx.wx_logoutjob();
+call watsonx.wx_setapikeyforjob('x');
+call watsonx.wx_setprojectidforjob('y');
 
 -- Should return Y
-values watsonx.watsonx_ShouldGetNewToken();
+values watsonx.wx_ShouldGetNewToken();
 
 -- Should return Y
-values watsonx.watsonx_authenticate();
+values watsonx.wx_authenticate();
 
 -- Should return N
-values watsonx.watsonx_ShouldGetNewToken();
+values watsonx.wx_ShouldGetNewToken();
 ```
 
 ### Generate
 
 ```sql
-values watsonx.watsonx_generate('Hello world');
-values watsonx.watsonx_generate('Hello world', model_id => 'ibm/granite-3-8b-instruct');
+values watsonx.wx_generate('Hello world');
+values watsonx.wx_generate('Hello world', model_id => 'ibm/granite-3-8b-instruct');
 ```
 
 * `model_id` corresponds to the model list returned by `watsonx.GetModels()`.
 * `watsonx_generate()` has a `parameters` parameter that can be used to control the generation, typically used by advanced users.
 
 ```sql
-values watsonx.watsonx_parameters(temperature => 0.5, time_limit => 1000);
-values watsonx.watsonx_generate('Hello world', parameters => watsonx.parameters(temperature => 0.5, time_limit => 1000));
+values watsonx.wx_parameters(temperature => 0.5, time_limit => 1000);
+values watsonx.wx_generate('Hello world', parameters => watsonx.parameters(temperature => 0.5, time_limit => 1000));
 ```
 
 ### Infer
@@ -48,7 +48,7 @@ Coming soon.
 Authorisation is not required to get the list of models.
 
 ```sql
-call watsonx.watsonx_GetModels();
+call watsonx.wx_GetModels();
 ```
 
 ## Installation
