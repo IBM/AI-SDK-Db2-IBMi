@@ -33,14 +33,14 @@ begin
   declare response_code int default 0;
   declare needsNewToken char(1) default 'Y';
 
-  set needsNewToken = watsonx.ShouldGetNewToken();
+  set needsNewToken = watsonx.wx_ShouldGetNewToken();
   if (needsNewToken = 'Y') then
     signal sqlstate '38001' set message_text = 'Please authenticate first.';
     return '*ERROR';
   end if;
 
   if parameters is null then
-    set parameters = watsonx.parameters(max_new_tokens => 100, time_limit => 1000);
+    set parameters = watsonx.wx_parameters(max_new_tokens => 100, time_limit => 1000);
   end if;
 
   -- todo: support this url:

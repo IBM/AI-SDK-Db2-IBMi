@@ -22,7 +22,7 @@ begin
   declare successful char(1) ccsid 1208 default 'N';
   declare bearer_token varchar(8192) ccsid 1208;
 
-  set needsNewToken = watsonx.ShouldGetNewToken();
+  set needsNewToken = watsonx.wx_ShouldGetNewToken();
 
   if (needsNewToken = 'Y') then 
     --
