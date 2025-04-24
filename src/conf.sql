@@ -53,7 +53,7 @@ create or replace table watsonx.conf
       )
       on replace preserve rows;
 
-create or replace procedure watsonx.conf_register_user(usrprf varchar(10) ccsid 1208 default current_user) 
+create or replace procedure watsonx.conf_register_user(usrprf varchar(10) ccsid 1208 default CURRENT_USER) 
   program type sub
   set option usrprf = *user, dynusrprf = *user, commit = *none
 begin
@@ -65,10 +65,16 @@ begin
     WHEN NOT MATCHED THEN INSERT (usrprf) VALUES (live.usrprf)
     WHEN MATCHED THEN UPDATE SET (usrprf) = (live.usrprf);
 end;
-create or replace procedure watsonx.conf_initialize() 
-  modifies SQL DATA
+create or replace procedure watsonx.conf_initialize(usrprf varchar(10) ccsid 1208 default CURRENT_USER) 
+  program type sub
+  set option usrprf = *user, dynusrprf = *user, commit = *none
 begin
-  call watsonx.conf_register_user('*DEFAULT');
+  call watsonx.conf_register_user(usrprf);
 end;
-drop table watsonx.conf;
-  call watsonx.conf_initialize();
+create or replace procedure watsonx.conf_remove_user(usrprftoremove varchar(10) ccsid 1208 default CURRENT_USER) 
+  program type sub
+  set option usrprf = *user, dynusrprf = *user, commit = *none
+begin
+  DELETE FROM watsonx.conf WHERE usrprf = usrprftoremove; 
+end;
+

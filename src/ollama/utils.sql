@@ -12,8 +12,6 @@ begin
   set returnval = watsonx.ollama_server;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select ollama_server from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select ollama_server from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 
@@ -63,8 +61,6 @@ begin
   set returnval = watsonx.ollama_port;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select ollama_port from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select ollama_port from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 
@@ -114,8 +110,6 @@ begin
   set returnval = watsonx.ollama_model;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select ollama_model from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select ollama_model from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 
@@ -164,8 +158,6 @@ begin
   set returnval = watsonx.ollama_protocol;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select ollama_protocol from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select ollama_protocol from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 

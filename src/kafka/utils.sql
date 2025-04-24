@@ -12,8 +12,6 @@ begin
   set returnval = watsonx.kafka_broker;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select kafka_broker from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select kafka_broker from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 
@@ -59,8 +57,6 @@ begin
   set returnval = watsonx.kafka_port;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select kafka_port from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select kafka_port from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 
@@ -154,8 +150,6 @@ begin
   set returnval = watsonx.kafka_protocol;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select kafka_protocol from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select kafka_protocol from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 

@@ -6,13 +6,12 @@ create or replace function watsonx.slack_getwebhook(webhook varchar(1000) ccsid 
   modifies sql data
 begin
   declare returnval varchar(1000) ccsid 1208;
+  call watsonx.conf_initialize();
   set returnval = webhook;
   if (returnval is not null) then return returnval;end if;
   set returnval = watsonx.slack_webhook;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select slack_webhook from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select slack_webhook from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 

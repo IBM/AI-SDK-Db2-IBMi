@@ -11,8 +11,6 @@ begin
   set returnval = watsonx.twilio_number;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select twilio_number from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select twilio_number from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 
@@ -45,8 +43,6 @@ begin
   set returnval = watsonx.twilio_sid;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select twilio_sid from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select twilio_sid from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 
@@ -99,8 +95,6 @@ begin
   set returnval = watsonx.twilio_authtoken;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select twilio_authtoken from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select twilio_authtoken from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 
