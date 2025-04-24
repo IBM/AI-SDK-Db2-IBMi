@@ -1,3 +1,5 @@
+-- ## Ollama utility functions
+
 
 create or replace function watsonx.ollama_getserver(hostname varchar(1000) ccsid 1208 default NULL) 
   returns varchar(1000) ccsid 1208
@@ -15,11 +17,27 @@ begin
   return returnval;
 end;
 
+
+-- ### procedure: `ollama_setserverforjob`
+
+-- Description: sets the ollama server to be used for this job
+
+-- Input parameters:
+-- - `HOSTNAME` (required): The IP address or hostname of the ollama server.
 create or replace procedure watsonx.ollama_setserverforjob(hostname varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
 begin
   set watsonx.ollama_server= hostname;
 end;
+
+
+
+-- ### procedure: `ollama_setserverforme`
+
+-- Description: sets the ollama server to be used for this user profile (persists across jobs)
+
+-- Input parameters:
+-- - `HOSTNAME` (required): The IP address or hostname of the ollama server.
 create or replace procedure watsonx.ollama_setserverforme(hostname varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin
@@ -32,6 +50,7 @@ begin
       live.ollama_server)
   WHEN MATCHED THEN UPDATE SET (usrprf, ollama_server) = (live.usrprf, live.ollama_server);
 end;
+
 
 create or replace function watsonx.ollama_getport(port INT default NULL) 
   returns INT
@@ -49,11 +68,27 @@ begin
   return returnval;
 end;
 
+
+
+-- ### procedure: `ollama_setportforjob`
+
+-- Description: sets the ollama server port to be used for this job
+
+-- Input parameters:
+-- - `PORT` (required): The ollama server port.
 create or replace procedure watsonx.ollama_setportforjob(port INT default NULL) 
   modifies SQL DATA
 begin
   set watsonx.ollama_port= port;
 end;
+
+
+-- ### procedure: `ollama_setportforme`
+
+-- Description: sets the ollama server port to be used for this user profile (persists across jobs).
+
+-- Input parameters:
+-- - `PORT` (required): The ollama server port.
 create or replace procedure watsonx.ollama_setportforme(port INT default NULL) 
   MODIFIES SQL DATA
 begin
@@ -84,11 +119,27 @@ begin
   return returnval;
 end;
 
+
+-- ### procedure: `ollama_setmodelforjob`
+
+-- Description: sets the large language model (LLM) to be used for this job
+
+-- Input parameters:
+-- - `MODEL` (required): The ollama identifier of the model to use.
 create or replace procedure watsonx.ollama_setmodelforjob(model varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
 begin
   set watsonx.ollama_model= model;
 end;
+
+
+
+-- ### procedure: `ollama_setmodelforme`
+
+-- Description: sets the large language model (LLM) to be used for this user profile (persists across jobs)
+
+-- Input parameters:
+-- - `MODEL` (required): The ollama identifier of the model to use.
 create or replace procedure watsonx.ollama_setmodelforme(model varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin
@@ -118,11 +169,27 @@ begin
   return returnval;
 end;
 
+
+
+-- ### procedure: `ollama_setprotocolforjob`
+
+-- Description: sets the protocol to be used for this job
+
+-- Input parameters:
+-- - `PROTOCOL` (required): `http`/`https`
 create or replace procedure watsonx.ollama_setprotocolforjob(protocol varchar(1000) ccsid 1208 default NULL) 
   modifies SQL DATA
 begin
   set watsonx.ollama_protocol= protocol;
 end;
+
+
+-- ### procedure: `ollama_setprotocolforjob`
+
+-- Description: sets the protocol to be used for this user profile (persists across jobs)
+
+-- Input parameters:
+-- - `PROTOCOL` (required): `http`/`https`
 create or replace procedure watsonx.ollama_setprotocolforme(protocol varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin

@@ -1,4 +1,6 @@
 
+-- ## Kafka main functionality
+
 -- ### function: `kafka_publish`
 
 -- Description: publishes a message to the kafka topic

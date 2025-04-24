@@ -1,4 +1,6 @@
 
+-- ## Kafka utility functions
+
 create or replace function watsonx.kafka_getbroker(hostname varchar(1000) ccsid 1208 default NULL) 
   returns varchar(1000) ccsid 1208
   modifies sql data
@@ -102,11 +104,10 @@ begin
   declare returnval varchar(1000) ccsid 1208;
   set returnval = topic;
   if (returnval is not null) then return returnval;end if;
+  call watsonx.conf_register_user();
   set returnval = watsonx.kafka_topic;
   if (returnval is not null) then return returnval;end if;
   set returnval = (select kafka_topic from watsonx.conf where USRPRF = CURRENT_USER);
-  if (returnval is not null) then return returnval;end if;
-  set returnval = (select kafka_topic from watsonx.conf where USRPRF = '*DEFAULT');
   return returnval;
 end;
 

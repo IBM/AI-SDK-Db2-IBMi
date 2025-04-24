@@ -1,3 +1,20 @@
+
+-- ## Ollama main functionality
+
+-- ### function: `ollama_generate`
+
+-- Description: Uses ollama to generate a reply to the given prompt
+
+-- Input parameters:
+-- - `PROMPT` (required): The input prompt for the LLM.
+-- - `model_id` (optional): The ollama identifier of the model to use for generation.
+
+-- Return type: 
+-- - `clob(2G) ccsid 1208`
+
+-- Return value:
+-- - The generated reply.
+
 create or replace function watsonx.ollama_generate(prompt varchar(1000) ccsid 1208, model_id varchar(1000) ccsid 1208 default NULL) 
   RETURNS clob(2G) ccsid 1208
   modifies sql data
@@ -30,6 +47,4 @@ begin
   call systools.lprintf('Ollama generation request returned error: ' concat response_message);
   signal sqlstate '38002' set message_text = 'Add error has occured. Check the job log.';
   return null;
-
-  
 end;
