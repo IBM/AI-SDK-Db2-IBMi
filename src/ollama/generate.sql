@@ -4,14 +4,14 @@
 -- ### function: `ollama_generate`
 
 -- Description: Uses ollama to generate a reply to the given prompt
-
+-- 
 -- Input parameters:
 -- - `PROMPT` (required): The input prompt for the LLM.
 -- - `model_id` (optional): The ollama identifier of the model to use for generation.
-
+-- 
 -- Return type: 
 -- - `clob(2G) ccsid 1208`
-
+-- 
 -- Return value:
 -- - The generated reply.
 

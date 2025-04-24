@@ -185,9 +185,9 @@ end;
 
 
 -- ### procedure: `ollama_setprotocolforjob`
-
+-- 
 -- Description: sets the protocol to be used for this user profile (persists across jobs)
-
+-- 
 -- Input parameters:
 -- - `PROTOCOL` (required): `http`/`https`
 create or replace procedure watsonx.ollama_setprotocolforme(protocol varchar(1000) ccsid 1208 default NULL) 

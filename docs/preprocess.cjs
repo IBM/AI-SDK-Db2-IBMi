@@ -46,6 +46,8 @@ try {
       for (const line of inFileLines) {
         if (line.startsWith('-- ')) {
           outputContent += (line.slice(3) + '\n');
+        } else if (line.trim() == '--') {
+          outputContent += '\n';
         }
       }
 

@@ -2,51 +2,6 @@
 
 WatsonX client SDK for Db2 on IBM i
 
-## Usage
-
-### Login
-
-```sql
-call watsonx.logoutjob();
-call watsonx.setapikeyforjob('x');
-call watsonx.setprojectidforjob('y');
-
--- Should return Y
-values watsonx.ShouldGetNewToken();
-
--- Should return Y
-values watsonx.authenticate();
-
--- Should return N
-values watsonx.ShouldGetNewToken();
-```
-
-### Generate
-
-```sql
-values watsonx.generate('Hello world');
-values watsonx.generate('Hello world', model_id => 'ibm/granite-3-8b-instruct');
-```
-
-* `model_id` corresponds to the model list returned by `watsonx.GetModels()`.
-* `generate()` has a `parameters` parameter that can be used to control the generation, typically used by advanced users.
-
-```sql
-values watsonx.parameters(temperature => 0.5, time_limit => 1000);
-values watsonx.generate('Hello world', parameters => watsonx.parameters(temperature => 0.5, time_limit => 1000));
-```
-
-### Infer
-
-Coming soon.
-
-### Model list
-
-Authorisation is not required to get the list of models.
-
-```sql
-call watsonx.GetModels();
-```
 
 ## Installation
 
