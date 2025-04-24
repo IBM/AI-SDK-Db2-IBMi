@@ -4,3 +4,13 @@ Description: Examples
 sidebar:
     order: 3
 ---
+
+
+### Call a PASE program
+```sql
+values(watsonx.pase_call('ls -b'));
+```
+
+```sql
+values(watsonx.pase_call('cd /opt/myapp && node index'));
+```

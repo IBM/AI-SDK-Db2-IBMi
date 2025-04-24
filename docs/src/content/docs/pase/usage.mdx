@@ -4,9 +4,22 @@ Description: Usage
 sidebar:
     order: 1
 ---
-import { Aside, LinkButton } from '@astrojs/starlight/components';
-
-Hello, PASE is great, eh?
 
 
-<Aside type="caution">Some cautionary content.</Aside>
+
+----
+## PASE main functions
+
+#### **Function:** `pase_call`
+
+**Description:** Calls a PASE program
+
+**Input parameters:**
+- `FULLCMD` (required): The PASE command to run.
+
+**Return type:** 
+- Result set with the following columns:
+   - `output`: A line of output from the PASE command's standard output stream.
+
+**Return value:**
+- The PASE command's standard output stream. The command's standard error stream is ignored.

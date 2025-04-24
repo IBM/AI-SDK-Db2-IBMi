@@ -8,7 +8,7 @@ import { Aside, LinkButton } from '@astrojs/starlight/components';
 
 ----
 ## watsonx main functionality 
-### **Function:** `watsonx_generate`
+#### **Function:** `watsonx_generate`
 **Description:** calls a large language model in [watsonx.ai](http://watsonx.ai) to generate a response based on the input message.
 **Input parameters:**
 - `TEXT` (required): The prompt text for the LLM.
@@ -23,7 +23,7 @@ import { Aside, LinkButton } from '@astrojs/starlight/components';
 ----
 ## Model list 
 
-### **Function:** `watsonx_getmodels`
+#### **Function:** `watsonx_getmodels`
 
 **Description:** Calls [watsonx.ai](http://watsonx.ai) to list available model ids for use with this API. 
 
@@ -45,7 +45,7 @@ import { Aside, LinkButton } from '@astrojs/starlight/components';
 ----
 ## Authorization functions
 
-### **Function:** `watsonx_authenticate`
+#### **Function:** `watsonx_authenticate`
 **Description:** authenticates to the watsonx service and acquires an access token.
 
 **Return type:** 
@@ -57,19 +57,19 @@ import { Aside, LinkButton } from '@astrojs/starlight/components';
 
 ----
 ## Utility functions
-### **Function:** `watsonx_SetApiKeyForJob`
+#### **Function:** `watsonx_SetApiKeyForJob`
 
 **Description:** Sets the watsonx API key to be used for the current job
 
 **Input parameters:**
 - `APIKEY` (required): The API key.
-### **Function:** `watsonx_SetProjectIdForJob`
+#### **Function:** `watsonx_SetProjectIdForJob`
 
 **Description:** Sets the watsonx project ID to be used for the current job
 
 **Input parameters:**
 - `PROJECTID` (required): The project ID.
-### **Function:** `watsonx_logoutJob`
+#### **Function:** `watsonx_logoutJob`
 
 **Description:** Log out from teh current job.
 
