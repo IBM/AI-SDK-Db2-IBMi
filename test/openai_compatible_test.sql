@@ -62,7 +62,7 @@ CALL watsonx.openai_compatible_setmodelforjob('gpt-3.5-turbo'); -- Set some mode
 
 -- Basic usage with just the prompt and model parameters
 SELECT watsonx.openai_compatible_generate(
-  'Building a website can be done in 10 simple steps:',
+  'why are armadillo so cute?',
   NULL  -- Use default model 
 ) FROM sysibm.sysdummy1;
 
@@ -71,6 +71,24 @@ SELECT watsonx.openai_compatible_generate_json(
   'Generate a JSON with 3 names and ages of fictional people',
   NULL
 ) FROM sysibm.sysdummy1;
+
+-- Basic call with defaults
+SELECT watsonx.openai_compatible_generate('Tell me a story about a dragon.') 
+FROM sysibm.sysdummy1;
+
+-- With specific options
+SELECT watsonx.openai_compatible_generate(
+  'why are armadillos so cute?',
+  '{"max_tokens": 128, "temperature": 0.7}'
+) 
+FROM sysibm.sysdummy1;
+
+-- JSON generation with options
+SELECT watsonx.openai_compatible_generate_json(
+  'List the top 5 programming languages as a JSON array.',
+  '{"temperature": 0.5, "max_tokens": 100}'
+) 
+FROM sysibm.sysdummy1;
 
 -- Clean up after the test
 SET watsonx.openai_compatible_server = NULL;
