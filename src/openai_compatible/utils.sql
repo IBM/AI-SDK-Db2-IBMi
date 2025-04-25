@@ -271,3 +271,46 @@ begin
       live.openai_compatible_basepath)
   WHEN MATCHED THEN UPDATE SET (usrprf, openai_compatible_basepath) = (live.usrprf, live.openai_compatible_basepath);
 end;
+
+-- ## JSON Object Update Function
+-- 
+-- **Description:** Merges two JSON objects into one
+-- 
+-- **Input parameters:**
+-- - `base_object` (required): The base JSON object
+-- - `update_object` (required): The object to merge into the base object
+-- 
+-- **Return type:** 
+-- - `clob(64K) ccsid 1208`
+-- 
+-- **Return value:**
+-- - A merged JSON object
+
+create or replace function watsonx.json_object_update(
+  base_object CLOB(2G) ccsid 1208,
+  update_object CLOB(2G) ccsid 1208
+) 
+  returns clob(64K) ccsid 1208
+  deterministic
+  no external action
+  not fenced
+  set option usrprf = *user, dynusrprf = *user, commit = *none
+begin
+  -- If base object is empty, return update object
+  if base_object is null or trim(base_object) = '' or trim(base_object) = '{}' then
+    return update_object;
+  end if;
+  
+  -- If update object is empty, return base object
+  if update_object is null or trim(update_object) = '' or trim(update_object) = '{}' then
+    return base_object;
+  end if;
+  
+  -- Directly combine without intermediate variable assignments
+  return '{' concat 
+         substring(trim(base_object), 2, length(trim(base_object)) - 2) concat 
+         ', ' concat 
+         substring(trim(update_object), 2, length(trim(update_object)) - 2) concat 
+         '}';
+
+end;
