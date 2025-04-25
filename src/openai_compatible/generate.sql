@@ -55,7 +55,7 @@ begin
   
   -- Extract parameters from options
   declare model_id varchar(1000) ccsid 1208;
-  declare max_tokens integer;
+  declare max_tokens integer default -1;
   declare temperature decimal(3,1);
   declare top_p decimal(3,1);
   declare n integer;
@@ -72,7 +72,7 @@ begin
   
   -- Get parameters from options JSON
   set model_id = json_value(options, '$.model_id');
-  set max_tokens = coalesce(json_value(options, '$.max_tokens'), 16);
+  set max_tokens = coalesce(json_value(options, '$.max_tokens'), -1);
   set temperature = coalesce(json_value(options, '$.temperature'), 1);
   set top_p = coalesce(json_value(options, '$.top_p'), 1);
   set n = coalesce(json_value(options, '$.n'), 1);
@@ -132,6 +132,10 @@ begin
   );
 
   -- Add optional parameters only if they are not null
+  if (max_tokens > 0) then
+    set req_body = watsonx.json_object_update(req_body, json_object('max_tokens': max_tokens));
+  end if;
+
   if (logprobs is not null) then
     set req_body = watsonx.json_object_update(req_body, json_object('logprobs': logprobs));
   end if;
@@ -240,7 +244,7 @@ begin
   
   -- Extract parameters from options
   declare model_id varchar(1000) ccsid 1208;
-  declare max_tokens integer;
+  declare max_tokens integer default -1;
   declare temperature decimal(3,1);
   declare top_p decimal(3,1);
   declare n integer;
@@ -257,7 +261,7 @@ begin
   
   -- Get parameters from options JSON
   set model_id = json_value(options, '$.model_id');
-  set max_tokens = coalesce(json_value(options, '$.max_tokens'), 16);
+  set max_tokens = coalesce(json_value(options, '$.max_tokens'), -1);
   set temperature = coalesce(json_value(options, '$.temperature'), 1);
   set top_p = coalesce(json_value(options, '$.top_p'), 1);
   set n = coalesce(json_value(options, '$.n'), 1);
@@ -306,7 +310,6 @@ begin
   set req_body = json_object(
     'model': coalesce(model_id, watsonx.openai_compatible_getmodel()),
     'prompt': prompt,
-    'max_tokens': max_tokens,
     'temperature': temperature,
     'top_p': top_p,
     'n': n,
@@ -317,6 +320,10 @@ begin
   );
 
   -- Add optional parameters only if they are not null
+  if (max_tokens > 0) then
+    set req_body = watsonx.json_object_update(req_body, json_object('max_tokens': max_tokens));
+  end if;
+
   if (logprobs is not null) then
     set req_body = watsonx.json_object_update(req_body, json_object('logprobs': logprobs));
   end if;
