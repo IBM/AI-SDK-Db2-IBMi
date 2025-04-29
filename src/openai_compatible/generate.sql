@@ -133,31 +133,31 @@ begin
 
   -- Add optional parameters only if they are not null
   if (max_tokens > 0) then
-    set req_body = watsonx.json_object_update(req_body, json_object('max_tokens': max_tokens));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.max_tokens', max_tokens);
   end if;
 
   if (logprobs is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('logprobs': logprobs));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.logprobs', logprobs);
   end if;
 
   if (stop_token is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('stop': stop_token));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.stop', stop_token);
   end if;
 
   if (logit_bias is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('logit_bias': logit_bias));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.logit_bias', logit_bias);
   end if;
 
   if (user_id is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('user': user_id));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.user', user_id);
   end if;
 
   if (seed is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('seed': seed));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.seed', seed);
   end if;
 
   if (suffix is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('suffix': suffix));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.suffix', suffix);
   end if;
   
   -- Make the API call
@@ -321,31 +321,31 @@ begin
 
   -- Add optional parameters only if they are not null
   if (max_tokens > 0) then
-    set req_body = watsonx.json_object_update(req_body, json_object('max_tokens': max_tokens));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.max_tokens', max_tokens);
   end if;
 
   if (logprobs is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('logprobs': logprobs));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.logprobs', logprobs);
   end if;
 
   if (stop_token is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('stop': stop_token));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.stop', stop_token);
   end if;
 
   if (logit_bias is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('logit_bias': logit_bias));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.logit_bias', logit_bias);
   end if;
 
   if (user_id is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('user': user_id));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.user', user_id);
   end if;
 
   if (seed is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('seed': seed));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.seed', seed);
   end if;
 
   if (suffix is not null) then
-    set req_body = watsonx.json_object_update(req_body, json_object('suffix': suffix));
+    set req_body = JSON_UPDATE(req_body, 'SET', '$.suffix', suffix);
   end if;
   
   -- Make the API call
