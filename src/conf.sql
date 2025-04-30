@@ -13,12 +13,12 @@ create or replace variable dbsdk_v1.ollama_port         INT                     
 create or replace variable dbsdk_v1.ollama_model        varchar(1000) ccsid 1208 default NULL;
 
 -- variables for openai compatible
-create or replace variable watsonx.openai_compatible_protocol     varchar(16)   ccsid 1208 default null;
-create or replace variable watsonx.openai_compatible_server       varchar(1000) ccsid 1208 default null;
-create or replace variable watsonx.openai_compatible_port         INT                      default NULL;
-create or replace variable watsonx.openai_compatible_model        varchar(1000) ccsid 1208 default NULL;
-create or replace variable watsonx.openai_compatible_apikey       varchar(1000) ccsid 1208 default NULL;
-create or replace variable watsonx.openai_compatible_basepath     varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.openai_compatible_protocol     varchar(16)   ccsid 1208 default null;
+create or replace variable dbsdk_v1.openai_compatible_server       varchar(1000) ccsid 1208 default null;
+create or replace variable dbsdk_v1.openai_compatible_port         INT                      default NULL;
+create or replace variable dbsdk_v1.openai_compatible_model        varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.openai_compatible_apikey       varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.openai_compatible_basepath     varchar(1000) ccsid 1208 default NULL;
 
 -- variables for kafka
 create or replace variable dbsdk_v1.kafka_protocol     varchar(16)   ccsid 1208 default null;
