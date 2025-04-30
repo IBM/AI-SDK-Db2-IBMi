@@ -1,16 +1,17 @@
 
-SCHEMA=watsonx
+SCHEMA=dbsdk_v1
+OBJS =  $(shell getmaketargets.sh)
 
-all: $(SCHEMA).schema conf.sql ollama/utils.sql kafka/utils.sql slack/utils.sql watsonx/utils.sql watsonx/auth.sql watsonx/models.sql watsonx/generate.sql
+all: buildts.txt
 
-%.schema:
-	-system -s "RUNSQL SQL('CREATE SCHEMA $*') COMMIT(*NONE)"
+/qsys.lib/$(SCHEMA).lib:
+	-system -s "RUNSQL SQL('CREATE SCHEMA $(SCHEMA)') COMMIT(*NONE)" && echo created schema $(SCHEMA)
 
-%.sql: src/%.sql
-	system "RUNSQLSTM SRCSTMF('$<') COMMIT(*NONE) NAMING(*SQL) DFTRDBCOL($(SCHEMA))"
+buildts.txt: /qsys.lib/$(SCHEMA).lib  $(OBJS)
+	date > buildts.txt
+	
+clean:
+	rm -r .build
 
-watsonx/%.sql: src/watsonx/%.sql
-	system "RUNSQLSTM SRCSTMF('$<') COMMIT(*NONE) NAMING(*SQL) DFTRDBCOL($(SCHEMA))"
-
-ollama/%.sql: src/ollama/%.sql
-	system "RUNSQLSTM SRCSTMF('$<') COMMIT(*NONE) NAMING(*SQL) DFTRDBCOL($(SCHEMA))"
+.build/%.done: %
+	runsql.sh $(SCHEMA) $<
