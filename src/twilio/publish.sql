@@ -14,7 +14,7 @@
 -- 
 -- **Return value:**
 -- - Response message from API call
-create or replace function watsonx.twilio_sendsms(to_cell_number varchar(100) ccsid 1208 default NULL, msg varchar(110) ccsid 1208 default NULL, twilio_number varchar(100) ccsid 1208 default NULL)
+create or replace function dbsdk_v1.twilio_sendsms(to_cell_number varchar(100) ccsid 1208 default NULL, msg varchar(110) ccsid 1208 default NULL, twilio_number varchar(100) ccsid 1208 default NULL)
   RETURNS varchar(32000) ccsid 1208
   modifies sql data
   not deterministic
@@ -30,11 +30,11 @@ begin
   declare response_message Varchar(10000) CCSID 1208;
   declare response_code int default 500;
   
-  set http_options = json_object('basicAuth': watsonx.twilio_getsid() concat ',' concat watsonx.twilio_getauthtoken(), 'header': 'content-type,application/x-www-form-urlencoded');
+  set http_options = json_object('basicAuth': dbsdk_v1.twilio_getsid() concat ',' concat dbsdk_v1.twilio_getauthtoken(), 'header': 'content-type,application/x-www-form-urlencoded');
   
-  set fullUrl = 'https://api.twilio.com/2010-04-01/Accounts/' concat watsonx.twilio_getsid() concat '/Messages.json';
+  set fullUrl = 'https://api.twilio.com/2010-04-01/Accounts/' concat dbsdk_v1.twilio_getsid() concat '/Messages.json';
   set payload = 'To=' concat to_cell_number concat
-          '&From=' concat watsonx.twilio_getnumber(twilio_number) concat '&Body=' concat
+          '&From=' concat dbsdk_v1.twilio_getnumber(twilio_number) concat '&Body=' concat
           msg;
           
   select RESPONSE_MESSAGE, RESPONSE_HTTP_HEADER

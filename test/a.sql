@@ -2,58 +2,58 @@
 -- Ensure authenticate can return Y (success)
 ------
 
-call watsonx.logoutjob();
-call watsonx.wx_setapikeyforjob('');
-call watsonx.wx_setprojectidforjob('');
+call dbsdk_v1.logoutjob();
+call dbsdk_v1.wx_setapikeyforjob('');
+call dbsdk_v1.wx_setprojectidforjob('');
 
 -- Should return Y
-values watsonx.ShouldGetNewToken();
+values dbsdk_v1.ShouldGetNewToken();
 
 -- Should return Y
-values watsonx.authenticate();
+values dbsdk_v1.authenticate();
 
 -- Should return N
-values watsonx.ShouldGetNewToken();
+values dbsdk_v1.ShouldGetNewToken();
 
-values watsonx.generate('Hello world');
-values watsonx.generate('Hello world', model_id => 'meta-llama/llama-2-13b-chat');
+values dbsdk_v1.generate('Hello world');
+values dbsdk_v1.generate('Hello world', model_id => 'meta-llama/llama-2-13b-chat');
 
 ------
 -- Ensure authenticate can return N (failed)
 ------
 
-call watsonx.logoutjob();
-call watsonx.wx_setapikeyforjob('-BAD');
+call dbsdk_v1.logoutjob();
+call dbsdk_v1.wx_setapikeyforjob('-BAD');
 
 -- Should return Y
-values watsonx.ShouldGetNewToken();
+values dbsdk_v1.ShouldGetNewToken();
 
 -- Should return N
-values watsonx.authenticate();
+values dbsdk_v1.authenticate();
 
 -- Should return Y
-values watsonx.ShouldGetNewToken();
+values dbsdk_v1.ShouldGetNewToken();
 
 -- Should return '*PLSAUTH'
-values watsonx.generate('Hello world');
+values dbsdk_v1.generate('Hello world');
 
 ------
 -- Validate URL
 ------
 
 -- Should return 'https://us-south.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-07-07'
-values watsonx.geturl('/text/generation');
+values dbsdk_v1.geturl('/text/generation');
 
 ------
 -- Gets a list of models
 ------
 
-call watsonx.getmodels();
+call dbsdk_v1.getmodels();
 
 ------
 -- Test parameters function
 ------
 
-values watsonx.parameters(temperature => 0.5, time_limit => 1000);
+values dbsdk_v1.parameters(temperature => 0.5, time_limit => 1000);
 
 -- Should return {"temperature":0.5,"time_limit":1000}

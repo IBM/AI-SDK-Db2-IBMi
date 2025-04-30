@@ -15,7 +15,7 @@
 -- **Return value:**
 -- - The generated reply.
 
-create or replace function watsonx.ollama_generate(prompt varchar(1000) ccsid 1208, model_id varchar(1000) ccsid 1208 default NULL) 
+create or replace function dbsdk_v1.ollama_generate(prompt varchar(1000) ccsid 1208, model_id varchar(1000) ccsid 1208 default NULL) 
   RETURNS clob(2G) ccsid 1208
   modifies sql data
   not deterministic
@@ -29,13 +29,13 @@ begin
   declare response_code int default 500;
   
   declare http_options varchar(32400) ccsid 1208 default '{"ioTimeout":2000000}';
-  set fullUrl = watsonx.ollama_getprotocol() concat '://' concat watsonx.ollama_getserver() concat ':' concat watsonx.ollama_getport() concat '/api/generate';
+  set fullUrl = dbsdk_v1.ollama_getprotocol() concat '://' concat dbsdk_v1.ollama_getserver() concat ':' concat dbsdk_v1.ollama_getport() concat '/api/generate';
   
   select RESPONSE_MESSAGE, RESPONSE_HTTP_HEADER
   into response_message, response_header
   from table(QSYS2.HTTP_POST_VERBOSE(
                         fullUrl,
-                        json_object('model': watsonx.ollama_getmodel(), 'prompt': prompt, 'stream': false),
+                        json_object('model': dbsdk_v1.ollama_getmodel(), 'prompt': prompt, 'stream': false),
                         http_options));
   call systools.lprintf('r: ' concat response_message);
   set response_code = json_value(response_header, '$.HTTP_STATUS_CODE');

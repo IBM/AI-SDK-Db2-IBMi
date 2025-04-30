@@ -15,7 +15,7 @@
 -- 
 -- **Return value:**
 -- - API error, if any was encountered
-create or replace function watsonx.kafka_publish(msgdata varchar(32000) ccsid 1208 default NULL, topic varchar(1000) ccsid 1208 default NULL, key varchar(1000) ccsid 1208 default NULL)
+create or replace function dbsdk_v1.kafka_publish(msgdata varchar(32000) ccsid 1208 default NULL, topic varchar(1000) ccsid 1208 default NULL, key varchar(1000) ccsid 1208 default NULL)
   RETURNS varchar(32000) ccsid 1208
   modifies sql data
   not deterministic
@@ -31,7 +31,7 @@ begin
   declare http_options varchar(32400) ccsid 1208 default '{"header":"Content-Type,application/vnd.kafka.json.v2+json" ,
                                                            "header":"Accept,application/vnd.kafka.v2+json" 
                                                           }';
-  set fullUrl = watsonx.kafka_getprotocol() concat '://' concat watsonx.kafka_getbroker() concat ':' concat watsonx.kafka_getport() concat '/topics/' concat watsonx.kafka_gettopic(topic);
+  set fullUrl = dbsdk_v1.kafka_getprotocol() concat '://' concat dbsdk_v1.kafka_getbroker() concat ':' concat dbsdk_v1.kafka_getport() concat '/topics/' concat dbsdk_v1.kafka_gettopic(topic);
 
   select RESPONSE_MESSAGE, RESPONSE_HTTP_HEADER
   into response_message, response_header
