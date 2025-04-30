@@ -83,6 +83,12 @@ SELECT watsonx.openai_compatible_generate(
 ) 
 FROM sysibm.sysdummy1;
 
+SELECT watsonx.openai_compatible_generate(
+  'why are armadillos so cute?',
+  '{"temperature": 0.7}'
+) 
+FROM sysibm.sysdummy1;
+
 -- JSON generation with options
 SELECT watsonx.openai_compatible_generate_json(
   'List the top 5 programming languages as a JSON array.',
