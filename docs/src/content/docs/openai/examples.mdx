@@ -4,3 +4,260 @@ Description: Examples
 sidebar:
     order: 3
 ---
+
+# OpenAI-compatible Endpoints Examples
+
+This page provides practical examples of using OpenAI-compatible endpoints in your DB2 for IBM i applications.
+
+## Basic Examples
+
+### Simple Text Generation
+
+```sql
+-- Configure connection for this job
+CALL dbsdk_v1.openai_compatible_setserverforjob('127.0.0.1');
+CALL dbsdk_v1.openai_compatible_setportforjob(8080);
+CALL dbsdk_v1.openai_compatible_setprotocolforjob('http');
+CALL dbsdk_v1.openai_compatible_setapikeyforjob('your-api-key');
+CALL dbsdk_v1.openai_compatible_setmodelforjob('llama3');
+
+-- Generate text
+SELECT dbsdk_v1.openai_compatible_generate('What is IBM i?') FROM sysibm.sysdummy1;
+```
+
+### Different Models
+
+You can specify different models for different use cases:
+
+```sql
+-- Use a larger model for complex tasks
+SELECT dbsdk_v1.openai_compatible_generate(
+  'Explain quantum computing in simple terms',
+  'mistral-7b'
+) FROM sysibm.sysdummy1;
+
+-- Use a smaller model for simple tasks
+SELECT dbsdk_v1.openai_compatible_generate(
+  'Write a short greeting',
+  'tinyllama'
+) FROM sysibm.sysdummy1;
+```
+
+### Using Optional Parameters
+
+The openai_compatible_generate function accepts a JSON options object with many optional parameters to control the generation:
+
+```sql
+-- Using temperature and max_tokens to control generation
+SELECT dbsdk_v1.openai_compatible_generate(
+  'Tell me a creative story about a dragon',
+  '{
+    "temperature": 0.8,
+    "max_tokens": 200
+  }'
+) FROM sysibm.sysdummy1;
+
+-- Using multiple parameters for more control
+SELECT dbsdk_v1.openai_compatible_generate(
+  'List 5 programming best practices',
+  '{
+    "model_id": "llama3", 
+    "temperature": 0.5,
+    "max_tokens": 150,
+    "top_p": 0.9,
+    "frequency_penalty": 0.2
+  }'
+) FROM sysibm.sysdummy1;
+
+-- Controlling randomness with seed parameter
+SELECT dbsdk_v1.openai_compatible_generate(
+  'Write a haiku about programming',
+  '{
+    "temperature": 0.7,
+    "max_tokens": 50,
+    "seed": 42
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+## Advanced Examples
+
+### Working with JSON Data
+
+Generate structured JSON data:
+
+```sql
+-- Create a JSON structure with information about database tables
+SELECT dbsdk_v1.openai_compatible_generate_json(
+  'Create a JSON structure with 3 fictional SQL tables, each with name, purpose, and 3 columns',
+  '{
+    "model_id": "llama3",
+    "temperature": 0.2,
+    "max_tokens": 300
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+### Dynamic SQL Generation
+
+Generate SQL queries based on natural language:
+
+```sql
+-- Set up a temporary table for demonstration
+CREATE TABLE qtemp.employees (
+  id INT PRIMARY KEY,
+  name VARCHAR(100),
+  department VARCHAR(50),
+  salary DECIMAL(10,2)
+);
+
+-- Use LLM to generate SQL from natural language
+VALUES CAST(dbsdk_v1.openai_compatible_generate(
+  'Write an SQL query to find the average salary by department for the employees table with columns: id, name, department, salary',
+  '{
+    "model_id": "llama3",
+    "temperature": 0.1,
+    "max_tokens": 100,
+    "frequency_penalty": 0.1
+  }'
+) AS VARCHAR(1000));
+
+-- The output SQL can then be executed
+```
+
+### Data Summarization
+
+Summarize data from a query:
+
+```sql
+-- Assume we have a sales table
+-- Create and summarize data with a single WITH clause
+WITH 
+  sales_data AS (
+    SELECT 'North' as region, 150000 as q1_sales, 180000 as q2_sales, 120000 as q3_sales, 200000 as q4_sales FROM sysibm.sysdummy1
+    UNION ALL SELECT 'South', 120000, 110000, 140000, 130000 FROM sysibm.sysdummy1
+    UNION ALL SELECT 'East', 160000, 170000, 180000, 190000 FROM sysibm.sysdummy1
+    UNION ALL SELECT 'West', 130000, 140000, 150000, 160000 FROM sysibm.sysdummy1
+  ),
+  formatted_data AS (
+    SELECT LISTAGG('Region: ' || region || ', Q1: ' || q1_sales || ', Q2: ' || q2_sales || 
+                 ', Q3: ' || q3_sales || ', Q4: ' || q4_sales, '
+') AS sales_text
+    FROM sales_data
+  )
+-- Generate a summary
+SELECT dbsdk_v1.openai_compatible_generate(
+  'Analyze the following sales data and provide insights:
+' || sales_text,
+  '{
+    "model_id": "llama3",
+    "temperature": 0.7,
+    "max_tokens": 500
+  }'
+) FROM formatted_data;
+```
+
+### Content Classification
+
+Classify customer feedback:
+
+```sql
+-- Create a temporary table with customer feedback
+CREATE TABLE qtemp.feedback (
+  id INT PRIMARY KEY,
+  comment VARCHAR(1000)
+);
+
+INSERT INTO qtemp.feedback VALUES
+  (1, 'I love your product, it works perfectly!'),
+  (2, 'The software is good but the documentation could be better'),
+  (3, 'This is terrible, nothing works as expected');
+
+-- Classify each feedback
+SELECT 
+  f.id,
+  f.comment,
+  dbsdk_v1.openai_compatible_generate_json(
+    'Classify the following customer feedback into one of these categories: Positive, Neutral, Negative. Return just a JSON with a single "category" field.
+    
+    Feedback: ' || f.comment,
+    '{
+      "temperature": 0.1,
+      "max_tokens": 30
+    }'
+  ) AS classification
+FROM qtemp.feedback f;
+```
+
+## Integration Examples
+
+### Storing Generated Content in a Table
+
+Generate and store content in a table:
+
+```sql
+-- Create a table to store the generated content
+CREATE TABLE mylib.generated_content (
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  prompt VARCHAR(1000),
+  content CLOB(2G),
+  generation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Generate and store content
+INSERT INTO mylib.generated_content (prompt, content)
+SELECT 'Write a short poem about databases', 
+       dbsdk_v1.openai_compatible_generate(
+         'Write a short poem about databases',
+         '{
+           "temperature": 0.7,
+           "max_tokens": 200,
+           "top_p": 0.95
+         }'
+       )
+FROM sysibm.sysdummy1;
+
+-- Retrieve the stored content
+SELECT * FROM mylib.generated_content;
+```
+
+### Using with Custom Prompts Table
+
+Manage and use prompt templates:
+
+```sql
+-- Create a table for prompt templates
+CREATE TABLE mylib.prompt_templates (
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(100),
+  template CLOB(64K),
+  description VARCHAR(1000)
+);
+
+-- Insert some prompt templates
+INSERT INTO mylib.prompt_templates (name, template, description) VALUES
+  ('sql_generator', 'Given the following database schema:\n{{schema}}\n\nGenerate an SQL query to: {{task}}', 
+   'Template for SQL generation from natural language'),
+  ('data_summarizer', 'Summarize the following data:\n{{data}}\n\nFocus on: {{focus}}',
+   'Template for summarizing datasets');
+
+-- Use a template to generate content
+WITH prompt_data AS (
+  SELECT REPLACE(
+           REPLACE(
+             (SELECT template FROM mylib.prompt_templates WHERE name = 'sql_generator'),
+             '{{schema}}', 'Customers(id, name, email, signup_date), Orders(id, customer_id, order_date, amount)'
+           ),
+           '{{task}}', 'Find all customers who spent more than $1000 in total'
+         ) AS prompt
+)
+SELECT dbsdk_v1.openai_compatible_generate(
+  prompt,
+  '{
+    "temperature": 0.3,
+    "max_tokens": 150
+  }'
+) FROM prompt_data;
+```
+
+These examples demonstrate the versatility of the OpenAI-compatible endpoints for various use cases in your IBM i applications.
