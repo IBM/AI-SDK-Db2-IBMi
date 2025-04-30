@@ -42,19 +42,21 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm install
-        working-directory: ${{ env.BUILD_PATH }}
+        working-directory: ${{ env.BUILD_PATH }}/docs
       - name: Preprocess documentation files from SQL source
-        working-directory: ${{ env.BUILD_PATH }}
+        working-directory: ${{ env.BUILD_PATH }}/docs
         run: |
           npm run preprocess
       - name: Build with Astro
-        working-directory: ${{ env.BUILD_PATH }}
+        working-directory: ${{ env.BUILD_PATH }}/docs
         run: |
-          npm run astro build
+          npm run astro build \
+            --site "${{ steps.pages.outputs.origin }}" \
+            --base "${{ steps.pages.outputs.base_path }}"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ env.BUILD_PATH }}/dist
+          path: ${{ env.BUILD_PATH }}/docs/dist
 
   deploy:
     environment:
