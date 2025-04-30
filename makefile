@@ -1,10 +1,17 @@
 
-SCHEMA=watsonx
+SCHEMA=dbsdk_v1
+OBJS =  $(shell getmaketargets.sh)
 
-all: $(SCHEMA).schema install.sql auth.sql models.sql generate.sql
+all: buildts.txt
 
-%.schema:
-	-system -s "RUNSQL SQL('CREATE SCHEMA $*') COMMIT(*NONE)"
+/qsys.lib/$(SCHEMA).lib:
+	-system -s "RUNSQL SQL('CREATE SCHEMA $(SCHEMA)') COMMIT(*NONE)" && echo created schema $(SCHEMA)
 
-%.sql: src/%.sql
-	system "RUNSQLSTM SRCSTMF('$<') COMMIT(*NONE) NAMING(*SQL) DFTRDBCOL($(SCHEMA))"
+buildts.txt: /qsys.lib/$(SCHEMA).lib  $(OBJS)
+	date > buildts.txt
+	
+clean:
+	rm -r .build
+
+.build/%.done: %
+	runsql.sh $(SCHEMA) $<

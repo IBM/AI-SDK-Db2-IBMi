@@ -1,0 +1,22 @@
+---
+title: Examples 
+Description: Examples
+sidebar:
+    order: 3
+---
+
+### Set a webhook for the current user profile
+```sql
+call dbsdk_v1.slack_setwebhookforme('https://hooks.slack.com/services/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');
+```
+
+### Send a Slack message (using the webhook set for the current user profile)
+```sql
+values(dbsdk_v1.slack_sendmessage('IBM i rules'));
+```
+### Send a Slack message (using a specific webhook)
+```sql
+values(
+    dbsdk_v1.slack_sendmessage( MSG =>'IBM i rules'
+                               WEBHOOK => 'https://hooks.slack.com/services/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'));
+```
