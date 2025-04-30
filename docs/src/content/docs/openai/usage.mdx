@@ -4,9 +4,8 @@ Description: Usage
 sidebar:
     order: 1
 ---
-# Using OpenAI-compatible LLMs 
 
-This module allows you to connect to any API endpoint that implements the OpenAI API specification. Many LLM providers such as LMStudio, LocalAI, vLLM, or self-hosted solutions offer OpenAI-compatible APIs.
+This module allows you to connect to any API endpoint that implements the OpenAI API specification. Many LLM providers such as Llama.cpp, LMStudio, LocalAI, vLLM, or self-hosted solutions offer OpenAI-compatible APIs.
 
 ## Setup
 
@@ -18,7 +17,7 @@ CALL dbsdk_v1.openai_compatible_setserverforjob('127.0.0.1');
 CALL dbsdk_v1.openai_compatible_setportforjob(8080);
 CALL dbsdk_v1.openai_compatible_setprotocolforjob('http');
 
--- Set the model to use
+-- Optional: Set the model to use
 CALL dbsdk_v1.openai_compatible_setmodelforjob('gpt-3.5-turbo');
 
 -- Optional: Set API key if your server requires authentication
@@ -36,9 +35,9 @@ To make these settings persistent across jobs for your user profile:
 CALL dbsdk_v1.openai_compatible_setserverforme('127.0.0.1');
 CALL dbsdk_v1.openai_compatible_setportforme(8080);
 CALL dbsdk_v1.openai_compatible_setprotocolforme('http');
-CALL dbsdk_v1.openai_compatible_setmodelforme('gpt-3.5-turbo');
+CALL dbsdk_v1.openai_compatible_setmodelforme('gpt-3.5-turbo');  -- Optional
 CALL dbsdk_v1.openai_compatible_setapikeyforme('your-api-key');  -- Optional
-CALL dbsdk_v1.openai_compatible_setbasepathforme('/v1');     -- Optional
+CALL dbsdk_v1.openai_compatible_setbasepathforme('/v1');         -- Optional
 ```
 
 ## Basic Usage
@@ -48,7 +47,19 @@ CALL dbsdk_v1.openai_compatible_setbasepathforme('/v1');     -- Optional
 To generate text using the OpenAI-compatible API:
 
 ```sql
-SELECT dbsdk_v1.openai_compatible_generate('What is Db2 for i?') FROM sysibm.sysdummy1;
+SELECT dbsdk_v1.openai_compatible_generate('What is Db2 for i?')
+FROM sysibm.sysdummy1;
+```
+
+### Set `max_tokens`:
+
+it is recommended to specify a value for `max_tokens` depending on your task:
+
+```sql
+SELECT dbsdk_v1.openai_compatible_generate(
+  'Why are armadillos so cute?',
+  '{"max_tokens": 128}'
+) FROM sysibm.sysdummy1;
 ```
 
 ### Specifying a Model
@@ -58,9 +69,7 @@ You can specify which model to use (overriding the default):
 ```sql
 SELECT dbsdk_v1.openai_compatible_generate(
   'Explain SQL in 100 words',
-  '{
-    "model_id": "gpt-3.5-turbo"
-  }'
+  '{"model_id": "gpt-3.5-turbo"}'
 ) FROM sysibm.sysdummy1;
 ```
 
@@ -84,6 +93,8 @@ SELECT dbsdk_v1.openai_compatible_generate(
 ```
 
 #### Supported Parameters
+
+see official [OpenAI API Reference](https://platform.openai.com/docs/api-reference/completions/create) for full breakdown of optional parameters.
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -125,7 +136,7 @@ For structured data, you can use the JSON-specific function:
 SELECT dbsdk_v1.openai_compatible_generate_json(
   'Generate a JSON with 3 names and ages of fictional people',
   '{
-    "model_id": "gpt-3.5-turbo",
+    "model_id": "llama3",
     "temperature": 0.5,
     "max_tokens": 100
   }'
@@ -142,21 +153,32 @@ The OpenAI-compatible API response follows this structure:
 {
   "choices": [
     {
-      "text": "The generated content appears here...",
+      "text": "** GENERATED TEXT HERE **",
       "index": 0,
       "logprobs": null,
       "finish_reason": "length"
     }
   ],
-  "created": 1745528364,
-  "model": "gpt-3.5-turbo",
+  "created": 1746039098,
+  "model": "llama3",
+  "system_fingerprint": "b5043-c262bedd",
   "object": "text_completion",
   "usage": {
-    "completion_tokens": 128,
+    "completion_tokens": 100,
     "prompt_tokens": 13,
-    "total_tokens": 141
+    "total_tokens": 113
   },
-  "id": "chatcmpl-OW6vxJUGFMwUyg6HPGHYO1Uaza3VeXRj"
+  "id": "chatcmpl-OW6vxJUGFMwUyg6HPGHYO1Uaza3VeXRj",
+  "timings": {
+    "prompt_n": 13,
+    "prompt_ms": 418.129,
+    "prompt_per_token_ms": 32.16376923076923,
+    "prompt_per_second": 31.090883435494785,
+    "predicted_n": 100,
+    "predicted_ms": 14705.362,
+    "predicted_per_token_ms": 147.05362,
+    "predicted_per_second": 6.8002406197140886
+  }
 }
 ```
 
