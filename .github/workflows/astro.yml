@@ -50,9 +50,7 @@ jobs:
       - name: Build with Astro
         working-directory: ${{ env.BUILD_PATH }}
         run: |
-          npm run astro build \
-            --site "${{ steps.pages.outputs.origin }}" \
-            --base "${{ steps.pages.outputs.base_path }}"
+          npm run astro build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
