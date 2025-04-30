@@ -1,0 +1,209 @@
+---
+title: OpenAI-compatible Endpoints Usage
+description: How to use OpenAI-compatible endpoints in your DB2 for IBM i applications
+---
+
+# Using OpenAI-compatible LLMs 
+
+This module allows you to connect to any API endpoint that implements the OpenAI API specification. Many LLM providers such as LMStudio, LocalAI, vLLM, or self-hosted solutions offer OpenAI-compatible APIs.
+
+## Setup
+
+Before using the OpenAI-compatible functionality, you need to configure the connection details:
+
+```sql
+-- Set server information for current job
+CALL watsonx.openai_compatible_setserverforjob('127.0.0.1');
+CALL watsonx.openai_compatible_setportforjob(8080);
+CALL watsonx.openai_compatible_setprotocolforjob('http');
+
+-- Set the model to use
+CALL watsonx.openai_compatible_setmodelforjob('gpt-3.5-turbo');
+
+-- Optional: Set API key if your server requires authentication
+-- Many local deployments don't require authentication
+CALL watsonx.openai_compatible_setapikeyforjob('your-api-key');
+
+-- Optional: Set a custom base path if your provider uses a non-standard path
+-- By default, the standard OpenAI path '/v1' is used
+CALL watsonx.openai_compatible_setbasepathforjob('/v1');
+```
+
+To make these settings persistent across jobs for your user profile:
+
+```sql
+CALL watsonx.openai_compatible_setserverforme('127.0.0.1');
+CALL watsonx.openai_compatible_setportforme(8080);
+CALL watsonx.openai_compatible_setprotocolforme('http');
+CALL watsonx.openai_compatible_setmodelforme('gpt-3.5-turbo');
+CALL watsonx.openai_compatible_setapikeyforme('your-api-key');  -- Optional
+CALL watsonx.openai_compatible_setbasepathforme('/v1');     -- Optional
+```
+
+## Basic Usage
+
+### Text Generation
+
+To generate text using the OpenAI-compatible API:
+
+```sql
+SELECT watsonx.openai_compatible_generate('What is Db2 for i?') FROM sysibm.sysdummy1;
+```
+
+### Specifying a Model
+
+You can specify which model to use (overriding the default):
+
+```sql
+SELECT watsonx.openai_compatible_generate(
+  'Explain SQL in 100 words',
+  '{
+    "model_id": "gpt-3.5-turbo"
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+### Optional Parameters
+
+The `openai_compatible_generate` function supports a wide range of optional parameters through a JSON options object:
+
+```sql
+SELECT watsonx.openai_compatible_generate(
+  'Tell me a story about a dragon',
+  '{
+    "model_id": "llama3",
+    "max_tokens": 150,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "frequency_penalty": 0.1,
+    "presence_penalty": 0.1,
+    "seed": 42
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+#### Supported Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `model_id` | string | (configured model) | The model to use for generation |
+| `max_tokens` | integer | 16 | Maximum number of tokens to generate |
+| `temperature` | decimal | 1.0 | Controls randomness (0-2). Lower is more deterministic |
+| `top_p` | decimal | 1.0 | Nucleus sampling probability cutoff |
+| `n` | integer | 1 | Number of completions to generate |
+| `stream` | boolean | false | Whether to stream back partial progress |
+| `logprobs` | integer | null | Include log probabilities on most likely tokens |
+| `echo` | boolean | false | Echo back the prompt in the completion |
+| `stop` | string | null | Sequences where generation should stop |
+| `presence_penalty` | decimal | 0.0 | Penalty between -2.0 and 2.0 for tokens based on presence |
+| `frequency_penalty` | decimal | 0.0 | Penalty between -2.0 and 2.0 for tokens based on frequency |
+| `logit_bias` | object | null | JSON object mapping tokens to bias values |
+| `user` | string | null | Unique identifier for the end user |
+| `seed` | integer | null | Seed for deterministic sampling |
+| `suffix` | string | null | Suffix after completion insertion (for compatible models only) |
+
+Here are some key parameters explained:
+
+- **temperature**: Controls randomness in token selection. Lower values (e.g., 0.2) make the output more focused and deterministic, while higher values (e.g., 0.8) make it more creative.
+
+- **max_tokens**: Sets the maximum length of the generated text. Increase for longer responses, decrease for shorter ones.
+
+- **top_p**: An alternative to temperature for controlling randomness. Sets a probability threshold for token selection.
+
+- **frequency_penalty**: Reduces repetition by penalizing tokens that have already appeared in the text. Higher values (0.8) strongly discourage repetition.
+
+- **presence_penalty**: Similar to frequency_penalty, but penalizes tokens based on their presence regardless of how many times they've appeared.
+
+- **seed**: When provided, attempts to make outputs deterministic. Good for reproducible results.
+
+### JSON Generation
+
+For structured data, you can use the JSON-specific function:
+
+```sql
+SELECT watsonx.openai_compatible_generate_json(
+  'Generate a JSON with 3 names and ages of fictional people',
+  '{
+    "model_id": "gpt-3.5-turbo",
+    "temperature": 0.5,
+    "max_tokens": 100
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+The `generate_json` function returns the complete API response as a JSON object, allowing you to access not only the generated content but also metadata such as token usage statistics.
+
+## API Response Format
+
+The OpenAI-compatible API response follows this structure:
+
+```json
+{
+  "choices": [
+    {
+      "text": "The generated content appears here...",
+      "index": 0,
+      "logprobs": null,
+      "finish_reason": "length"
+    }
+  ],
+  "created": 1745528364,
+  "model": "gpt-3.5-turbo",
+  "object": "text_completion",
+  "usage": {
+    "completion_tokens": 128,
+    "prompt_tokens": 13,
+    "total_tokens": 141
+  },
+  "id": "chatcmpl-OW6vxJUGFMwUyg6HPGHYO1Uaza3VeXRj"
+}
+```
+
+The regular `generate` function extracts just the text content from `choices[0].text`, while the `generate_json` function returns the entire JSON response.
+
+## Authentication
+
+The OpenAI-compatible endpoints can work with both authenticated and unauthenticated services:
+
+- **Commercial Services** (like OpenAI): Typically require an API key
+- **Self-hosted Models**: Often don't require authentication, especially local deployments
+
+If your service doesn't require authentication, you can skip setting the API key, and the system will automatically make unauthenticated requests.
+
+## Configuration Functions
+
+### Server Configuration
+
+- `openai_compatible_getserver()` - Gets the current server hostname/IP
+- `openai_compatible_setserverforjob()` - Sets the server for the current job
+- `openai_compatible_setserverforme()` - Sets the server persistently for your user profile
+
+### Port Configuration
+
+- `openai_compatible_getport()` - Gets the current port
+- `openai_compatible_setportforjob()` - Sets the port for the current job
+- `openai_compatible_setportforme()` - Sets the port persistently for your user profile
+
+### Protocol Configuration
+
+- `openai_compatible_getprotocol()` - Gets the current protocol (http/https)
+- `openai_compatible_setprotocolforjob()` - Sets the protocol for the current job
+- `openai_compatible_setprotocolforme()` - Sets the protocol persistently for your user profile
+
+### Model Configuration
+
+- `openai_compatible_getmodel()` - Gets the current model
+- `openai_compatible_setmodelforjob()` - Sets the model for the current job
+- `openai_compatible_setmodelforme()` - Sets the model persistently for your user profile
+
+### API Key Configuration (Optional)
+
+- `openai_compatible_getapikey()` - Gets the current API key
+- `openai_compatible_setapikeyforjob()` - Sets the API key for the current job
+- `openai_compatible_setapikeyforme()` - Sets the API key persistently for your user profile
+
+### Base Path Configuration (Optional)
+
+- `openai_compatible_getbasepath()` - Gets the current base path
+- `openai_compatible_setbasepathforjob()` - Sets the base path for the current job
+- `openai_compatible_setbasepathforme()` - Sets the base path persistently for your user profile
