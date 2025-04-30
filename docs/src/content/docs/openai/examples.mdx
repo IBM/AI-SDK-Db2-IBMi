@@ -5,8 +5,6 @@ sidebar:
     order: 3
 ---
 
-# OpenAI-compatible Endpoints Examples
-
 This page provides practical examples of using OpenAI-compatible endpoints in your DB2 for IBM i applications.
 
 ## Basic Examples
@@ -22,7 +20,8 @@ CALL dbsdk_v1.openai_compatible_setapikeyforjob('your-api-key');
 CALL dbsdk_v1.openai_compatible_setmodelforjob('llama3');
 
 -- Generate text
-SELECT dbsdk_v1.openai_compatible_generate('What is IBM i?') FROM sysibm.sysdummy1;
+SELECT dbsdk_v1.openai_compatible_generate('What is IBM i?') 
+FROM sysibm.sysdummy1;
 ```
 
 ### Different Models
@@ -33,13 +32,13 @@ You can specify different models for different use cases:
 -- Use a larger model for complex tasks
 SELECT dbsdk_v1.openai_compatible_generate(
   'Explain quantum computing in simple terms',
-  'mistral-7b'
+  '{"model_id": "mistral-7b"}'
 ) FROM sysibm.sysdummy1;
 
 -- Use a smaller model for simple tasks
 SELECT dbsdk_v1.openai_compatible_generate(
   'Write a short greeting',
-  'tinyllama'
+  '{"model_id": "gpt-4o"}'
 ) FROM sysibm.sysdummy1;
 ```
 
@@ -104,25 +103,37 @@ Generate SQL queries based on natural language:
 
 ```sql
 -- Set up a temporary table for demonstration
-CREATE TABLE qtemp.employees (
+CREATE TABLE employees_temp (
   id INT PRIMARY KEY,
   name VARCHAR(100),
   department VARCHAR(50),
   salary DECIMAL(10,2)
 );
 
+-- Insert sample data
+INSERT INTO employees_temp VALUES
+  (1, 'John Smith', 'Engineering', 85000.00),
+  (2, 'Maria Garcia', 'Engineering', 92000.00),
+  (3, 'Robert Chen', 'Marketing', 78500.00),
+  (4, 'Sarah Johnson', 'Marketing', 81200.00),
+  (5, 'James Wilson', 'Finance', 95000.00),
+  (6, 'Aisha Patel', 'Finance', 98500.00),
+  (7, 'David Kim', 'Engineering', 78000.00);
+
 -- Use LLM to generate SQL from natural language
 VALUES CAST(dbsdk_v1.openai_compatible_generate(
-  'Write an SQL query to find the average salary by department for the employees table with columns: id, name, department, salary',
+  'Write an SQL query to find the average salary by department for the employees_temp table with columns: id, name, department, salary',
   '{
     "model_id": "llama3",
     "temperature": 0.1,
-    "max_tokens": 100,
     "frequency_penalty": 0.1
   }'
 ) AS VARCHAR(1000));
 
--- The output SQL can then be executed
+-- Execute the generated query (example of what might be returned by the LLM)
+
+-- clean up table
+Drop table employees_temp;
 ```
 
 ### Data Summarization
