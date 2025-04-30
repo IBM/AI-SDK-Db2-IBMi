@@ -13,14 +13,14 @@ This page provides practical examples of using OpenAI-compatible endpoints in yo
 
 ```sql
 -- Configure connection for this job
-CALL watsonx.openai_compatible_setserverforjob('127.0.0.1');
-CALL watsonx.openai_compatible_setportforjob(8080);
-CALL watsonx.openai_compatible_setprotocolforjob('http');
-CALL watsonx.openai_compatible_setapikeyforjob('your-api-key');
-CALL watsonx.openai_compatible_setmodelforjob('llama3');
+CALL dbsdk_v1.openai_compatible_setserverforjob('127.0.0.1');
+CALL dbsdk_v1.openai_compatible_setportforjob(8080);
+CALL dbsdk_v1.openai_compatible_setprotocolforjob('http');
+CALL dbsdk_v1.openai_compatible_setapikeyforjob('your-api-key');
+CALL dbsdk_v1.openai_compatible_setmodelforjob('llama3');
 
 -- Generate text
-SELECT watsonx.openai_compatible_generate('What is IBM i?') FROM sysibm.sysdummy1;
+SELECT dbsdk_v1.openai_compatible_generate('What is IBM i?') FROM sysibm.sysdummy1;
 ```
 
 ### Different Models
@@ -29,13 +29,13 @@ You can specify different models for different use cases:
 
 ```sql
 -- Use a larger model for complex tasks
-SELECT watsonx.openai_compatible_generate(
+SELECT dbsdk_v1.openai_compatible_generate(
   'Explain quantum computing in simple terms',
   'mistral-7b'
 ) FROM sysibm.sysdummy1;
 
 -- Use a smaller model for simple tasks
-SELECT watsonx.openai_compatible_generate(
+SELECT dbsdk_v1.openai_compatible_generate(
   'Write a short greeting',
   'tinyllama'
 ) FROM sysibm.sysdummy1;
@@ -47,7 +47,7 @@ The openai_compatible_generate function accepts a JSON options object with many 
 
 ```sql
 -- Using temperature and max_tokens to control generation
-SELECT watsonx.openai_compatible_generate(
+SELECT dbsdk_v1.openai_compatible_generate(
   'Tell me a creative story about a dragon',
   '{
     "temperature": 0.8,
@@ -56,7 +56,7 @@ SELECT watsonx.openai_compatible_generate(
 ) FROM sysibm.sysdummy1;
 
 -- Using multiple parameters for more control
-SELECT watsonx.openai_compatible_generate(
+SELECT dbsdk_v1.openai_compatible_generate(
   'List 5 programming best practices',
   '{
     "model_id": "llama3", 
@@ -68,7 +68,7 @@ SELECT watsonx.openai_compatible_generate(
 ) FROM sysibm.sysdummy1;
 
 -- Controlling randomness with seed parameter
-SELECT watsonx.openai_compatible_generate(
+SELECT dbsdk_v1.openai_compatible_generate(
   'Write a haiku about programming',
   '{
     "temperature": 0.7,
@@ -86,7 +86,7 @@ Generate structured JSON data:
 
 ```sql
 -- Create a JSON structure with information about database tables
-SELECT watsonx.openai_compatible_generate_json(
+SELECT dbsdk_v1.openai_compatible_generate_json(
   'Create a JSON structure with 3 fictional SQL tables, each with name, purpose, and 3 columns',
   '{
     "model_id": "llama3",
@@ -110,7 +110,7 @@ CREATE TABLE qtemp.employees (
 );
 
 -- Use LLM to generate SQL from natural language
-VALUES CAST(watsonx.openai_compatible_generate(
+VALUES CAST(dbsdk_v1.openai_compatible_generate(
   'Write an SQL query to find the average salary by department for the employees table with columns: id, name, department, salary',
   '{
     "model_id": "llama3",
@@ -144,7 +144,7 @@ WITH
     FROM sales_data
   )
 -- Generate a summary
-SELECT watsonx.openai_compatible_generate(
+SELECT dbsdk_v1.openai_compatible_generate(
   'Analyze the following sales data and provide insights:
 ' || sales_text,
   '{
@@ -175,7 +175,7 @@ INSERT INTO qtemp.feedback VALUES
 SELECT 
   f.id,
   f.comment,
-  watsonx.openai_compatible_generate_json(
+  dbsdk_v1.openai_compatible_generate_json(
     'Classify the following customer feedback into one of these categories: Positive, Neutral, Negative. Return just a JSON with a single "category" field.
     
     Feedback: ' || f.comment,
@@ -205,7 +205,7 @@ CREATE TABLE mylib.generated_content (
 -- Generate and store content
 INSERT INTO mylib.generated_content (prompt, content)
 SELECT 'Write a short poem about databases', 
-       watsonx.openai_compatible_generate(
+       dbsdk_v1.openai_compatible_generate(
          'Write a short poem about databases',
          '{
            "temperature": 0.7,
@@ -249,7 +249,7 @@ WITH prompt_data AS (
            '{{task}}', 'Find all customers who spent more than $1000 in total'
          ) AS prompt
 )
-SELECT watsonx.openai_compatible_generate(
+SELECT dbsdk_v1.openai_compatible_generate(
   prompt,
   '{
     "temperature": 0.3,

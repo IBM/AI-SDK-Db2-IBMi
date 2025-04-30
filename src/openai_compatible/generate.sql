@@ -33,7 +33,7 @@
 -- Unsupported options:
 --  - set best_of = coalesce(json_value(options, '$.best_of'), 1);
 
-create or replace function watsonx.openai_compatible_generate(
+create or replace function dbsdk_v1.openai_compatible_generate(
   prompt varchar(32000) ccsid 1208,
   options varchar(32000) ccsid 1208 default '{}'
 ) 
@@ -90,13 +90,13 @@ begin
   -- unsupported options
   
   -- Get API key for authentication
-  set api_key = watsonx.openai_compatible_getapikey();
+  set api_key = dbsdk_v1.openai_compatible_getapikey();
   
   -- Build the URL for the OpenAI compatible API endpoint
-  set fullUrl = watsonx.openai_compatible_getprotocol() concat '://' 
-              concat watsonx.openai_compatible_getserver() 
-              concat ':' concat watsonx.openai_compatible_getport() 
-              concat watsonx.openai_compatible_getbasepath() 
+  set fullUrl = dbsdk_v1.openai_compatible_getprotocol() concat '://' 
+              concat dbsdk_v1.openai_compatible_getserver() 
+              concat ':' concat dbsdk_v1.openai_compatible_getport() 
+              concat dbsdk_v1.openai_compatible_getbasepath() 
               concat '/completions';
   
   -- Set HTTP options including headers
@@ -119,7 +119,7 @@ begin
   
   -- Build the request body with required parameters
   set req_body = json_object(
-    'model': coalesce(model_id, watsonx.openai_compatible_getmodel()),
+    'model': coalesce(model_id, dbsdk_v1.openai_compatible_getmodel()),
     'prompt': prompt,
     'max_tokens': max_tokens,
     'temperature': temperature,
@@ -222,7 +222,7 @@ end;
 -- Unsupported options:
 --  - set best_of = coalesce(json_value(options, '$.best_of'), 1);
 
-create or replace function watsonx.openai_compatible_generate_json(
+create or replace function dbsdk_v1.openai_compatible_generate_json(
   prompt varchar(32000) ccsid 1208,
   options varchar(32000) ccsid 1208 default '{}'
 ) 
@@ -279,13 +279,13 @@ begin
   -- unsupported options
   
   -- Get API key for authentication
-  set api_key = watsonx.openai_compatible_getapikey();
+  set api_key = dbsdk_v1.openai_compatible_getapikey();
   
   -- Build the URL for the OpenAI compatible API endpoint
-  set fullUrl = watsonx.openai_compatible_getprotocol() concat '://' 
-              concat watsonx.openai_compatible_getserver() 
-              concat ':' concat watsonx.openai_compatible_getport() 
-              concat watsonx.openai_compatible_getbasepath() 
+  set fullUrl = dbsdk_v1.openai_compatible_getprotocol() concat '://' 
+              concat dbsdk_v1.openai_compatible_getserver() 
+              concat ':' concat dbsdk_v1.openai_compatible_getport() 
+              concat dbsdk_v1.openai_compatible_getbasepath() 
               concat '/completions';
   
   -- Set HTTP options including headers
@@ -308,7 +308,7 @@ begin
   
   -- Build the request body with required parameters
   set req_body = json_object(
-    'model': coalesce(model_id, watsonx.openai_compatible_getmodel()),
+    'model': coalesce(model_id, dbsdk_v1.openai_compatible_getmodel()),
     'prompt': prompt,
     'temperature': temperature,
     'top_p': top_p,
