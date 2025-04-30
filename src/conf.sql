@@ -13,6 +13,13 @@ create or replace variable dbsdk_v1.ollama_server       varchar(1000) ccsid 1208
 create or replace variable dbsdk_v1.ollama_port         INT                      default NULL;
 create or replace variable dbsdk_v1.ollama_model        varchar(1000) ccsid 1208 default NULL;
 
+-- variables for openai compatible
+create or replace variable dbsdk_v1.openai_compatible_protocol     varchar(16)   ccsid 1208 default null;
+create or replace variable dbsdk_v1.openai_compatible_server       varchar(1000) ccsid 1208 default null;
+create or replace variable dbsdk_v1.openai_compatible_port         INT                      default NULL;
+create or replace variable dbsdk_v1.openai_compatible_model        varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.openai_compatible_apikey       varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.openai_compatible_basepath     varchar(1000) ccsid 1208 default NULL;
 
 -- variables for kafka
 create or replace variable dbsdk_v1.kafka_protocol     varchar(16)   ccsid 1208 default null;
@@ -41,6 +48,12 @@ create or replace table dbsdk_v1.conf
           ollama_model varchar(1000) ccsid 1208 default 'granite3.2:8b',
           openai_server varchar(1000) ccsid 1208 default 'localhost',
           openai_port INT default 443,
+          openai_compatible_protocol varchar(16) ccsid 1208 default 'http',
+          openai_compatible_server varchar(1000) ccsid 1208 default 'localhost',
+          openai_compatible_port INT default 8000,
+          openai_compatible_model varchar(1000) ccsid 1208 default 'llama3',
+          openai_compatible_apikey varchar(1000) ccsid 1208 default NULL,
+          openai_compatible_basepath varchar(1000) ccsid 1208 default '/v1',
           kafka_protocol varchar(16) ccsid 1208 default 'http',
           kafka_broker varchar(1000) ccsid 1208 default 'localhost',
           kafka_port int default 8082,

@@ -13,31 +13,31 @@ Before using the OpenAI-compatible functionality, you need to configure the conn
 
 ```sql
 -- Set server information for current job
-CALL watsonx.openai_compatible_setserverforjob('127.0.0.1');
-CALL watsonx.openai_compatible_setportforjob(8080);
-CALL watsonx.openai_compatible_setprotocolforjob('http');
+CALL dbsdk_v1.openai_compatible_setserverforjob('127.0.0.1');
+CALL dbsdk_v1.openai_compatible_setportforjob(8080);
+CALL dbsdk_v1.openai_compatible_setprotocolforjob('http');
 
 -- Set the model to use
-CALL watsonx.openai_compatible_setmodelforjob('gpt-3.5-turbo');
+CALL dbsdk_v1.openai_compatible_setmodelforjob('gpt-3.5-turbo');
 
 -- Optional: Set API key if your server requires authentication
 -- Many local deployments don't require authentication
-CALL watsonx.openai_compatible_setapikeyforjob('your-api-key');
+CALL dbsdk_v1.openai_compatible_setapikeyforjob('your-api-key');
 
 -- Optional: Set a custom base path if your provider uses a non-standard path
 -- By default, the standard OpenAI path '/v1' is used
-CALL watsonx.openai_compatible_setbasepathforjob('/v1');
+CALL dbsdk_v1.openai_compatible_setbasepathforjob('/v1');
 ```
 
 To make these settings persistent across jobs for your user profile:
 
 ```sql
-CALL watsonx.openai_compatible_setserverforme('127.0.0.1');
-CALL watsonx.openai_compatible_setportforme(8080);
-CALL watsonx.openai_compatible_setprotocolforme('http');
-CALL watsonx.openai_compatible_setmodelforme('gpt-3.5-turbo');
-CALL watsonx.openai_compatible_setapikeyforme('your-api-key');  -- Optional
-CALL watsonx.openai_compatible_setbasepathforme('/v1');     -- Optional
+CALL dbsdk_v1.openai_compatible_setserverforme('127.0.0.1');
+CALL dbsdk_v1.openai_compatible_setportforme(8080);
+CALL dbsdk_v1.openai_compatible_setprotocolforme('http');
+CALL dbsdk_v1.openai_compatible_setmodelforme('gpt-3.5-turbo');
+CALL dbsdk_v1.openai_compatible_setapikeyforme('your-api-key');  -- Optional
+CALL dbsdk_v1.openai_compatible_setbasepathforme('/v1');     -- Optional
 ```
 
 ## Basic Usage
@@ -47,7 +47,7 @@ CALL watsonx.openai_compatible_setbasepathforme('/v1');     -- Optional
 To generate text using the OpenAI-compatible API:
 
 ```sql
-SELECT watsonx.openai_compatible_generate('What is Db2 for i?') FROM sysibm.sysdummy1;
+SELECT dbsdk_v1.openai_compatible_generate('What is Db2 for i?') FROM sysibm.sysdummy1;
 ```
 
 ### Specifying a Model
@@ -55,7 +55,7 @@ SELECT watsonx.openai_compatible_generate('What is Db2 for i?') FROM sysibm.sysd
 You can specify which model to use (overriding the default):
 
 ```sql
-SELECT watsonx.openai_compatible_generate(
+SELECT dbsdk_v1.openai_compatible_generate(
   'Explain SQL in 100 words',
   '{
     "model_id": "gpt-3.5-turbo"
@@ -68,7 +68,7 @@ SELECT watsonx.openai_compatible_generate(
 The `openai_compatible_generate` function supports a wide range of optional parameters through a JSON options object:
 
 ```sql
-SELECT watsonx.openai_compatible_generate(
+SELECT dbsdk_v1.openai_compatible_generate(
   'Tell me a story about a dragon',
   '{
     "model_id": "llama3",
@@ -121,7 +121,7 @@ Here are some key parameters explained:
 For structured data, you can use the JSON-specific function:
 
 ```sql
-SELECT watsonx.openai_compatible_generate_json(
+SELECT dbsdk_v1.openai_compatible_generate_json(
   'Generate a JSON with 3 names and ages of fictional people',
   '{
     "model_id": "gpt-3.5-turbo",
