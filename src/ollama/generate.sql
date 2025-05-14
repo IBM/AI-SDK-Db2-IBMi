@@ -24,18 +24,20 @@ create or replace function dbsdk_v1.ollama_generate(prompt varchar(1000) ccsid 1
 begin
   declare fullUrl varchar(32500) ccsid 1208 default NULL;
   declare apierr  varchar(32500) CCSID 1208 default NULL;
-  declare response_header Varchar(10000) CCSID 1208;
-  declare response_message Varchar(10000) CCSID 1208;
+  declare response_header CLOB(2G) CCSID 1208;
+  declare response_message CLOB(2G) CCSID 1208;
   declare response_code int default 500;
+  declare payload CLOB(2G) CCSID 1208;
   
   declare http_options varchar(32400) ccsid 1208 default '{"ioTimeout":2000000}';
   set fullUrl = dbsdk_v1.ollama_getprotocol() concat '://' concat dbsdk_v1.ollama_getserver() concat ':' concat dbsdk_v1.ollama_getport() concat '/api/generate';
+  set payload = '' concat json_object('model': dbsdk_v1.ollama_getmodel(model_id), 'prompt': prompt, 'stream': false);
   
   select RESPONSE_MESSAGE, RESPONSE_HTTP_HEADER
   into response_message, response_header
   from table(QSYS2.HTTP_POST_VERBOSE(
                         fullUrl,
-                        json_object('model': dbsdk_v1.ollama_getmodel(), 'prompt': prompt, 'stream': false),
+                        payload,
                         http_options));
   call systools.lprintf('r: ' concat response_message);
   set response_code = json_value(response_header, '$.HTTP_STATUS_CODE');
