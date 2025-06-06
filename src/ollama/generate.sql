@@ -31,8 +31,8 @@ begin
   
   declare http_options varchar(32400) ccsid 1208 default '{"ioTimeout":2000000}';
   set fullUrl = dbsdk_v1.ollama_getprotocol() concat '://' concat dbsdk_v1.ollama_getserver() concat ':' concat dbsdk_v1.ollama_getport() concat '/api/generate';
-  set payload = '' concat json_object('model': dbsdk_v1.ollama_getmodel(model_id), 'prompt': prompt, 'stream': false);
-  
+  set payload = '' concat json_object('model': dbsdk_v1.ollama_getmodel(model_id), 'stream': dbsdk_v1.ollama_getstream(), 'prompt': prompt);
+
   select RESPONSE_MESSAGE, RESPONSE_HTTP_HEADER
   into response_message, response_header
   from table(QSYS2.HTTP_POST_VERBOSE(

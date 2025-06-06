@@ -15,7 +15,19 @@ begin
   return returnval;
 end;
 
-
+create or replace function dbsdk_v1.ollama_getstream(stream boolean default null)
+  returns boolean
+  modifies sql data
+begin
+  declare returnval boolean;
+  call dbsdk_v1.conf_initialize();
+  set returnval = stream;
+  if (returnval is not null) then return returnval;end if;
+  set returnval = dbsdk_v1.ollama_stream;
+  if (returnval is not null) then return returnval;end if;
+  set returnval = (select ollama_stream from dbsdk_v1.conf where USRPRF = CURRENT_USER);
+  return returnval;
+end;
 -- ### procedure: `ollama_setserverforjob`
 
 -- **Description:** sets the ollama server to be used for this job
