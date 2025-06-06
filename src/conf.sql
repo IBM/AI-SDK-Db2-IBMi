@@ -11,7 +11,7 @@ create or replace variable dbsdk_v1.ollama_protocol     varchar(16)   ccsid 1208
 create or replace variable dbsdk_v1.ollama_server       varchar(1000) ccsid 1208 default null;
 create or replace variable dbsdk_v1.ollama_port         INT                      default NULL;
 create or replace variable dbsdk_v1.ollama_model        varchar(1000) ccsid 1208 default NULL;
-create or replace variable dbsdk_v1.ollama_stream	varchar(5)    ccsid 1208 default 'false';
+create or replace variable dbsdk_v1.ollama_stream	    boolean                  default false;
 
 -- variables for openai compatible
 create or replace variable dbsdk_v1.openai_compatible_protocol     varchar(16)   ccsid 1208 default null;
