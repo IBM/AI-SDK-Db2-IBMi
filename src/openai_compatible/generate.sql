@@ -72,7 +72,7 @@ begin
   
   -- Get parameters from options JSON
   set model_id = json_value(options, '$.model_id');
-  set max_tokens = coalesce(json_value(options, '$.max_tokens'), -1);
+  set max_tokens = coalesce(json_value(options, '$.max_tokens'), 256);
   set temperature = coalesce(json_value(options, '$.temperature'), 1);
   set top_p = coalesce(json_value(options, '$.top_p'), 1);
   set n = coalesce(json_value(options, '$.n'), 1);
