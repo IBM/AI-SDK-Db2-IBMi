@@ -196,7 +196,8 @@ begin
     
     return response_text;
   end if;
-  
+  set response_text = 'An error has occured. Check the job log. HTTP response code was ' concat response_code concat ' from ' concat fullUrl;
+  signal sqlstate '38002' set message_text = response_text;
   return null;
 end;
 
