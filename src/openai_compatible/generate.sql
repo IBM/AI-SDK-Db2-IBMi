@@ -23,6 +23,8 @@
 --   - `user`: Unique identifier for the end user.
 --   - `seed`: Seed for deterministic sampling.
 --   - `suffix`: Suffix after completion insertion (for compatible models only).
+-- - `apikey` (optional): API key for authentication. If not provided, uses configured key.
+-- - `base_url` (optional): Base URL for the API endpoint. If not provided, uses configured endpoint settings.
 -- 
 -- **Return type:** 
 -- - `clob(2G) ccsid 1208`
@@ -35,7 +37,9 @@
 
 create or replace function dbsdk_v1.openai_compatible_generate(
   prompt varchar(32000) ccsid 1208,
-  options varchar(32000) ccsid 1208 default '{}'
+  options varchar(32000) ccsid 1208 default '{}',
+  api_key_  varchar(8000) ccsid 1208 default NULL,
+  base_url varchar(1000) ccsid 1208 default NULL
 ) 
   returns clob(2G) ccsid 1208
   modifies sql data
@@ -90,14 +94,23 @@ begin
   -- unsupported options
   
   -- Get API key for authentication
-  set api_key = dbsdk_v1.openai_compatible_getapikey();
-  
+  if (api_key_ is null) then
+    set api_key = dbsdk_v1.openai_compatible_getapikey();
+  else
+    set api_key = api_key_;
+  end if;
   -- Build the URL for the OpenAI compatible API endpoint
-  set fullUrl = dbsdk_v1.openai_compatible_getprotocol() concat '://' 
-              concat dbsdk_v1.openai_compatible_getserver() 
-              concat ':' concat dbsdk_v1.openai_compatible_getport() 
-              concat dbsdk_v1.openai_compatible_getbasepath() 
-              concat '/completions';
+  if (base_url is not null and trim(base_url) <> '') then
+    -- Use provided base URL
+    set fullUrl = base_url concat '/completions';
+  else
+    -- Use configured endpoint settings
+    set fullUrl = dbsdk_v1.openai_compatible_getprotocol() concat '://' 
+                concat dbsdk_v1.openai_compatible_getserver() 
+                concat ':' concat dbsdk_v1.openai_compatible_getport() 
+                concat dbsdk_v1.openai_compatible_getbasepath() 
+                concat '/completions';
+  end if;
   
   -- Set HTTP options including headers
   if (api_key is not null and trim(api_key) <> '') then
@@ -125,8 +138,6 @@ begin
     'temperature': temperature,
     'top_p': top_p,
     'n': n,
-    'stream': CAST(stream as boolean),
-    'echo': CAST(echo as boolean),
     'presence_penalty': presence_penalty,
     'frequency_penalty': frequency_penalty
   );
@@ -212,6 +223,8 @@ end;
 --   - `user`: Unique identifier for the end user.
 --   - `seed`: Seed for deterministic sampling.
 --   - `suffix`: Suffix after completion insertion (for compatible models only).
+-- - `api_key_` (optional): API key for authentication. If not provided, uses configured key.
+-- - `base_url` (optional): Base URL for the API endpoint. If not provided, uses configured endpoint settings.
 -- 
 -- **Return type:** 
 -- - `clob(2G) ccsid 1208`
@@ -224,7 +237,9 @@ end;
 
 create or replace function dbsdk_v1.openai_compatible_generate_json(
   prompt varchar(32000) ccsid 1208,
-  options varchar(32000) ccsid 1208 default '{}'
+  options varchar(32000) ccsid 1208 default '{}',
+  api_key_  varchar(8000) ccsid 1208 default NULL,
+  base_url varchar(1000) ccsid 1208 default NULL
 ) 
   returns clob(2G) ccsid 1208
   modifies sql data
@@ -279,14 +294,24 @@ begin
   -- unsupported options
   
   -- Get API key for authentication
-  set api_key = dbsdk_v1.openai_compatible_getapikey();
+  if (api_key_ is null) then
+    set api_key = dbsdk_v1.openai_compatible_getapikey();
+  else
+    set api_key = api_key_;
+  end if;
   
   -- Build the URL for the OpenAI compatible API endpoint
-  set fullUrl = dbsdk_v1.openai_compatible_getprotocol() concat '://' 
-              concat dbsdk_v1.openai_compatible_getserver() 
-              concat ':' concat dbsdk_v1.openai_compatible_getport() 
-              concat dbsdk_v1.openai_compatible_getbasepath() 
-              concat '/completions';
+  if (base_url is not null and trim(base_url) <> '') then
+    -- Use provided base URL
+    set fullUrl = base_url concat '/completions';
+  else
+    -- Use configured endpoint settings
+    set fullUrl = dbsdk_v1.openai_compatible_getprotocol() concat '://' 
+                concat dbsdk_v1.openai_compatible_getserver() 
+                concat ':' concat dbsdk_v1.openai_compatible_getport() 
+                concat dbsdk_v1.openai_compatible_getbasepath() 
+                concat '/completions';
+  end if;
   
   -- Set HTTP options including headers
   if (api_key is not null and trim(api_key) <> '') then
@@ -313,8 +338,6 @@ begin
     'temperature': temperature,
     'top_p': top_p,
     'n': n,
-    'stream': CAST(stream as boolean),
-    'echo': CAST(echo as boolean),
     'presence_penalty': presence_penalty,
     'frequency_penalty': frequency_penalty
   );

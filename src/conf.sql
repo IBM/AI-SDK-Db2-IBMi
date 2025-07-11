@@ -17,8 +17,13 @@ create or replace variable dbsdk_v1.openai_compatible_protocol     varchar(16)  
 create or replace variable dbsdk_v1.openai_compatible_server       varchar(1000) ccsid 1208 default null;
 create or replace variable dbsdk_v1.openai_compatible_port         INT                      default NULL;
 create or replace variable dbsdk_v1.openai_compatible_model        varchar(1000) ccsid 1208 default NULL;
-create or replace variable dbsdk_v1.openai_compatible_apikey       varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.openai_compatible_apikey       varchar(8000) ccsid 1208 default NULL;
 create or replace variable dbsdk_v1.openai_compatible_basepath     varchar(1000) ccsid 1208 default NULL;
+
+--variables for Wallaroo
+create or replace variable dbsdk_v1.wallaroo_tokenurl                      varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.wallaroo_confidential_client           varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.wallaroo_confidential_client_secret    varchar(8000) ccsid 1208 default NULL;
 
 -- variables for kafka
 create or replace variable dbsdk_v1.kafka_protocol     varchar(16)   ccsid 1208 default null;
@@ -51,8 +56,11 @@ create or replace table dbsdk_v1.conf
           openai_compatible_server varchar(1000) ccsid 1208 default 'localhost',
           openai_compatible_port INT default 8000,
           openai_compatible_model varchar(1000) ccsid 1208 default 'llama3',
-          openai_compatible_apikey varchar(1000) ccsid 1208 default NULL,
+          openai_compatible_apikey varchar(8000) ccsid 1208 default NULL,
           openai_compatible_basepath varchar(1000) ccsid 1208 default '/v1',
+          wallaroo_tokenurl varchar(1000) ccsid 1208 default NULL,
+          wallaroo_confidential_client varchar(1000) ccsid 1208 default NULL,
+          wallaroo_confidential_client_secret varchar(8000) ccsid 1208 default NULL,
           kafka_protocol varchar(16) ccsid 1208 default 'http',
           kafka_broker varchar(1000) ccsid 1208 default 'localhost',
           kafka_port int default 8082,
