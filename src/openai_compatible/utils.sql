@@ -182,10 +182,10 @@ end;
 
 -- Function for API key management
 create or replace function dbsdk_v1.openai_compatible_getapikey(api_key varchar(8000) ccsid 1208 default NULL) 
-  returns varchar(1000) ccsid 1208
+  returns varchar(8000) ccsid 1208
   modifies sql data
 begin
-  declare returnval varchar(1000) ccsid 1208;
+  declare returnval varchar(8000) ccsid 1208;
   call dbsdk_v1.conf_initialize();
   set returnval = api_key;
   if (returnval is not null) then return returnval;end if;
