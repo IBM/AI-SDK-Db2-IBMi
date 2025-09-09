@@ -181,7 +181,7 @@ begin
 end;
 
 -- Function for API key management
-create or replace function dbsdk_v1.openai_compatible_getapikey(api_key varchar(1000) ccsid 1208 default NULL) 
+create or replace function dbsdk_v1.openai_compatible_getapikey(api_key varchar(8000) ccsid 1208 default NULL) 
   returns varchar(1000) ccsid 1208
   modifies sql data
 begin
@@ -201,7 +201,7 @@ end;
 
 -- **Input parameters:**
 -- - `API_KEY` (required): The API key for authentication.
-create or replace procedure dbsdk_v1.openai_compatible_setapikeyforjob(api_key varchar(1000) ccsid 1208 default NULL) 
+create or replace procedure dbsdk_v1.openai_compatible_setapikeyforjob(api_key varchar(8000) ccsid 1208 default NULL) 
   modifies SQL DATA
 begin
   set dbsdk_v1.openai_compatible_apikey = api_key;
@@ -213,7 +213,7 @@ end;
 -- 
 -- **Input parameters:**
 -- - `API_KEY` (required): The API key for authentication.
-create or replace procedure dbsdk_v1.openai_compatible_setapikeyforme(api_key varchar(1000) ccsid 1208 default NULL) 
+create or replace procedure dbsdk_v1.openai_compatible_setapikeyforme(api_key varchar(8000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin
   MERGE INTO dbsdk_v1.conf tt USING (

@@ -48,14 +48,14 @@ begin
   declare response_header clob(32K) ccsid 1208;
   declare response_message clob(2G) ccsid 1208;
   declare response_code int default 500;
-  declare api_key varchar(1000) ccsid 1208;
+  declare api_key varchar(8000) ccsid 1208;
   declare http_options varchar(32400) ccsid 1208;
   declare response_text clob(2G) ccsid 1208;
   declare req_body clob(64K) ccsid 1208;
   
   -- Extract parameters from options
   declare model_id varchar(1000) ccsid 1208;
-  declare max_tokens integer default -1;
+  declare max_tokens integer default 256;
   declare temperature decimal(3,1);
   declare top_p decimal(3,1);
   declare n integer;
@@ -72,7 +72,7 @@ begin
   
   -- Get parameters from options JSON
   set model_id = json_value(options, '$.model_id');
-  set max_tokens = coalesce(json_value(options, '$.max_tokens'), -1);
+  set max_tokens = coalesce(json_value(options, '$.max_tokens'), 256);
   set temperature = coalesce(json_value(options, '$.temperature'), 1);
   set top_p = coalesce(json_value(options, '$.top_p'), 1);
   set n = coalesce(json_value(options, '$.n'), 1);
@@ -237,14 +237,14 @@ begin
   declare response_header clob(32K) ccsid 1208;
   declare response_message clob(2G) ccsid 1208;
   declare response_code int default 500;
-  declare api_key varchar(1000) ccsid 1208;
+  declare api_key varchar(8000) ccsid 1208;
   declare http_options varchar(32400) ccsid 1208;
   declare response_text clob(2G) ccsid 1208;
   declare req_body clob(64K) ccsid 1208;
   
   -- Extract parameters from options
   declare model_id varchar(1000) ccsid 1208;
-  declare max_tokens integer default -1;
+  declare max_tokens integer default 256;
   declare temperature decimal(3,1);
   declare top_p decimal(3,1);
   declare n integer;
@@ -261,7 +261,7 @@ begin
   
   -- Get parameters from options JSON
   set model_id = json_value(options, '$.model_id');
-  set max_tokens = coalesce(json_value(options, '$.max_tokens'), -1);
+  set max_tokens = coalesce(json_value(options, '$.max_tokens'), 256);
   set temperature = coalesce(json_value(options, '$.temperature'), 1);
   set top_p = coalesce(json_value(options, '$.top_p'), 1);
   set n = coalesce(json_value(options, '$.n'), 1);
