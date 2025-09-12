@@ -22,6 +22,7 @@ create or replace function dbsdk_v1.wx_generate(
 )
   returns varchar(10000) ccsid 1208
   not deterministic
+  MODIFIES SQL DATA
   no external action
   set option usrprf = *user, dynusrprf = *user, commit = *none
 begin
