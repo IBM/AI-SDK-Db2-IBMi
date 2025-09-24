@@ -29,7 +29,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, twilio_number) VALUES (live.usrprf,
       live.twilio_number)
-  WHEN MATCHED THEN UPDATE SET (usrprf, twilio_number) = (live.usrprf, live.twilio_number);
+  WHEN MATCHED THEN UPDATE SET twilio_number = live.twilio_number;
 end;
 
 create or replace function dbsdk_v1.twilio_getsid(account_sid varchar(1000) ccsid 1208 default NULL) 
@@ -75,7 +75,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, twilio_sid) VALUES (live.usrprf,
       live.twilio_sid)
-  WHEN MATCHED THEN UPDATE SET (usrprf, twilio_sid) = (live.usrprf, live.twilio_sid);
+  WHEN MATCHED THEN UPDATE SET twilio_sid = live.twilio_sid;
 end;
 
 
@@ -127,5 +127,5 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, twilio_authtoken) VALUES (live.usrprf,
       live.twilio_authtoken)
-  WHEN MATCHED THEN UPDATE SET (usrprf, twilio_authtoken) = (live.usrprf, live.twilio_authtoken);
+  WHEN MATCHED THEN UPDATE SET twilio_authtoken = live.twilio_authtoken;
 end;

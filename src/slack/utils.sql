@@ -43,5 +43,5 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, slack_webhook) VALUES (live.usrprf,
       live.slack_webhook)
-  WHEN MATCHED THEN UPDATE SET (usrprf, slack_webhook) = (live.usrprf, live.slack_webhook);
+  WHEN MATCHED THEN UPDATE SET slack_webhook = live.slack_webhook;
 end;
