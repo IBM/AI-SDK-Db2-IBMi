@@ -42,7 +42,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, openai_compatible_server) VALUES (live.usrprf,
       live.openai_compatible_server)
-  WHEN MATCHED THEN UPDATE SET (usrprf, openai_compatible_server) = (live.usrprf, live.openai_compatible_server);
+  WHEN MATCHED THEN UPDATE SET openai_compatible_server = live.openai_compatible_server;
 end;
 
 create or replace function dbsdk_v1.openai_compatible_getport(port INT default NULL) 
@@ -87,7 +87,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, openai_compatible_port) VALUES (live.usrprf,
       live.openai_compatible_port)
-  WHEN MATCHED THEN UPDATE SET (usrprf, openai_compatible_port) = (live.usrprf, live.openai_compatible_port);
+  WHEN MATCHED THEN UPDATE SET openai_compatible_port = live.openai_compatible_port;
 end;
 
 create or replace function dbsdk_v1.openai_compatible_getmodel(model varchar(1000) ccsid 1208 default NULL) 
@@ -132,7 +132,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, openai_compatible_model) VALUES (live.usrprf,
       live.openai_compatible_model)
-  WHEN MATCHED THEN UPDATE SET (usrprf, openai_compatible_model) = (live.usrprf, live.openai_compatible_model);
+  WHEN MATCHED THEN UPDATE SET openai_compatible_model = live.openai_compatible_model;
 end;
 
 create or replace function dbsdk_v1.openai_compatible_getprotocol(protocol varchar(1000) ccsid 1208 default NULL) 
@@ -177,7 +177,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, openai_compatible_protocol) VALUES (live.usrprf,
       live.openai_compatible_protocol)
-  WHEN MATCHED THEN UPDATE SET (usrprf, openai_compatible_protocol) = (live.usrprf, live.openai_compatible_protocol);
+  WHEN MATCHED THEN UPDATE SET openai_compatible_protocol = live.openai_compatible_protocol;
 end;
 
 -- Function for API key management
@@ -223,7 +223,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, openai_compatible_apikey) VALUES (live.usrprf,
       live.openai_compatible_apikey)
-  WHEN MATCHED THEN UPDATE SET (usrprf, openai_compatible_apikey) = (live.usrprf, live.openai_compatible_apikey);
+  WHEN MATCHED THEN UPDATE SET openai_compatible_apikey = live.openai_compatible_apikey;
 end;
 
 -- Function for base path configuration (for servers with non-standard API paths)
@@ -269,7 +269,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, openai_compatible_basepath) VALUES (live.usrprf,
       live.openai_compatible_basepath)
-  WHEN MATCHED THEN UPDATE SET (usrprf, openai_compatible_basepath) = (live.usrprf, live.openai_compatible_basepath);
+  WHEN MATCHED THEN UPDATE SET openai_compatible_basepath = live.openai_compatible_basepath;
 end;
 
 -- ## JSON Object Update Function

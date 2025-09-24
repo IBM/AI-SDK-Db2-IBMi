@@ -43,7 +43,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, kafka_broker) VALUES (live.usrprf,
       live.kafka_broker)
-  WHEN MATCHED THEN UPDATE SET (usrprf, kafka_broker) = (live.usrprf, live.kafka_broker);
+  WHEN MATCHED THEN UPDATE SET kafka_broker = live.kafka_broker;
 end;
 
 create or replace function dbsdk_v1.kafka_getport(port INT default NULL) 
@@ -89,7 +89,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, kafka_port) VALUES (live.usrprf,
       live.kafka_port)
-  WHEN MATCHED THEN UPDATE SET (usrprf, kafka_port) = (live.usrprf, live.kafka_port);
+  WHEN MATCHED THEN UPDATE SET kafka_port = live.kafka_port;
 end;
 
 
@@ -136,7 +136,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, kafka_topic) VALUES (live.usrprf,
       live.kafka_topic)
-  WHEN MATCHED THEN UPDATE SET (usrprf, kafka_topic) = (live.usrprf, live.kafka_topic);
+  WHEN MATCHED THEN UPDATE SET kafka_topic = live.kafka_topic;
 end;
 
 create or replace function dbsdk_v1.kafka_getprotocol(protocol varchar(1000) ccsid 1208 default NULL) 
@@ -181,5 +181,5 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, kafka_protocol) VALUES (live.usrprf,
       live.kafka_protocol)
-  WHEN MATCHED THEN UPDATE SET (usrprf, kafka_protocol) = (live.usrprf, live.kafka_protocol);
+  WHEN MATCHED THEN UPDATE SET kafka_protocol = live.kafka_protocol;
 end;

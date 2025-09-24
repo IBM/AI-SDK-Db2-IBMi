@@ -46,7 +46,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, ollama_server) VALUES (live.usrprf,
       live.ollama_server)
-  WHEN MATCHED THEN UPDATE SET (usrprf, ollama_server) = (live.usrprf, live.ollama_server);
+  WHEN MATCHED THEN UPDATE SET ollama_server = live.ollama_server;
 end;
 
 
@@ -95,7 +95,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, ollama_port) VALUES (live.usrprf,
       live.ollama_port)
-  WHEN MATCHED THEN UPDATE SET (usrprf, ollama_port) = (live.usrprf, live.ollama_port);
+  WHEN MATCHED THEN UPDATE SET ollama_port = live.ollama_port;
 end;
 
 
@@ -144,7 +144,7 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, ollama_model) VALUES (live.usrprf,
       live.ollama_model)
-  WHEN MATCHED THEN UPDATE SET (usrprf, ollama_model) = (live.usrprf, live.ollama_model);
+  WHEN MATCHED THEN UPDATE SET ollama_model = live.ollama_model;
 end;
 
 create or replace function dbsdk_v1.ollama_getprotocol(protocol varchar(1000) ccsid 1208 default NULL) 
@@ -192,5 +192,5 @@ begin
   ON tt.usrprf = live.usrprf
   WHEN NOT MATCHED THEN INSERT (usrprf, ollama_protocol) VALUES (live.usrprf,
       live.ollama_protocol)
-  WHEN MATCHED THEN UPDATE SET (usrprf, ollama_protocol) = (live.usrprf, live.ollama_protocol);
+  WHEN MATCHED THEN UPDATE SET ollama_protocol = live.ollama_protocol;
 end;
