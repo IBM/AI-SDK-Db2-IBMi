@@ -29,6 +29,11 @@ export default defineConfig({
 					collapsed: true
 				},
 				{
+					label: 'Wallaroo',
+					autogenerate: { directory: 'wallaroo' }, 
+					collapsed: true
+				},
+				{
 					label: 'Kafka',
 					autogenerate: { directory: 'kafka' }, 
 					collapsed: true
