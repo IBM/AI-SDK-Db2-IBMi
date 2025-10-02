@@ -91,13 +91,13 @@ begin
   set dbsdk_v1.wallaroo_tokenurl = token_url;
 end;
 
--- ### procedure: `wallaroo_set_token_url_for_me`
+-- ### procedure: `wallaroo_set_token_url_forme`
 
 -- **Description:** sets the Wallaroo token URL to be used for this user profile (persists across jobs)
 
 -- **Input parameters:**
 -- - `TOKEN_URL` (required): The token URL for Wallaroo authentication.
-create or replace procedure dbsdk_v1.wallaroo_set_token_url_for_me(token_url varchar(1000) ccsid 1208 default NULL) 
+create or replace procedure dbsdk_v1.wallaroo_set_token_url_forme(token_url varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin
   MERGE INTO dbsdk_v1.conf tt USING (
@@ -122,13 +122,13 @@ begin
   set dbsdk_v1.wallaroo_confidential_client = client;
 end;
 
--- ### procedure: `wallaroo_set_confidential_client_for_me`
+-- ### procedure: `wallaroo_set_confidential_client_forme`
 
 -- **Description:** sets the Wallaroo confidential client to be used for this user profile (persists across jobs)
 
 -- **Input parameters:**
 -- - `CLIENT` (required): The confidential client identifier for Wallaroo authentication.
-create or replace procedure dbsdk_v1.wallaroo_set_confidential_client_for_me(client varchar(1000) ccsid 1208 default NULL) 
+create or replace procedure dbsdk_v1.wallaroo_set_confidential_client_forme(client varchar(1000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin
   MERGE INTO dbsdk_v1.conf tt USING (
@@ -153,13 +153,13 @@ begin
   set dbsdk_v1.wallaroo_confidential_client_secret = conf_secret;
 end;
 
--- ### procedure: `wallaroo_set_confidential_client_secret_for_me`
+-- ### procedure: `wallaroo_set_confidential_client_secret_forme`
 
 -- **Description:** sets the Wallaroo confidential client secret to be used for this user profile (persists across jobs)
 
 -- **Input parameters:**
 -- - `CONF_SECRET` (required): The confidential client secret for Wallaroo authentication.
-create or replace procedure dbsdk_v1.wallaroo_set_confidential_client_secret_for_me(conf_secret varchar(8000) ccsid 1208 default NULL) 
+create or replace procedure dbsdk_v1.wallaroo_set_confidential_client_secret_forme(conf_secret varchar(8000) ccsid 1208 default NULL) 
   MODIFIES SQL DATA
 begin
   MERGE INTO dbsdk_v1.conf tt USING (
