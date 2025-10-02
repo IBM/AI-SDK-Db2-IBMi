@@ -1,0 +1,267 @@
+---
+title: Usage
+Description: Usage
+sidebar:
+    order: 1
+---
+
+This module allows you to connect to Wallaroo AI endpoints using OAuth2 authentication. Wallaroo provides OpenAI-compatible APIs, so the configuration includes both Wallaroo-specific OAuth2 settings and OpenAI-compatible endpoint settings.
+
+## Setup
+
+Before using the Wallaroo functionality, you need to configure both the OAuth2 authentication and endpoint details:
+
+### Wallaroo OAuth2 Authentication
+
+Configure the OAuth2 client credentials for authentication:
+
+```sql
+-- Set Wallaroo OAuth2 authentication for current job
+CALL dbsdk_v1.wallaroo_set_token_url_for_job('https://YOUR_WALLAROO_SERVER/auth/realms/master/protocol/openid-connect/token');
+CALL dbsdk_v1.wallaroo_set_confidential_client_for_job('api-client');
+CALL dbsdk_v1.wallaroo_set_confidential_client_secret_for_job('your-client-secret');
+```
+
+To make these settings persistent across jobs for your user profile:
+
+```sql
+CALL dbsdk_v1.wallaroo_set_token_url_for_me('https://YOUR_WALLAROO_SERVER/auth/realms/master/protocol/openid-connect/token');
+CALL dbsdk_v1.wallaroo_set_confidential_client_for_me('api-client');
+CALL dbsdk_v1.wallaroo_set_confidential_client_secret_for_me('your-client-secret');
+```
+
+### OpenAI-Compatible Endpoint Configuration
+
+Since Wallaroo provides OpenAI-compatible APIs, you also need to configure the endpoint settings:
+
+```sql
+-- Set OpenAI-compatible endpoint settings for current job
+CALL dbsdk_v1.openai_compatible_setserverforjob('YOUR_WALLAROO_SERVER');
+CALL dbsdk_v1.openai_compatible_setbasepathforjob('/v1/api/pipelines/infer/llama-3dot1-8b-pipe-2/llama-3dot1-8b-pipe/openai/v1');
+CALL dbsdk_v1.openai_compatible_setprotocolforjob('https');
+
+-- Optional: Set the model identifier (often empty for Wallaroo)
+CALL dbsdk_v1.openai_compatible_setmodelforjob('');
+```
+
+To make these settings persistent across jobs for your user profile:
+
+```sql
+CALL dbsdk_v1.openai_compatible_setserverforme('YOUR_WALLAROO_SERVER');
+CALL dbsdk_v1.openai_compatible_setbasepathforme('/v1/api/pipelines/infer/llama-3dot1-8b-pipe-2/llama-3dot1-8b-pipe/openai/v1');
+CALL dbsdk_v1.openai_compatible_setprotocolforme('https');
+CALL dbsdk_v1.openai_compatible_setmodelforme('');  -- Optional
+```
+
+### Verify Configuration
+
+You can verify your configuration settings:
+
+```sql
+VALUES('Token URL: ' || COALESCE(dbsdk_v1.wallaroo_get_token_url(), 'NOT SET'));
+VALUES('Client ID: ' || COALESCE(dbsdk_v1.wallaroo_get_confidential_client(), 'NOT SET'));
+VALUES('Client Secret: ' || CASE WHEN dbsdk_v1.wallaroo_get_confidential_client_secret() IS NOT NULL THEN 'SET' ELSE 'NOT SET' END);
+VALUES('Server: ' || COALESCE(dbsdk_v1.openai_compatible_getserver(), 'NOT SET'));
+VALUES('Base Path: ' || COALESCE(dbsdk_v1.openai_compatible_getbasepath(), 'NOT SET'));
+VALUES('Protocol: ' || COALESCE(dbsdk_v1.openai_compatible_getprotocol(), 'NOT SET'));
+```
+
+## Basic Usage
+
+### Text Generation
+
+To generate text using Wallaroo AI:
+
+```sql
+SELECT dbsdk_v1.wallaroo_generate('Why are armadillos so cute?') as response
+FROM sysibm.sysdummy1;
+```
+
+### Set `max_tokens`
+
+It is recommended to specify a value for `max_tokens` depending on your task:
+
+```sql
+SELECT dbsdk_v1.wallaroo_generate(
+  'Explain quantum computing in simple terms',
+  '{"max_tokens": 200}'
+) as response FROM sysibm.sysdummy1;
+```
+
+### Optional Parameters
+
+The `wallaroo_generate` function supports a wide range of optional parameters through a JSON options object:
+
+```sql
+SELECT dbsdk_v1.wallaroo_generate(
+  'Tell me a story about a dragon',
+  '{
+    "max_tokens": 150,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "frequency_penalty": 0.1,
+    "presence_penalty": 0.1,
+    "seed": 42
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+#### Supported Parameters
+
+See official [OpenAI API Reference](https://platform.openai.com/docs/api-reference/completions/create) for full breakdown of optional parameters.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `model_id` | string | (configured model) | The model to use for generation |
+| `max_tokens` | integer | 256 | Maximum number of tokens to generate |
+| `temperature` | decimal | 1.0 | Controls randomness (0-2). Lower is more deterministic |
+| `top_p` | decimal | 1.0 | Nucleus sampling probability cutoff |
+| `n` | integer | 1 | Number of completions to generate |
+| `stream` | boolean | false | Whether to stream back partial progress |
+| `logprobs` | integer | null | Include log probabilities on most likely tokens |
+| `echo` | boolean | false | Echo back the prompt in the completion |
+| `stop` | string | null | Sequences where generation should stop |
+| `presence_penalty` | decimal | 0.0 | Penalty between -2.0 and 2.0 for tokens based on presence |
+| `frequency_penalty` | decimal | 0.0 | Penalty between -2.0 and 2.0 for tokens based on frequency |
+| `logit_bias` | object | null | JSON object mapping tokens to bias values |
+| `user` | string | null | Unique identifier for the end user |
+| `seed` | integer | null | Seed for deterministic sampling |
+| `suffix` | string | null | Suffix after completion insertion (for compatible models only) |
+
+Here are some key parameters explained:
+
+- **temperature**: Controls randomness in token selection. Lower values (e.g., 0.2) make the output more focused and deterministic, while higher values (e.g., 0.8) make it more creative.
+
+- **max_tokens**: Sets the maximum length of the generated text. Increase for longer responses, decrease for shorter ones.
+
+- **top_p**: An alternative to temperature for controlling randomness. Sets a probability threshold for token selection.
+
+- **frequency_penalty**: Reduces repetition by penalizing tokens that have already appeared in the text. Higher values (0.8) strongly discourage repetition.
+
+- **presence_penalty**: Similar to frequency_penalty, but penalizes tokens based on their presence regardless of how many times they've appeared.
+
+- **seed**: When provided, attempts to make outputs deterministic. Good for reproducible results.
+
+### JSON Generation
+
+For structured data or to get the complete API response, use the JSON-specific function:
+
+```sql
+SELECT dbsdk_v1.wallaroo_generate_json(
+  'Write a haiku about databases',
+  '{
+    "max_tokens": 100,
+    "temperature": 0.8
+  }'
+) as json_response
+FROM sysibm.sysdummy1;
+```
+
+The `wallaroo_generate_json` function returns the complete API response as a JSON object, allowing you to access not only the generated content but also metadata such as token usage statistics.
+
+### Parsing JSON Response
+
+You can parse specific fields from the JSON response:
+
+```sql
+VALUES JSON_VALUE(
+  dbsdk_v1.wallaroo_generate_json('Why are armadillos so cute?', '{}'),
+  '$.choices[0].text'
+);
+```
+
+### Custom Base URL
+
+If your Wallaroo endpoint uses a different URL structure, you can specify a custom base URL directly in the function call:
+
+```sql
+SELECT dbsdk_v1.wallaroo_generate(
+  'What is machine learning?',
+  '{"max_tokens": 150, "temperature": 0.5}',
+  'https://custom.wallaroo.io/v1/api/pipelines/infer/my-pipeline/openai/v1/completions'
+) as response
+FROM sysibm.sysdummy1;
+```
+
+## API Response Format
+
+The Wallaroo API response follows the OpenAI-compatible structure:
+
+```json
+{
+  "choices": [
+    {
+      "text": "** GENERATED TEXT HERE **",
+      "index": 0,
+      "logprobs": null,
+      "finish_reason": "length"
+    }
+  ],
+  "created": 1746039098,
+  "model": "llama3",
+  "system_fingerprint": "b5043-c262bedd",
+  "object": "text_completion",
+  "usage": {
+    "completion_tokens": 100,
+    "prompt_tokens": 13,
+    "total_tokens": 113
+  },
+  "id": "chatcmpl-OW6vxJUGFMwUyg6HPGHYO1Uaza3VeXRj"
+}
+```
+
+The regular `wallaroo_generate` function extracts just the text content from `choices[0].text`, while the `wallaroo_generate_json` function returns the entire JSON response.
+
+## Authentication
+
+Wallaroo uses OAuth2 client credentials flow for authentication:
+
+1. The SDK automatically requests an access token from the configured token URL
+2. The access token is used to authenticate requests to the Wallaroo API
+3. Tokens are managed automatically - you just need to configure the client credentials
+
+The OAuth2 flow is handled internally, so you don't need to manage tokens manually.
+
+## Configuration Functions
+
+### Wallaroo OAuth2 Configuration
+
+- `wallaroo_get_token_url()` - Gets the current OAuth2 token URL
+- `wallaroo_set_token_url_for_job()` - Sets the token URL for the current job
+- `wallaroo_set_token_url_for_me()` - Sets the token URL persistently for your user profile
+
+- `wallaroo_get_confidential_client()` - Gets the current OAuth2 client ID
+- `wallaroo_set_confidential_client_for_job()` - Sets the client ID for the current job
+- `wallaroo_set_confidential_client_for_me()` - Sets the client ID persistently for your user profile
+
+- `wallaroo_get_confidential_client_secret()` - Gets the current OAuth2 client secret
+- `wallaroo_set_confidential_client_secret_for_job()` - Sets the client secret for the current job
+- `wallaroo_set_confidential_client_secret_for_me()` - Sets the client secret persistently for your user profile
+
+### OpenAI-Compatible Endpoint Configuration
+
+Since Wallaroo provides OpenAI-compatible APIs, you also have access to all OpenAI-compatible configuration functions:
+
+#### Server Configuration
+
+- `openai_compatible_getserver()` - Gets the current server hostname/IP
+- `openai_compatible_setserverforjob()` - Sets the server for the current job
+- `openai_compatible_setserverforme()` - Sets the server persistently for your user profile
+
+#### Protocol Configuration
+
+- `openai_compatible_getprotocol()` - Gets the current protocol (http/https)
+- `openai_compatible_setprotocolforjob()` - Sets the protocol for the current job
+- `openai_compatible_setprotocolforme()` - Sets the protocol persistently for your user profile
+
+#### Base Path Configuration
+
+- `openai_compatible_getbasepath()` - Gets the current base path
+- `openai_compatible_setbasepathforjob()` - Sets the base path for the current job
+- `openai_compatible_setbasepathforme()` - Sets the base path persistently for your user profile
+
+#### Model Configuration
+
+- `openai_compatible_getmodel()` - Gets the current model
+- `openai_compatible_setmodelforjob()` - Sets the model for the current job
+- `openai_compatible_setmodelforme()` - Sets the model persistently for your user profile

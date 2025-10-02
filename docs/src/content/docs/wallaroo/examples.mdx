@@ -1,16 +1,199 @@
 ---
-title: Examples 
+title: Examples
 Description: Examples
 sidebar:
     order: 2
 ---
 
-This page provides practical examples of using Wallaroo endpoints in your DB2 for IBM i applications.
+This page provides practical examples of using Wallaroo AI endpoints in your DB2 for IBM i applications.
+
+**Note:** Before running these examples, make sure to configure your Wallaroo endpoint settings. See the [Usage](./usage) page for configuration instructions.
 
 ## Basic Examples
 
 ### Simple Text Generation
+```sql
+-- Generate text using Wallaroo AI
+SELECT dbsdk_v1.wallaroo_generate('Why are armadillos so cute?') as response
+FROM sysibm.sysdummy1;
+
+-- Generate with custom parameters
+SELECT dbsdk_v1.wallaroo_generate(
+  'Explain quantum computing in simple terms',
+  '{
+    "max_tokens": 200,
+    "temperature": 0.7,
+    "top_p": 0.9
+  }'
+) as response FROM sysibm.sysdummy1;
+```
+
+### JSON Response Generation
+
+Get complete JSON response from Wallaroo AI:
 
 ```sql
---- Examples coming soon!
+-- Get full JSON response
+SELECT dbsdk_v1.wallaroo_generate_json(
+  'Write a haiku about databases',
+  '{"max_tokens": 100, "temperature": 0.8}'
+) as json_response
+FROM sysibm.sysdummy1;
+
+-- Parse specific fields from JSON response
+SELECT
+  JSON_VALUE(response, '$.choices[0].text') as generated_text,
+  JSON_VALUE(response, '$.usage.total_tokens') as total_tokens,
+  JSON_VALUE(response, '$.model') as model_used
+FROM (
+  SELECT dbsdk_v1.wallaroo_generate_json(
+    'Write a haiku about databases',
+    '{
+      "max_tokens": 100,
+      "temperature": 0.8
+    }'
+  ) as response
+  FROM sysibm.sysdummy1
+);
 ```
+
+## Advanced Examples
+
+### Customer Feedback Analysis
+
+Analyze customer feedback using Wallaroo AI:
+
+```sql
+-- Create a sample table with customer feedback
+CREATE TABLE sample.customer_feedback (
+  feedback_id INT PRIMARY KEY,
+  customer_name VARCHAR(100),
+  product VARCHAR(100),
+  comment VARCHAR(1000)
+);
+
+INSERT INTO sample.customer_feedback VALUES
+  (1, 'John Smith', 'Database Suite', 'The performance is excellent and documentation is clear!'),
+  (2, 'Maria Garcia', 'Analytics Tool', 'Good product but needs better error messages'),
+  (3, 'Robert Chen', 'API Gateway', 'Terrible experience, nothing works as expected'),
+  (4, 'Sarah Johnson', 'Database Suite', 'Love the new features in the latest release');
+
+-- Analyze sentiment and extract insights
+SELECT
+  f.feedback_id,
+  f.customer_name,
+  f.product,
+  f.comment,
+  dbsdk_v1.wallaroo_generate(
+    'Analyze this customer feedback and provide: 1) Sentiment (Positive/Neutral/Negative), 2) Key topics, 3) Action items. Feedback: ' || f.comment,
+    '{"max_tokens": 200, "temperature": 0.3}'
+  ) as analysis
+FROM sample.customer_feedback f;
+```
+
+### Dynamic SQL Query Generation
+
+Use Wallaroo AI to generate SQL queries from natural language:
+
+```sql
+-- Set up a sample table for demonstration
+CREATE TABLE sample.employees (
+  id INT PRIMARY KEY,
+  name VARCHAR(100),
+  department VARCHAR(50),
+  salary DECIMAL(10,2)
+);
+
+-- Insert sample data
+INSERT INTO sample.employees VALUES
+  (1, 'John Smith', 'Engineering', 85000.00),
+  (2, 'Maria Garcia', 'Engineering', 92000.00),
+  (3, 'Robert Chen', 'Marketing', 78500.00),
+  (4, 'Sarah Johnson', 'Marketing', 81200.00),
+  (5, 'James Wilson', 'Finance', 95000.00),
+  (6, 'Aisha Patel', 'Finance', 98500.00),
+  (7, 'David Kim', 'Engineering', 78000.00);
+
+-- Generate SQL query from natural language request
+SELECT dbsdk_v1.wallaroo_generate(
+  'Write an SQL query to find the average salary by department for the sample.employees table with columns: id, name, department, salary',
+  '{"max_tokens": 150, "temperature": 0.1}'
+) as generated_query
+FROM sysibm.sysdummy1;
+```
+
+### Data Summarization
+
+Summarize data from a query:
+
+```sql
+-- Create sales data table
+CREATE TABLE sample.sales_data (
+  region VARCHAR(50),
+  q1_sales INT,
+  q2_sales INT,
+  q3_sales INT,
+  q4_sales INT
+);
+
+INSERT INTO sample.sales_data VALUES
+  ('North', 150000, 180000, 120000, 200000),
+  ('South', 120000, 110000, 140000, 130000),
+  ('East', 160000, 170000, 180000, 190000),
+  ('West', 130000, 140000, 150000, 160000);
+
+-- Generate a summary
+SELECT dbsdk_v1.wallaroo_generate(
+  'Analyze the following sales data and provide insights: ' ||
+  'Region: North, Q1: 150000, Q2: 180000, Q3: 120000, Q4: 200000. ' ||
+  'Region: South, Q1: 120000, Q2: 110000, Q3: 140000, Q4: 130000. ' ||
+  'Region: East, Q1: 160000, Q2: 170000, Q3: 180000, Q4: 190000. ' ||
+  'Region: West, Q1: 130000, Q2: 140000, Q3: 150000, Q4: 160000.',
+  '{"max_tokens": 500, "temperature": 0.7}'
+) as sales_summary
+FROM sysibm.sysdummy1;
+```
+
+## Integration Patterns
+
+### Storing AI-Generated Content
+
+```sql
+-- Create a table to store generated content
+CREATE TABLE sample.ai_generated_content (
+  content_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  prompt_text VARCHAR(1000),
+  generated_content VARCHAR(5000),
+  created_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Generate and store content
+INSERT INTO sample.ai_generated_content (prompt_text, generated_content)
+VALUES (
+  'Explain the benefits of DB2 for IBM i',
+  dbsdk_v1.wallaroo_generate(
+    'Explain the benefits of DB2 for IBM i',
+    '{"max_tokens": 300, "temperature": 0.7}'
+  )
+);
+
+-- Retrieve stored content
+SELECT * FROM sample.ai_generated_content
+ORDER BY created_timestamp DESC;
+```
+
+### Custom Base URL Support
+
+If your Wallaroo endpoint uses a different URL structure, you can specify a custom base URL:
+
+```sql
+-- Use custom base URL for a specific endpoint
+SELECT dbsdk_v1.wallaroo_generate(
+  'What is machine learning?',
+  '{"max_tokens": 150, "temperature": 0.5}',
+  'https://custom.wallaroo.io/v1/api/pipelines/infer/my-pipeline/openai/v1/completions'
+) as response
+FROM sysibm.sysdummy1;
+```
+
+These examples demonstrate how to leverage Wallaroo AI endpoints for various use cases in your IBM i applications, from simple text generation to complex business analytics and reporting workflows.
