@@ -1,0 +1,284 @@
+---
+title: Examples 
+Description: Examples
+sidebar:
+    order: 3
+---
+
+This page provides practical examples of using Anthropic's Claude AI models in your DB2 for IBM i applications.
+
+## Basic Examples
+
+### Simple Text Generation
+
+```sql
+-- Configure connection for this job
+CALL dbsdk_v1.anthropic_setserverforjob('api.anthropic.com');
+CALL dbsdk_v1.anthropic_setportforjob(443);
+CALL dbsdk_v1.anthropic_setprotocolforjob('https');
+CALL dbsdk_v1.anthropic_setapikeyforjob('your-anthropic-api-key');
+CALL dbsdk_v1.anthropic_setmodelforjob('claude-3-opus-20240229');
+
+-- Generate text
+SELECT dbsdk_v1.anthropic_generate('What is IBM i?') 
+FROM sysibm.sysdummy1;
+```
+
+### Different Models
+
+You can specify different Claude models for different use cases:
+
+```sql
+-- Use Claude Opus for complex tasks
+SELECT dbsdk_v1.anthropic_generate(
+  'Explain quantum computing in simple terms',
+  '{"model_id": "claude-3-opus-20240229"}'
+) FROM sysibm.sysdummy1;
+
+-- Use Claude Haiku for simple tasks (faster and more cost-effective)
+SELECT dbsdk_v1.anthropic_generate(
+  'Write a short greeting',
+  '{"model_id": "claude-3-haiku-20240307"}'
+) FROM sysibm.sysdummy1;
+```
+
+### Using Optional Parameters
+
+The anthropic_generate function accepts a JSON options object with many optional parameters to control the generation:
+
+```sql
+-- Using temperature and max_tokens to control generation
+SELECT dbsdk_v1.anthropic_generate(
+  'Tell me a creative story about a dragon',
+  '{
+    "temperature": 0.8,
+    "max_tokens": 1000
+  }'
+) FROM sysibm.sysdummy1;
+
+-- Using multiple parameters for more control
+SELECT dbsdk_v1.anthropic_generate(
+  'List 5 programming best practices',
+  '{
+    "model_id": "claude-3-sonnet-20240229", 
+    "temperature": 0.5,
+    "max_tokens": 500,
+    "top_p": 0.9
+  }'
+) FROM sysibm.sysdummy1;
+
+-- Using system instructions to guide Claude's behavior
+SELECT dbsdk_v1.anthropic_generate(
+  'Write a haiku about programming',
+  '{
+    "temperature": 0.7,
+    "max_tokens": 100,
+    "system": "You are a skilled poet specializing in haiku. Always respond with a haiku that follows the traditional 5-7-5 syllable pattern."
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+## Advanced Examples
+
+### Working with JSON Data
+
+Generate structured JSON data:
+
+```sql
+-- Create a JSON structure with information about database tables
+SELECT dbsdk_v1.anthropic_generate_json(
+  'Create a JSON structure with 3 fictional SQL tables, each with name, purpose, and 3 columns',
+  '{
+    "model_id": "claude-3-sonnet-20240229",
+    "temperature": 0.2,
+    "max_tokens": 1000,
+    "system": "You are a database expert. Always return valid, well-structured JSON."
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+### Dynamic SQL Generation
+
+Generate SQL queries based on natural language:
+
+```sql
+-- Set up a temporary table for demonstration
+CREATE TABLE employees_temp (
+  id INT PRIMARY KEY,
+  name VARCHAR(100),
+  department VARCHAR(50),
+  salary DECIMAL(10,2)
+);
+
+-- Insert sample data
+INSERT INTO employees_temp VALUES
+  (1, 'John Smith', 'Engineering', 85000.00),
+  (2, 'Maria Garcia', 'Engineering', 92000.00),
+  (3, 'Robert Chen', 'Marketing', 78500.00),
+  (4, 'Sarah Johnson', 'Marketing', 81200.00),
+  (5, 'James Wilson', 'Finance', 95000.00),
+  (6, 'Aisha Patel', 'Finance', 98500.00),
+  (7, 'David Kim', 'Engineering', 78000.00);
+
+-- Use Claude to generate SQL from natural language
+VALUES CAST(dbsdk_v1.anthropic_generate(
+  'Write an SQL query to find the average salary by department for the employees_temp table with columns: id, name, department, salary',
+  '{
+    "model_id": "claude-3-sonnet-20240229",
+    "temperature": 0.1,
+    "system": "You are an SQL expert. Generate only valid SQL code with no explanations."
+  }'
+) AS VARCHAR(1000));
+
+-- Execute the generated query (example of what might be returned by Claude)
+
+-- clean up table
+Drop table employees_temp;
+```
+
+### Data Summarization
+
+Summarize data from a query:
+
+```sql
+-- Assume we have a sales table
+-- Create and summarize data with a single WITH clause
+WITH 
+  sales_data AS (
+    SELECT 'North' as region, 150000 as q1_sales, 180000 as q2_sales, 120000 as q3_sales, 200000 as q4_sales FROM sysibm.sysdummy1
+    UNION ALL SELECT 'South', 120000, 110000, 140000, 130000 FROM sysibm.sysdummy1
+    UNION ALL SELECT 'East', 160000, 170000, 180000, 190000 FROM sysibm.sysdummy1
+    UNION ALL SELECT 'West', 130000, 140000, 150000, 160000 FROM sysibm.sysdummy1
+  ),
+  formatted_data AS (
+    SELECT LISTAGG('Region: ' || region || ', Q1: ' || q1_sales || ', Q2: ' || q2_sales || 
+                 ', Q3: ' || q3_sales || ', Q4: ' || q4_sales, '
+') AS sales_text
+    FROM sales_data
+  )
+-- Generate a summary
+SELECT dbsdk_v1.anthropic_generate(
+  'Analyze the following sales data and provide insights:
+' || sales_text,
+  '{
+    "model_id": "claude-3-sonnet-20240229",
+    "temperature": 0.7,
+    "max_tokens": 1000,
+    "system": "You are a data analyst. Provide clear, concise insights with specific numbers."
+  }'
+) FROM formatted_data;
+```
+
+### Content Classification
+
+Classify customer feedback:
+
+```sql
+-- Create a temporary table with customer feedback
+CREATE TABLE qtemp.feedback (
+  id INT PRIMARY KEY,
+  comment VARCHAR(1000)
+);
+
+INSERT INTO qtemp.feedback VALUES
+  (1, 'I love your product, it works perfectly!'),
+  (2, 'The software is good but the documentation could be better'),
+  (3, 'This is terrible, nothing works as expected');
+
+-- Classify each feedback
+SELECT 
+  f.id,
+  f.comment,
+  dbsdk_v1.anthropic_generate_json(
+    'Classify the following customer feedback into one of these categories: Positive, Neutral, Negative. Return just a JSON with a single "category" field.
+    
+    Feedback: ' || f.comment,
+    '{
+      "temperature": 0.1,
+      "max_tokens": 50,
+      "system": "You are a sentiment analysis expert. Always return valid JSON with a single category field."
+    }'
+  ) AS classification
+FROM qtemp.feedback f;
+```
+
+## Integration Examples
+
+### Storing Generated Content in a Table
+
+Generate and store content in a table:
+
+```sql
+-- Create a table to store the generated content
+CREATE TABLE mylib.generated_content (
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  prompt VARCHAR(1000),
+  content CLOB(2G),
+  model VARCHAR(100),
+  generation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Generate and store content
+INSERT INTO mylib.generated_content (prompt, content, model)
+SELECT 'Write a short poem about databases', 
+       dbsdk_v1.anthropic_generate(
+         'Write a short poem about databases',
+         '{
+           "temperature": 0.7,
+           "max_tokens": 500,
+           "top_p": 0.95
+         }'
+       ),
+       'claude-3-sonnet-20240229'
+FROM sysibm.sysdummy1;
+
+-- Retrieve the stored content
+SELECT * FROM mylib.generated_content;
+```
+
+### Using with Custom Prompts Table
+
+Manage and use prompt templates:
+
+```sql
+-- Create a table for prompt templates
+CREATE TABLE mylib.prompt_templates (
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  name VARCHAR(100),
+  template CLOB(64K),
+  system_prompt CLOB(64K),
+  description VARCHAR(1000)
+);
+
+-- Insert some prompt templates
+INSERT INTO mylib.prompt_templates (name, template, system_prompt, description) VALUES
+  ('sql_generator', 'Given the following database schema:\n{{schema}}\n\nGenerate an SQL query to: {{task}}', 
+   'You are an SQL expert. Generate only valid SQL code with no explanations.',
+   'Template for SQL generation from natural language'),
+  ('data_summarizer', 'Summarize the following data:\n{{data}}\n\nFocus on: {{focus}}',
+   'You are a data analyst. Provide clear, concise insights with specific numbers.',
+   'Template for summarizing datasets');
+
+-- Use a template to generate content
+WITH prompt_data AS (
+  SELECT 
+    REPLACE(
+      REPLACE(
+        (SELECT template FROM mylib.prompt_templates WHERE name = 'sql_generator'),
+        '{{schema}}', 'Customers(id, name, email, signup_date), Orders(id, customer_id, order_date, amount)'
+      ),
+      '{{task}}', 'Find all customers who spent more than $1000 in total'
+    ) AS prompt,
+    (SELECT system_prompt FROM mylib.prompt_templates WHERE name = 'sql_generator') AS system_prompt
+)
+SELECT dbsdk_v1.anthropic_generate(
+  prompt,
+  '{
+    "temperature": 0.3,
+    "max_tokens": 500,
+    "system": "' || system_prompt || '"
+  }'
+) FROM prompt_data;
+```
+
+These examples demonstrate the versatility of the Anthropic Claude integration for various use cases in your IBM i applications.

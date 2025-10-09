@@ -20,6 +20,15 @@ create or replace variable dbsdk_v1.openai_compatible_model        varchar(1000)
 create or replace variable dbsdk_v1.openai_compatible_apikey       varchar(8000) ccsid 1208 default NULL;
 create or replace variable dbsdk_v1.openai_compatible_basepath     varchar(1000) ccsid 1208 default NULL;
 
+-- variables for Anthropic
+create or replace variable dbsdk_v1.anthropic_protocol     varchar(16)   ccsid 1208 default null;
+create or replace variable dbsdk_v1.anthropic_server       varchar(1000) ccsid 1208 default null;
+create or replace variable dbsdk_v1.anthropic_port         INT                      default NULL;
+create or replace variable dbsdk_v1.anthropic_model        varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.anthropic_apikey       varchar(8000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.anthropic_basepath     varchar(1000) ccsid 1208 default NULL;
+create or replace variable dbsdk_v1.anthropic_version      varchar(100)  ccsid 1208 default NULL;
+
 --variables for Wallaroo
 create or replace variable dbsdk_v1.wallaroo_tokenurl                      varchar(1000) ccsid 1208 default NULL;
 create or replace variable dbsdk_v1.wallaroo_confidential_client           varchar(1000) ccsid 1208 default NULL;
@@ -69,6 +78,13 @@ create or replace table dbsdk_v1.conf
           twilio_number varchar(1000) ccsid 1208 default NULL,
           twilio_sid varchar(1000) ccsid 1208 default NULL,
           twilio_authtoken varchar(1000) ccsid 1208 default NULL,
+          anthropic_protocol varchar(16) ccsid 1208 default 'https',
+          anthropic_server varchar(1000) ccsid 1208 default 'api.anthropic.com',
+          anthropic_port INT default 443,
+          anthropic_model varchar(1000) ccsid 1208 default 'claude-3-sonnet-20240229',
+          anthropic_apikey varchar(8000) ccsid 1208 default NULL,
+          anthropic_basepath varchar(1000) ccsid 1208 default '/v1',
+          anthropic_version varchar(100) ccsid 1208 default '2023-06-01',
         PRIMARY KEY(USRPRF)
       )
       on replace preserve rows;

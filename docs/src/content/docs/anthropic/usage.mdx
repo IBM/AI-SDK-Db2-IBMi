@@ -1,0 +1,204 @@
+---
+title: Usage 
+Description: Usage
+sidebar:
+    order: 1
+---
+
+This module allows you to connect to Anthropic's Claude AI models through their API. Claude is known for its strong reasoning capabilities, safety, and ability to handle complex instructions.
+
+## Setup
+
+Before using the Anthropic functionality, you need to configure the connection details:
+
+```sql
+-- Set server information for current job
+CALL dbsdk_v1.anthropic_setserverforjob('api.anthropic.com');
+CALL dbsdk_v1.anthropic_setportforjob(443);
+CALL dbsdk_v1.anthropic_setprotocolforjob('https');
+
+-- Set the model to use (required)
+CALL dbsdk_v1.anthropic_setmodelforjob('claude-3-opus-20240229');
+
+-- Set API key (required for Anthropic)
+CALL dbsdk_v1.anthropic_setapikeyforjob('your-anthropic-api-key');
+
+-- Optional: Set API version if needed
+CALL dbsdk_v1.anthropic_setversionforjob('2023-06-01');
+```
+
+To make these settings persistent across jobs for your user profile:
+
+```sql
+CALL dbsdk_v1.anthropic_setserverforme('api.anthropic.com');
+CALL dbsdk_v1.anthropic_setportforme(443);
+CALL dbsdk_v1.anthropic_setprotocolforme('https');
+CALL dbsdk_v1.anthropic_setmodelforme('claude-3-opus-20240229');
+CALL dbsdk_v1.anthropic_setapikeyforme('your-anthropic-api-key');
+CALL dbsdk_v1.anthropic_setversionforme('2023-06-01');
+```
+
+## Basic Usage
+
+### Text Generation
+
+To generate text using the Anthropic API:
+
+```sql
+SELECT dbsdk_v1.anthropic_generate('What is Db2 for i?')
+FROM sysibm.sysdummy1;
+```
+
+### Set `max_tokens`:
+
+It is recommended to specify a value for `max_tokens` depending on your task:
+
+```sql
+SELECT dbsdk_v1.anthropic_generate(
+  'Why are armadillos so cute?',
+  '{"max_tokens": 500}'
+) FROM sysibm.sysdummy1;
+```
+
+### Specifying a Model
+
+You can specify which Claude model to use (overriding the default):
+
+```sql
+SELECT dbsdk_v1.anthropic_generate(
+  'Explain SQL in 100 words',
+  '{"model_id": "claude-3-haiku-20240307"}'
+) FROM sysibm.sysdummy1;
+```
+
+### Optional Parameters
+
+The `anthropic_generate` function supports a wide range of optional parameters through a JSON options object:
+
+```sql
+SELECT dbsdk_v1.anthropic_generate(
+  'Tell me a story about a dragon',
+  '{
+    "model_id": "claude-3-sonnet-20240229",
+    "max_tokens": 1000,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "system": "You are a creative storyteller who specializes in fantasy tales."
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+#### Supported Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `model_id` | string | (configured model) | The model to use for generation |
+| `max_tokens` | integer | 256 | Maximum number of tokens to generate |
+| `temperature` | decimal | 1.0 | Controls randomness (0-1). Lower is more deterministic |
+| `top_p` | decimal | 1.0 | Nucleus sampling probability cutoff |
+| `top_k` | integer | null | Number of tokens to consider for sampling |
+| `stop_sequences` | array | null | Sequences where generation should stop |
+| `system` | string | null | System instructions to guide Claude's behavior |
+
+Here are some key parameters explained:
+
+- **temperature**: Controls randomness in token selection. Lower values (e.g., 0.2) make the output more focused and deterministic, while higher values (e.g., 0.8) make it more creative.
+
+- **max_tokens**: Sets the maximum length of the generated text. Increase for longer responses, decrease for shorter ones.
+
+- **top_p**: An alternative to temperature for controlling randomness. Sets a probability threshold for token selection.
+
+- **system**: Provides high-level instructions to guide Claude's behavior throughout the conversation. This is useful for setting the tone, style, or role for Claude.
+
+### JSON Generation
+
+For structured data, you can use the JSON-specific function:
+
+```sql
+SELECT dbsdk_v1.anthropic_generate_json(
+  'Generate a JSON with 3 names and ages of fictional people',
+  '{
+    "model_id": "claude-3-sonnet-20240229",
+    "temperature": 0.5,
+    "max_tokens": 500,
+    "system": "You are a helpful assistant that always returns valid JSON."
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+The `generate_json` function returns the complete API response as a JSON object, allowing you to access not only the generated content but also metadata such as token usage statistics.
+
+## API Response Format
+
+The Anthropic API response follows this structure:
+
+```json
+{
+  "id": "msg_01DG7P8EFHQ2QGBZYZWCM3XJPQ",
+  "type": "message",
+  "role": "assistant",
+  "content": [
+    {
+      "type": "text",
+      "text": "** GENERATED TEXT HERE **"
+    }
+  ],
+  "model": "claude-3-opus-20240229",
+  "stop_reason": "end_turn",
+  "stop_sequence": null,
+  "usage": {
+    "input_tokens": 25,
+    "output_tokens": 100
+  }
+}
+```
+
+The regular `generate` function extracts just the text content from `content[0].text`, while the `generate_json` function returns the entire JSON response.
+
+## Authentication
+
+Anthropic's API requires authentication with an API key. You can obtain an API key by signing up at [Anthropic's website](https://www.anthropic.com/).
+
+## Configuration Functions
+
+### Server Configuration
+
+- `anthropic_getserver()` - Gets the current server hostname/IP
+- `anthropic_setserverforjob()` - Sets the server for the current job
+- `anthropic_setserverforme()` - Sets the server persistently for your user profile
+
+### Port Configuration
+
+- `anthropic_getport()` - Gets the current port
+- `anthropic_setportforjob()` - Sets the port for the current job
+- `anthropic_setportforme()` - Sets the port persistently for your user profile
+
+### Protocol Configuration
+
+- `anthropic_getprotocol()` - Gets the current protocol (http/https)
+- `anthropic_setprotocolforjob()` - Sets the protocol for the current job
+- `anthropic_setprotocolforme()` - Sets the protocol persistently for your user profile
+
+### Model Configuration
+
+- `anthropic_getmodel()` - Gets the current model
+- `anthropic_setmodelforjob()` - Sets the model for the current job
+- `anthropic_setmodelforme()` - Sets the model persistently for your user profile
+
+### API Key Configuration
+
+- `anthropic_getapikey()` - Gets the current API key
+- `anthropic_setapikeyforjob()` - Sets the API key for the current job
+- `anthropic_setapikeyforme()` - Sets the API key persistently for your user profile
+
+### API Version Configuration
+
+- `anthropic_getversion()` - Gets the current API version
+- `anthropic_setversionforjob()` - Sets the API version for the current job
+- `anthropic_setversionforme()` - Sets the API version persistently for your user profile
+
+### Base Path Configuration
+
+- `anthropic_getbasepath()` - Gets the current base path
+- `anthropic_setbasepathforjob()` - Sets the base path for the current job
+- `anthropic_setbasepathforme()` - Sets the base path persistently for your user profile
