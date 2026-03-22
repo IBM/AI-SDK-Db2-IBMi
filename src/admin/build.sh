@@ -149,7 +149,7 @@ for pgm in "${RPGLE_PROGRAMS[@]}"; do
     # INCDIR specifies library for external file descriptions
     # DFTRDBCOL(DBSDK_V1) sets default collection for unqualified SQL names
     # CURLIB(DBSDK_V1) sets current library for this compile job
-    system "CRTSQLRPGI OBJ(DBSDK_V1/${pgm}) SRCSTMF('${BASE_DIR}/rpgle/${pgm}.rpgle') COMMIT(*NONE) DBGVIEW(*SOURCE) COMPILEOPT('DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB) INCDIR(''/QSYS.LIB/DBSDK_V1.LIB'') CURLIB(DBSDK_V1)') USRPRF(*OWNER) RDB(*LOCAL) DFTRDBCOL(DBSDK_V1) CVTCCSID(*JOB) SQLPATH(*LIBL)" 2>&1 > /dev/null
+    system "CRTSQLRPGI OBJ(DBSDK_V1/${pgm}) SRCSTMF('${BASE_DIR}/rpgle/${pgm}.rpgle') COMMIT(*NONE) DBGVIEW(*SOURCE) COMPILEOPT('DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)') USRPRF(*OWNER) RDB(*LOCAL) DFTRDBCOL(DBSDK_V1) CVTCCSID(*JOB) SQLPATH(*LIBL)" 2>&1 > /dev/null
     
     if [ $? -eq 0 ]; then
         print_success "${pgm} compiled successfully"
