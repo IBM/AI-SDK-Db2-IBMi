@@ -1,0 +1,87 @@
+     A*=====================================================================
+     A* DBSDK Configuration Administration - OpenAI Compatible Config Display
+     A*=====================================================================
+     A* Purpose: OpenAI Compatible configuration screen for editing user settings
+     A*
+     A* Compilation:
+     A*   CRTSRCPF FILE(QTEMP/QDDSSRC) RCDLEN(112)
+     A*   CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGOPENAID.dspf') +
+     A*              TOMBR('/QSYS.LIB/QTEMP.LIB/QDDSSRC.FILE/CFGOPENAID.MBR') +
+     A*              MBROPT(*REPLACE)
+     A*   CRTDSPF FILE(DBSDK_V1/CFGOPENAID) SRCFILE(QTEMP/QDDSSRC) SRCMBR(CFGOPENAID)
+     A*
+     A* Author: AI-SDK-Db2-IBMi Project
+     A* Date: 2026-03-22
+     A*=====================================================================
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      PRINT
+     A                                      INDARA
+     A                                      CA03(03 'Exit')
+     A                                      CA12(12 'Cancel')
+     A          R OACONFG
+     A                                      OVERLAY
+     A*=====================================================================
+     A* Screen Title and Header
+     A*=====================================================================
+     A                                  1  2'DBSDK Configuration Administra-
+     A                                      tion'
+     A                                      DSPATR(HI)
+     A                                  1 70TIME
+     A                                  2  2'OpenAI Compatible Configuration-
+     A                                      '
+     A                                      DSPATR(UL)
+     A                                  2 70DATE
+     A                                      EDTCDE(Y)
+     A*=====================================================================
+     A* User Profile Display
+     A*=====================================================================
+     A                                  4  2'User Profile:'
+     A            USRPRF        10A  O  4 17DSPATR(HI)
+     A*=====================================================================
+     A* Configuration Fields
+     A*=====================================================================
+     A                                  6  2'Protocol:'
+     A            OAPROTOC      16A  B  6 20
+     A                                  6 38'(http or https)'
+     A                                      COLOR(BLU)
+     A                                  7  2'Server:'
+     A            OASERVER      50A  B  7 20
+     A                                  8  2'Port:'
+     A            OAPORT         5S 0B  8 20EDTCDE(4)
+     A                                  8 27'(default: 8000)'
+     A                                      COLOR(BLU)
+     A                                  9  2'Model:'
+     A            OAMODEL       50A  B  9 20
+     A                                 10  2'API Key:'
+     A            OAAPIKEY      50A  B 10 20DSPATR(ND)
+     A                                 10 72'(1/2)'
+     A                                      COLOR(BLU)
+     A            OAAPIKY2      50A  B 11 20DSPATR(ND)
+     A                                 11 72'(2/2)'
+     A                                      COLOR(BLU)
+     A                                 12  2'Base Path:'
+     A            OABASEPT      50A  B 12 20
+     A                                 12 72'(e.g., /v1)'
+     A                                      COLOR(BLU)
+     A*=====================================================================
+     A* Instructions
+     A*=====================================================================
+     A                                 15  2'Enter configuration values and -
+     A                                      press Enter to save.'
+     A                                      COLOR(BLU)
+     A                                 16  2'API Key is password protected.'
+     A                                      COLOR(BLU)
+     A*=====================================================================
+     A* Error Message Area
+     A*=====================================================================
+     A            ERRMSG        78A  O 21  2DSPATR(HI)
+     A                                      COLOR(RED)
+     A*=====================================================================
+     A* Status Message Area
+     A*=====================================================================
+     A            STSMSG        78A  O 22  2COLOR(GRN)
+     A*=====================================================================
+     A* Function Keys
+     A*=====================================================================
+     A                                 23  2'F3=Exit  F12=Cancel'
+     A                                      COLOR(BLU)

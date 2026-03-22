@@ -1,0 +1,78 @@
+     A*=====================================================================
+     A* DBSDK Configuration Administration - WatsonX Configuration Display
+     A*=====================================================================
+     A* Purpose: WatsonX configuration screen for editing user settings
+     A*
+     A* Compilation:
+     A*   CRTSRCPF FILE(QTEMP/QDDSSRC) RCDLEN(112)
+     A*   CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGWXD.dspf') +
+     A*              TOMBR('/QSYS.LIB/QTEMP.LIB/QDDSSRC.FILE/CFGWXD.MBR') +
+     A*              MBROPT(*REPLACE)
+     A*   CRTDSPF FILE(DBSDK_V1/CFGWXD) SRCFILE(QTEMP/QDDSSRC) SRCMBR(CFGWXD)
+     A*
+     A* Author: AI-SDK-Db2-IBMi Project
+     A* Date: 2026-03-22
+     A*=====================================================================
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      PRINT
+     A                                      INDARA
+     A                                      CA03(03 'Exit')
+     A                                      CA12(12 'Cancel')
+     A          R WXCONFIG
+     A                                      OVERLAY
+     A*=====================================================================
+     A* Screen Title and Header
+     A*=====================================================================
+     A                                  1  2'DBSDK Configuration Administra-
+     A                                      tion'
+     A                                      DSPATR(HI)
+     A                                  1 70TIME
+     A                                  2  2'WatsonX Configuration'
+     A                                      DSPATR(UL)
+     A                                  2 70DATE
+     A                                      EDTCDE(Y)
+     A*=====================================================================
+     A* User Profile Display
+     A*=====================================================================
+     A                                  4  2'User Profile:'
+     A            USRPRF        10A  O  4 17DSPATR(HI)
+     A*=====================================================================
+     A* Configuration Fields
+     A*=====================================================================
+     A                                  6  2'WatsonX Region:'
+     A            WXREGION      16A  B  6 20
+     A                                  6 38'(e.g., us-south)'
+     A                                      COLOR(BLU)
+     A                                  8  2'API Version:'
+     A            WXAPIVER      10A  B  8 20
+     A                                  8 32'(e.g., 2023-07-07)'
+     A                                      COLOR(BLU)
+     A                                 10  2'API Key:'
+     A            WXAPIKEY     100A  B 10 20DSPATR(ND)
+     A                                 10 38'(password protected)'
+     A                                      COLOR(BLU)
+     A                                 12  2'Project ID:'
+     A            WXPROJID     100A  B 12 20
+     A*=====================================================================
+     A* Instructions
+     A*=====================================================================
+     A                                 16  2'Enter configuration values and -
+     A                                      press Enter to save.'
+     A                                      COLOR(BLU)
+     A                                 17  2'Press F12 to cancel without sav-
+     A                                      ing.'
+     A                                      COLOR(BLU)
+     A*=====================================================================
+     A* Error Message Area
+     A*=====================================================================
+     A            ERRMSG        78A  O 21  2DSPATR(HI)
+     A                                      COLOR(RED)
+     A*=====================================================================
+     A* Status Message Area
+     A*=====================================================================
+     A            STSMSG        78A  O 22  2COLOR(GRN)
+     A*=====================================================================
+     A* Function Keys
+     A*=====================================================================
+     A                                 23  2'F3=Exit  F12=Cancel'
+     A                                      COLOR(BLU)

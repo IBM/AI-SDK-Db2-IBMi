@@ -1,0 +1,75 @@
+     A*=====================================================================
+     A* DBSDK Configuration Administration - Slack Configuration Display
+     A*=====================================================================
+     A* Purpose: Slack configuration screen for editing user settings
+     A*
+     A* Compilation:
+     A*   CRTSRCPF FILE(QTEMP/QDDSSRC) RCDLEN(112)
+     A*   CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGSLACKD.dspf') +
+     A*              TOMBR('/QSYS.LIB/QTEMP.LIB/QDDSSRC.FILE/CFGSLACKD.MBR') +
+     A*              MBROPT(*REPLACE)
+     A*   CRTDSPF FILE(DBSDK_V1/CFGSLACKD) SRCFILE(QTEMP/QDDSSRC) SRCMBR(CFGSLACKD)
+     A*
+     A* Author: AI-SDK-Db2-IBMi Project
+     A* Date: 2026-03-22
+     A*=====================================================================
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      PRINT
+     A                                      INDARA
+     A                                      CA03(03 'Exit')
+     A                                      CA12(12 'Cancel')
+     A          R SLCONFIG
+     A                                      OVERLAY
+     A*=====================================================================
+     A* Screen Title and Header
+     A*=====================================================================
+     A                                  1  2'DBSDK Configuration Administra-
+     A                                      tion'
+     A                                      DSPATR(HI)
+     A                                  1 70TIME
+     A                                  2  2'Slack Configuration'
+     A                                      DSPATR(UL)
+     A                                  2 70DATE
+     A                                      EDTCDE(Y)
+     A*=====================================================================
+     A* User Profile Display
+     A*=====================================================================
+     A                                  4  2'User Profile:'
+     A            USRPRF        10A  O  4 17DSPATR(HI)
+     A*=====================================================================
+     A* Configuration Fields
+     A*=====================================================================
+     A                                  6  2'Webhook URL:'
+     A            SLWEBHOK      50A  B  6 20DSPATR(ND)
+     A                                  6 72'(1/2)'
+     A                                      COLOR(BLU)
+     A            SLWEBHK2      50A  B  7 20DSPATR(ND)
+     A                                  7 72'(2/2)'
+     A                                      COLOR(BLU)
+     A*=====================================================================
+     A* Instructions
+     A*=====================================================================
+     A                                 10  2'Enter the Slack webhook URL.'
+     A                                      COLOR(BLU)
+     A                                 11  2'This field is password protecte-
+     A                                      d.'
+     A                                      COLOR(BLU)
+     A                                 13  2'Press Enter to save.'
+     A                                      COLOR(BLU)
+     A                                 14  2'Press F12 to cancel without sav-
+     A                                      ing.'
+     A                                      COLOR(BLU)
+     A*=====================================================================
+     A* Error Message Area
+     A*=====================================================================
+     A            ERRMSG        78A  O 21  2DSPATR(HI)
+     A                                      COLOR(RED)
+     A*=====================================================================
+     A* Status Message Area
+     A*=====================================================================
+     A            STSMSG        78A  O 22  2COLOR(GRN)
+     A*=====================================================================
+     A* Function Keys
+     A*=====================================================================
+     A                                 23  2'F3=Exit  F12=Cancel'
+     A                                      COLOR(BLU)
