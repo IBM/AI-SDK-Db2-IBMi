@@ -1,0 +1,73 @@
+     A*=====================================================================
+     A* DBSDK Configuration Administration - User Management Display File
+     A*=====================================================================
+     A* Purpose: User management screen for add/change/delete operations
+     A*
+     A* Compilation:
+     A*   CRTSRCPF FILE(QTEMP/QDDSSRC) RCDLEN(112)
+     A*   CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGUSERD.dspf') +
+     A*              TOMBR('/QSYS.LIB/QTEMP.LIB/QDDSSRC.FILE/CFGUSERD.MBR') +
+     A*              MBROPT(*REPLACE)
+     A*   CRTDSPF FILE(DBSDK_V1/CFGUSERD) SRCFILE(QTEMP/QDDSSRC) SRCMBR(CFGUSERD)
+     A*
+     A* Author: AI-SDK-Db2-IBMi Project
+     A* Date: 2026-03-22
+     A*=====================================================================
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      PRINT
+     A                                      INDARA
+     A                                      CA03(03 'Exit')
+     A                                      CA12(12 'Cancel')
+     A*=====================================================================
+     A* Main Screen Record
+     A*=====================================================================
+     A          R USERMAIN
+     A*=====================================================================
+     A* Screen Title and Header
+     A*=====================================================================
+     A                                  1  2'DBSDK Configuration Administra-
+     A                                      tion'
+     A                                      DSPATR(HI)
+     A                                  1 70TIME
+     A                                  2  2'User Management'
+     A                                      DSPATR(UL)
+     A                                  2 70DATE
+     A                                      EDTCDE(Y)
+     A*=====================================================================
+     A* Action Input
+     A*=====================================================================
+     A                                  4  2'Action:'
+     A            ACTION         1A  B  4 11DSPATR(HI)
+     A                                  4 14'(1=Add, 2=Change, 4=Delete, 5=-
+     A                                      Display, 9=List)'
+     A                                  5  2'User Profile:'
+     A            USRPRFI       10A  B  5 17DSPATR(HI)
+     A*=====================================================================
+     A* User List Display Area (when action=9)
+     A*=====================================================================
+     A                                  7  2'Current Users:'
+     A                                      DSPATR(HI)
+     A            USER01        10A  O  9  5
+     A            USER02        10A  O 10  5
+     A            USER03        10A  O 11  5
+     A            USER04        10A  O 12  5
+     A            USER05        10A  O 13  5
+     A            USER06        10A  O 14  5
+     A            USER07        10A  O 15  5
+     A            USER08        10A  O 16  5
+     A            USER09        10A  O 17  5
+     A            USER10        10A  O 18  5
+     A*=====================================================================
+     A* Error Message Area
+     A*=====================================================================
+     A            ERRMSG        78A  O 21  2DSPATR(HI)
+     A                                      COLOR(RED)
+     A*=====================================================================
+     A* Status Message Area
+     A*=====================================================================
+     A            STSMSG        78A  O 22  2COLOR(GRN)
+     A*=====================================================================
+     A* Function Keys
+     A*=====================================================================
+     A                                 23  2'F3=Exit  F12=Cancel'
+     A                                      COLOR(BLU)

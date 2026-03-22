@@ -1,0 +1,85 @@
+     A*=====================================================================
+     A* DBSDK Configuration Administration - Twilio Configuration Display
+     A*=====================================================================
+     A* Purpose: Twilio configuration screen for editing user settings
+     A*
+     A* Compilation:
+     A*   CRTSRCPF FILE(QTEMP/QDDSSRC) RCDLEN(112)
+     A*   CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGTWILIOD.dspf') +
+     A*              TOMBR('/QSYS.LIB/QTEMP.LIB/QDDSSRC.FILE/CFGTWILIOD.MBR') +
+     A*              MBROPT(*REPLACE)
+     A*   CRTDSPF FILE(DBSDK_V1/CFGTWILIOD) SRCFILE(QTEMP/QDDSSRC) SRCMBR(CFGTWILIOD)
+     A*
+     A* Author: AI-SDK-Db2-IBMi Project
+     A* Date: 2026-03-22
+     A*=====================================================================
+     A                                      DSPSIZ(24 80 *DS3)
+     A                                      PRINT
+     A                                      INDARA
+     A                                      CA03(03 'Exit')
+     A                                      CA12(12 'Cancel')
+     A          R TWCONFIG
+     A                                      OVERLAY
+     A*=====================================================================
+     A* Screen Title and Header
+     A*=====================================================================
+     A                                  1  2'DBSDK Configuration Administra-
+     A                                      tion'
+     A                                      DSPATR(HI)
+     A                                  1 70TIME
+     A                                  2  2'Twilio Configuration'
+     A                                      DSPATR(UL)
+     A                                  2 70DATE
+     A                                      EDTCDE(Y)
+     A*=====================================================================
+     A* User Profile Display
+     A*=====================================================================
+     A                                  4  2'User Profile:'
+     A            USRPRF        10A  O  4 17DSPATR(HI)
+     A*=====================================================================
+     A* Configuration Fields
+     A*=====================================================================
+     A                                  6  2'Phone Number:'
+     A            TWNUMBER      50A  B  6 20
+     A                                  6 72'(1/2)'
+     A                                      COLOR(BLU)
+     A            TWNUMBR2      50A  B  7 20
+     A                                  7 72'(2/2)'
+     A                                      COLOR(BLU)
+     A                                  9  2'Account SID:'
+     A            TWSID         50A  B  9 20
+     A                                  9 72'(1/2)'
+     A                                      COLOR(BLU)
+     A            TWSID2        50A  B 10 20
+     A                                 10 72'(2/2)'
+     A                                      COLOR(BLU)
+     A                                 12  2'Auth Token:'
+     A            TWAUTHTN      50A  B 12 20DSPATR(ND)
+     A                                 12 72'(1/2)'
+     A                                      COLOR(BLU)
+     A            TWAUTHK2      50A  B 13 20DSPATR(ND)
+     A                                 13 72'(2/2)'
+     A                                      COLOR(BLU)
+     A*=====================================================================
+     A* Instructions
+     A*=====================================================================
+     A                                 16  2'Enter configuration values and -
+     A                                      press Enter to save.'
+     A                                      COLOR(BLU)
+     A                                 17  2'Auth Token is password protecte-
+     A                                      d.'
+     A                                      COLOR(BLU)
+     A*=====================================================================
+     A* Error Message Area
+     A*=====================================================================
+     A            ERRMSG        78A  O 21  2DSPATR(HI)
+     A                                      COLOR(RED)
+     A*=====================================================================
+     A* Status Message Area
+     A*=====================================================================
+     A            STSMSG        78A  O 22  2COLOR(GRN)
+     A*=====================================================================
+     A* Function Keys
+     A*=====================================================================
+     A                                 23  2'F3=Exit  F12=Cancel'
+     A                                      COLOR(BLU)
