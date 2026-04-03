@@ -29,7 +29,6 @@ Dcl-Ds Indicators;
 End-Ds;
 
 // Screen fields
-Dcl-Ds TwConfig ExtName('TWCONFIG':*All) Qualified End-Ds;
 
 // Program variables
 Dcl-S FirstTime Ind Inz(*On);
@@ -52,7 +51,7 @@ Dow Not Exit;
   LoadConfiguration();
   
   // Display screen
-  Exfmt TwConfig;
+  Exfmt TWCONFIG;
   
   // Check for exit or cancel
   If Exit Or Cancel;
@@ -70,29 +69,29 @@ Return;
 // Get User Profile to Configure
 //==============================================================================
 Dcl-Proc GetUserProfile;
-  TwConfig.UsrPrf = *Blanks;
-  TwConfig.ErrMsg = 'Enter user profile to configure';
+  UsrPrf = *Blanks;
+  ErrMsg = 'Enter user profile to configure';
   
-  Dow TwConfig.UsrPrf = *Blanks;
-    Exfmt TwConfig;
+  Dow UsrPrf = *Blanks;
+    Exfmt TWCONFIG;
     
     If Exit Or Cancel;
       Leave;
     EndIf;
     
-    If TwConfig.UsrPrf <> *Blanks;
+    If UsrPrf <> *Blanks;
       // Verify user exists in configuration table
       Exec SQL
         SELECT USRPRF
-        INTO :TwConfig.UsrPrf
+        INTO :UsrPrf
         FROM DBSDK_V1.CONF
-        WHERE USRPRF = :TwConfig.UsrPrf;
+        WHERE USRPRF = :UsrPrf;
       
       If SQLCODE <> 0;
-        TwConfig.ErrMsg = 'User not found. Add user first.';
-        TwConfig.UsrPrf = *Blanks;
+        ErrMsg = 'User not found. Add user first.';
+        UsrPrf = *Blanks;
       Else;
-        TwConfig.ErrMsg = *Blanks;
+        ErrMsg = *Blanks;
       EndIf;
     EndIf;
   EndDo;
@@ -103,8 +102,8 @@ End-Proc;
 //==============================================================================
 Dcl-Proc LoadConfiguration;
   // Clear messages
-  TwConfig.ErrMsg = *Blanks;
-  TwConfig.StsMsg = *Blanks;
+  ErrMsg = *Blanks;
+  StsMsg = *Blanks;
   
   // Load configuration from database
   Exec SQL
@@ -115,34 +114,34 @@ Dcl-Proc LoadConfiguration;
          :FullSid,
          :FullAuthToken
     FROM DBSDK_V1.CONF
-    WHERE USRPRF = :TwConfig.UsrPrf;
+    WHERE USRPRF = :UsrPrf;
   
   If SQLCODE = 0;
     // Split number into two 50-char fields
-    TwConfig.TwNumber = %Subst(FullNumber:1:50);
+    TwNumber = %Subst(FullNumber:1:50);
     If %Len(FullNumber) > 50;
-      TwConfig.TwNumbr2 = %Subst(FullNumber:51:50);
+      TwNumbr2 = %Subst(FullNumber:51:50);
     Else;
-      TwConfig.TwNumbr2 = *Blanks;
+      TwNumbr2 = *Blanks;
     EndIf;
     
     // Split SID into two 50-char fields
-    TwConfig.TwSid = %Subst(FullSid:1:50);
+    TwSid = %Subst(FullSid:1:50);
     If %Len(FullSid) > 50;
-      TwConfig.TwSid2 = %Subst(FullSid:51:50);
+      TwSid2 = %Subst(FullSid:51:50);
     Else;
-      TwConfig.TwSid2 = *Blanks;
+      TwSid2 = *Blanks;
     EndIf;
     
     // Split auth token into two 50-char fields
-    TwConfig.TwAuthTn = %Subst(FullAuthToken:1:50);
+    TwAuthTn = %Subst(FullAuthToken:1:50);
     If %Len(FullAuthToken) > 50;
-      TwConfig.TwAuthK2 = %Subst(FullAuthToken:51:50);
+      TwAuthK2 = %Subst(FullAuthToken:51:50);
     Else;
-      TwConfig.TwAuthK2 = *Blanks;
+      TwAuthK2 = *Blanks;
     EndIf;
   Else;
-    TwConfig.ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;
 
@@ -151,22 +150,22 @@ End-Proc;
 //==============================================================================
 Dcl-Proc SaveConfiguration;
   // Combine split fields
-  FullNumber = %Trim(TwConfig.TwNumber) + %Trim(TwConfig.TwNumbr2);
-  FullSid = %Trim(TwConfig.TwSid) + %Trim(TwConfig.TwSid2);
-  FullAuthToken = %Trim(TwConfig.TwAuthTn) + %Trim(TwConfig.TwAuthK2);
+  FullNumber = %Trim(TwNumber) + %Trim(TwNumbr2);
+  FullSid = %Trim(TwSid) + %Trim(TwSid2);
+  FullAuthToken = %Trim(TwAuthTn) + %Trim(TwAuthK2);
   
   // Call SQL procedure to update configuration
   Exec SQL
     CALL DBSDK_V1.CONF_UPDATE_TWILIO(
-      :TwConfig.UsrPrf,
+      :UsrPrf,
       :FullNumber,
       :FullSid,
       :FullAuthToken
     );
   
   If SQLCODE = 0;
-    TwConfig.StsMsg = 'Configuration saved successfully';
+    StsMsg = 'Configuration saved successfully';
   Else;
-    TwConfig.ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;

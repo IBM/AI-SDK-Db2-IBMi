@@ -29,7 +29,6 @@ Dcl-Ds Indicators;
 End-Ds;
 
 // Screen fields
-Dcl-Ds OaConfg ExtName('OACONFG':*All) Qualified End-Ds;
 
 // Program variables
 Dcl-S FirstTime Ind Inz(*On);
@@ -51,7 +50,7 @@ Dow Not Exit;
   LoadConfiguration();
   
   // Display screen
-  Exfmt OaConfg;
+  Exfmt OACONFG;
   
   // Check for exit or cancel
   If Exit Or Cancel;
@@ -69,29 +68,29 @@ Return;
 // Get User Profile to Configure
 //==============================================================================
 Dcl-Proc GetUserProfile;
-  OaConfg.UsrPrf = *Blanks;
-  OaConfg.ErrMsg = 'Enter user profile to configure';
+  UsrPrf = *Blanks;
+  ErrMsg = 'Enter user profile to configure';
   
-  Dow OaConfg.UsrPrf = *Blanks;
-    Exfmt OaConfg;
+  Dow UsrPrf = *Blanks;
+    Exfmt OACONFG;
     
     If Exit Or Cancel;
       Leave;
     EndIf;
     
-    If OaConfg.UsrPrf <> *Blanks;
+    If UsrPrf <> *Blanks;
       // Verify user exists in configuration table
       Exec SQL
         SELECT USRPRF
-        INTO :OaConfg.UsrPrf
+        INTO :UsrPrf
         FROM DBSDK_V1.CONF
-        WHERE USRPRF = :OaConfg.UsrPrf;
+        WHERE USRPRF = :UsrPrf;
       
       If SQLCODE <> 0;
-        OaConfg.ErrMsg = 'User not found. Add user first.';
-        OaConfg.UsrPrf = *Blanks;
+        ErrMsg = 'User not found. Add user first.';
+        UsrPrf = *Blanks;
       Else;
-        OaConfg.ErrMsg = *Blanks;
+        ErrMsg = *Blanks;
       EndIf;
     EndIf;
   EndDo;
@@ -102,8 +101,8 @@ End-Proc;
 //==============================================================================
 Dcl-Proc LoadConfiguration;
   // Clear messages
-  OaConfg.ErrMsg = *Blanks;
-  OaConfg.StsMsg = *Blanks;
+  ErrMsg = *Blanks;
+  StsMsg = *Blanks;
   
   // Load configuration from database
   Exec SQL
@@ -113,28 +112,28 @@ Dcl-Proc LoadConfiguration;
            openai_compatible_model,
            openai_compatible_apikey,
            openai_compatible_basepath
-    INTO :OaConfg.OaProtoc,
-         :OaConfg.OaServer,
-         :OaConfg.OaPort,
-         :OaConfg.OaModel,
+    INTO :OaProtoc,
+         :OaServer,
+         :OaPort,
+         :OaModel,
          :FullApiKey,
          :FullBasePath
     FROM DBSDK_V1.CONF
-    WHERE USRPRF = :OaConfg.UsrPrf;
+    WHERE USRPRF = :UsrPrf;
   
   If SQLCODE = 0;
     // Split API key into two 50-char fields
-    OaConfg.OaApiKey = %Subst(FullApiKey:1:50);
+    OaApiKey = %Subst(FullApiKey:1:50);
     If %Len(FullApiKey) > 50;
-      OaConfg.OaApiKy2 = %Subst(FullApiKey:51:50);
+      OaApiKy2 = %Subst(FullApiKey:51:50);
     Else;
-      OaConfg.OaApiKy2 = *Blanks;
+      OaApiKy2 = *Blanks;
     EndIf;
     
     // Base path fits in one field
-    OaConfg.OaBasePt = FullBasePath;
+    OaBasePt = FullBasePath;
   Else;
-    OaConfg.ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;
 
@@ -143,24 +142,24 @@ End-Proc;
 //==============================================================================
 Dcl-Proc SaveConfiguration;
   // Combine split API key fields
-  FullApiKey = %Trim(OaConfg.OaApiKey) + %Trim(OaConfg.OaApiKy2);
-  FullBasePath = OaConfg.OaBasePt;
+  FullApiKey = %Trim(OaApiKey) + %Trim(OaApiKy2);
+  FullBasePath = OaBasePt;
   
   // Call SQL procedure to update configuration
   Exec SQL
     CALL DBSDK_V1.CONF_UPDATE_OPENAI(
-      :OaConfg.UsrPrf,
-      :OaConfg.OaProtoc,
-      :OaConfg.OaServer,
-      :OaConfg.OaPort,
-      :OaConfg.OaModel,
+      :UsrPrf,
+      :OaProtoc,
+      :OaServer,
+      :OaPort,
+      :OaModel,
       :FullApiKey,
       :FullBasePath
     );
   
   If SQLCODE = 0;
-    OaConfg.StsMsg = 'Configuration saved successfully';
+    StsMsg = 'Configuration saved successfully';
   Else;
-    OaConfg.ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;

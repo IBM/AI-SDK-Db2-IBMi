@@ -29,7 +29,6 @@ Dcl-Ds Indicators;
 End-Ds;
 
 // Screen fields
-Dcl-Ds OlConfig ExtName('OLCONFIG':*All) Qualified End-Ds;
 
 // Program variables
 Dcl-S FirstTime Ind Inz(*On);
@@ -51,7 +50,7 @@ Dow Not Exit;
   LoadConfiguration();
   
   // Display screen
-  Exfmt OlConfig;
+  Exfmt OLCONFIG;
   
   // Check for exit or cancel
   If Exit Or Cancel;
@@ -69,29 +68,29 @@ Return;
 // Get User Profile to Configure
 //==============================================================================
 Dcl-Proc GetUserProfile;
-  OlConfig.UsrPrf = *Blanks;
-  OlConfig.ErrMsg = 'Enter user profile to configure';
+  UsrPrf = *Blanks;
+  ErrMsg = 'Enter user profile to configure';
   
-  Dow OlConfig.UsrPrf = *Blanks;
-    Exfmt OlConfig;
+  Dow UsrPrf = *Blanks;
+    Exfmt OLCONFIG;
     
     If Exit Or Cancel;
       Leave;
     EndIf;
     
-    If OlConfig.UsrPrf <> *Blanks;
+    If UsrPrf <> *Blanks;
       // Verify user exists in configuration table
       Exec SQL
         SELECT USRPRF
-        INTO :OlConfig.UsrPrf
+        INTO :UsrPrf
         FROM DBSDK_V1.CONF
-        WHERE USRPRF = :OlConfig.UsrPrf;
+        WHERE USRPRF = :UsrPrf;
       
       If SQLCODE <> 0;
-        OlConfig.ErrMsg = 'User not found. Add user first.';
-        OlConfig.UsrPrf = *Blanks;
+        ErrMsg = 'User not found. Add user first.';
+        UsrPrf = *Blanks;
       Else;
-        OlConfig.ErrMsg = *Blanks;
+        ErrMsg = *Blanks;
       EndIf;
     EndIf;
   EndDo;
@@ -102,8 +101,8 @@ End-Proc;
 //==============================================================================
 Dcl-Proc LoadConfiguration;
   // Clear messages
-  OlConfig.ErrMsg = *Blanks;
-  OlConfig.StsMsg = *Blanks;
+  ErrMsg = *Blanks;
+  StsMsg = *Blanks;
   
   // Load configuration from database
   Exec SQL
@@ -111,31 +110,31 @@ Dcl-Proc LoadConfiguration;
            ollama_server,
            ollama_port,
            ollama_model
-    INTO :OlConfig.OlProtoc,
+    INTO :OlProtoc,
          :FullServer,
-         :OlConfig.OlPort,
+         :OlPort,
          :FullModel
     FROM DBSDK_V1.CONF
-    WHERE USRPRF = :OlConfig.UsrPrf;
+    WHERE USRPRF = :UsrPrf;
   
   If SQLCODE = 0;
     // Split server into two 50-char fields
-    OlConfig.OlServer = %Subst(FullServer:1:50);
+    OlServer = %Subst(FullServer:1:50);
     If %Len(FullServer) > 50;
-      OlConfig.OlSrvr2 = %Subst(FullServer:51);
+      OlSrvr2 = %Subst(FullServer:51);
     Else;
-      OlConfig.OlSrvr2 = *Blanks;
+      OlSrvr2 = *Blanks;
     EndIf;
     
     // Split model into two 50-char fields
-    OlConfig.OlModel = %Subst(FullModel:1:50);
+    OlModel = %Subst(FullModel:1:50);
     If %Len(FullModel) > 50;
-      OlConfig.OlModl2 = %Subst(FullModel:51);
+      OlModl2 = %Subst(FullModel:51);
     Else;
-      OlConfig.OlModl2 = *Blanks;
+      OlModl2 = *Blanks;
     EndIf;
   Else;
-    OlConfig.ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;
 
@@ -144,22 +143,22 @@ End-Proc;
 //==============================================================================
 Dcl-Proc SaveConfiguration;
   // Combine split fields
-  FullServer = %Trim(OlConfig.OlServer) + %Trim(OlConfig.OlSrvr2);
-  FullModel = %Trim(OlConfig.OlModel) + %Trim(OlConfig.OlModl2);
+  FullServer = %Trim(OlServer) + %Trim(OlSrvr2);
+  FullModel = %Trim(OlModel) + %Trim(OlModl2);
   
   // Call SQL procedure to update configuration
   Exec SQL
     CALL DBSDK_V1.CONF_UPDATE_OLLAMA(
-      :OlConfig.UsrPrf,
-      :OlConfig.OlProtoc,
+      :UsrPrf,
+      :OlProtoc,
       :FullServer,
-      :OlConfig.OlPort,
+      :OlPort,
       :FullModel
     );
   
   If SQLCODE = 0;
-    OlConfig.StsMsg = 'Configuration saved successfully';
+    StsMsg = 'Configuration saved successfully';
   Else;
-    OlConfig.ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;
