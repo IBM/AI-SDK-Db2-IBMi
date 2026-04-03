@@ -29,7 +29,6 @@ Dcl-Ds Indicators;
 End-Ds;
 
 // Screen fields
-Dcl-Ds WlConfig ExtName('WLCONFIG':*All) Qualified End-Ds;
 
 // Program variables
 Dcl-S FirstTime Ind Inz(*On);
@@ -52,7 +51,7 @@ Dow Not Exit;
   LoadConfiguration();
   
   // Display screen
-  Exfmt WlConfig;
+  Exfmt WLCONFIG;
   
   // Check for exit or cancel
   If Exit Or Cancel;
@@ -70,29 +69,29 @@ Return;
 // Get User Profile to Configure
 //==============================================================================
 Dcl-Proc GetUserProfile;
-  WlConfig.UsrPrf = *Blanks;
-  WlConfig.ErrMsg = 'Enter user profile to configure';
+  UsrPrf = *Blanks;
+  ErrMsg = 'Enter user profile to configure';
   
-  Dow WlConfig.UsrPrf = *Blanks;
-    Exfmt WlConfig;
+  Dow UsrPrf = *Blanks;
+    Exfmt WLCONFIG;
     
     If Exit Or Cancel;
       Leave;
     EndIf;
     
-    If WlConfig.UsrPrf <> *Blanks;
+    If UsrPrf <> *Blanks;
       // Verify user exists in configuration table
       Exec SQL
         SELECT USRPRF
-        INTO :WlConfig.UsrPrf
+        INTO :UsrPrf
         FROM DBSDK_V1.CONF
-        WHERE USRPRF = :WlConfig.UsrPrf;
+        WHERE USRPRF = :UsrPrf;
       
       If SQLCODE <> 0;
-        WlConfig.ErrMsg = 'User not found. Add user first.';
-        WlConfig.UsrPrf = *Blanks;
+        ErrMsg = 'User not found. Add user first.';
+        UsrPrf = *Blanks;
       Else;
-        WlConfig.ErrMsg = *Blanks;
+        ErrMsg = *Blanks;
       EndIf;
     EndIf;
   EndDo;
@@ -103,8 +102,8 @@ End-Proc;
 //==============================================================================
 Dcl-Proc LoadConfiguration;
   // Clear messages
-  WlConfig.ErrMsg = *Blanks;
-  WlConfig.StsMsg = *Blanks;
+  ErrMsg = *Blanks;
+  StsMsg = *Blanks;
   
   // Load configuration from database
   Exec SQL
@@ -115,34 +114,34 @@ Dcl-Proc LoadConfiguration;
          :FullClient,
          :FullSecret
     FROM DBSDK_V1.CONF
-    WHERE USRPRF = :WlConfig.UsrPrf;
+    WHERE USRPRF = :UsrPrf;
   
   If SQLCODE = 0;
     // Split token URL into two 50-char fields
-    WlConfig.WlTknUrl = %Subst(FullTokenUrl:1:50);
+    WlTknUrl = %Subst(FullTokenUrl:1:50);
     If %Len(FullTokenUrl) > 50;
-      WlConfig.WlTkUrl2 = %Subst(FullTokenUrl:51:50);
+      WlTkUrl2 = %Subst(FullTokenUrl:51:50);
     Else;
-      WlConfig.WlTkUrl2 = *Blanks;
+      WlTkUrl2 = *Blanks;
     EndIf;
     
     // Split client into two 50-char fields
-    WlConfig.WlClient = %Subst(FullClient:1:50);
+    WlClient = %Subst(FullClient:1:50);
     If %Len(FullClient) > 50;
-      WlConfig.WlClint2 = %Subst(FullClient:51:50);
+      WlClint2 = %Subst(FullClient:51:50);
     Else;
-      WlConfig.WlClint2 = *Blanks;
+      WlClint2 = *Blanks;
     EndIf;
     
     // Split secret into two 50-char fields
-    WlConfig.WlSecret = %Subst(FullSecret:1:50);
+    WlSecret = %Subst(FullSecret:1:50);
     If %Len(FullSecret) > 50;
-      WlConfig.WlSecr2 = %Subst(FullSecret:51:50);
+      WlSecr2 = %Subst(FullSecret:51:50);
     Else;
-      WlConfig.WlSecr2 = *Blanks;
+      WlSecr2 = *Blanks;
     EndIf;
   Else;
-    WlConfig.ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;
 
@@ -151,22 +150,22 @@ End-Proc;
 //==============================================================================
 Dcl-Proc SaveConfiguration;
   // Combine split fields
-  FullTokenUrl = %Trim(WlConfig.WlTknUrl) + %Trim(WlConfig.WlTkUrl2);
-  FullClient = %Trim(WlConfig.WlClient) + %Trim(WlConfig.WlClint2);
-  FullSecret = %Trim(WlConfig.WlSecret) + %Trim(WlConfig.WlSecr2);
+  FullTokenUrl = %Trim(WlTknUrl) + %Trim(WlTkUrl2);
+  FullClient = %Trim(WlClient) + %Trim(WlClint2);
+  FullSecret = %Trim(WlSecret) + %Trim(WlSecr2);
   
   // Call SQL procedure to update configuration
   Exec SQL
     CALL DBSDK_V1.CONF_UPDATE_WALLAROO(
-      :WlConfig.UsrPrf,
+      :UsrPrf,
       :FullTokenUrl,
       :FullClient,
       :FullSecret
     );
   
   If SQLCODE = 0;
-    WlConfig.StsMsg = 'Configuration saved successfully';
+    StsMsg = 'Configuration saved successfully';
   Else;
-    WlConfig.ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;

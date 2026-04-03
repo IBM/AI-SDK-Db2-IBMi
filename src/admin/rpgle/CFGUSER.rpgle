@@ -29,15 +29,6 @@ Dcl-Ds Indicators;
   Cancel Ind Pos(12);
 End-Ds;
 
-// Screen record
-Dcl-Ds UserMain ExtName('USERMAIN':*All) Qualified End-Ds;
-
-// SQL communication area
-Dcl-Ds SQLCA Qualified;
-  SQLCODE Int(10);
-  SQLSTATE Char(5);
-End-Ds;
-
 //==============================================================================
 // Main Processing
 //==============================================================================
@@ -45,11 +36,10 @@ End-Ds;
 Dow Not Exit;
   
   // Clear screen fields
-  Clear UserMain;
+  Clear USERMAIN;
   
   // Display screen and get user input
-  Write UserMain;
-  Read UserMain;
+  Exfmt USERMAIN;
   
   If Exit;
     Leave;
@@ -57,19 +47,19 @@ Dow Not Exit;
   
   // Process action
   Select;
-    When UserMain.Action = '1' // Add user
+    When Action = '1' // Add user
       ;
       AddUser();
-    When UserMain.Action = '2' // Change user
+    When Action = '2' // Change user
       ;
       ChangeUser();
-    When UserMain.Action = '4' // Delete user
+    When Action = '4' // Delete user
       ;
       DeleteUser();
-    When UserMain.Action = '5' // Display user
+    When Action = '5' // Display user
       ;
       DisplayUser();
-    When UserMain.Action = '9' // List users
+    When Action = '9' // List users
       ;
       ListUsers();
   EndSl;
@@ -84,20 +74,20 @@ Return;
 //==============================================================================
 Dcl-Proc AddUser;
   
-  If UserMain.UsrPrfI = *Blanks;
-    UserMain.ErrMsg = 'User profile required';
+  If UsrPrfI = *Blanks;
+    ErrMsg = 'User profile required';
     Return;
   EndIf;
   
   Exec SQL
-    INSERT INTO CONF (USRPRF) VALUES (:UserMain.UsrPrfI);
+    INSERT INTO CONF (USRPRF) VALUES (:UsrPrfI);
   
-  If SQLCA.SQLCODE = 0;
-    UserMain.StsMsg = 'User added successfully';
-    Clear UserMain.ErrMsg;
+  If SQLCODE = 0;
+    StsMsg = 'User added successfully';
+    Clear ErrMsg;
   Else;
-    UserMain.ErrMsg = 'Error adding user: ' + %Char(SQLCA.SQLCODE);
-    Clear UserMain.StsMsg;
+    ErrMsg = 'Error adding user: ' + %Char(SQLCODE);
+    Clear StsMsg;
   EndIf;
   
 End-Proc;
@@ -107,8 +97,8 @@ End-Proc;
 //==============================================================================
 Dcl-Proc ChangeUser;
   
-  UserMain.StsMsg = 'Change not implemented - users have no additional fields';
-  Clear UserMain.ErrMsg;
+  StsMsg = 'Change not implemented - users have no additional fields';
+  Clear ErrMsg;
   
 End-Proc;
 
@@ -117,20 +107,20 @@ End-Proc;
 //==============================================================================
 Dcl-Proc DeleteUser;
   
-  If UserMain.UsrPrfI = *Blanks;
-    UserMain.ErrMsg = 'User profile required';
+  If UsrPrfI = *Blanks;
+    ErrMsg = 'User profile required';
     Return;
   EndIf;
   
   Exec SQL
-    DELETE FROM CONF WHERE USRPRF = :UserMain.UsrPrfI;
+    DELETE FROM CONF WHERE USRPRF = :UsrPrfI;
   
-  If SQLCA.SQLCODE = 0;
-    UserMain.StsMsg = 'User deleted successfully';
-    Clear UserMain.ErrMsg;
+  If SQLCODE = 0;
+    StsMsg = 'User deleted successfully';
+    Clear ErrMsg;
   Else;
-    UserMain.ErrMsg = 'Error deleting user: ' + %Char(SQLCA.SQLCODE);
-    Clear UserMain.StsMsg;
+    ErrMsg = 'Error deleting user: ' + %Char(SQLCODE);
+    Clear StsMsg;
   EndIf;
   
 End-Proc;
@@ -142,22 +132,22 @@ Dcl-Proc DisplayUser;
   
   Dcl-S FoundUser Char(10);
   
-  If UserMain.UsrPrfI = *Blanks;
-    UserMain.ErrMsg = 'User profile required';
+  If UsrPrfI = *Blanks;
+    ErrMsg = 'User profile required';
     Return;
   EndIf;
   
   Exec SQL
     SELECT USRPRF INTO :FoundUser
     FROM CONF
-    WHERE USRPRF = :UserMain.UsrPrfI;
+    WHERE USRPRF = :UsrPrfI;
   
-  If SQLCA.SQLCODE = 0;
-    UserMain.StsMsg = 'User found: ' + %Trim(FoundUser);
-    Clear UserMain.ErrMsg;
+  If SQLCODE = 0;
+    StsMsg = 'User found: ' + %Trim(FoundUser);
+    Clear ErrMsg;
   Else;
-    UserMain.ErrMsg = 'User not found';
-    Clear UserMain.StsMsg;
+    ErrMsg = 'User not found';
+    Clear StsMsg;
   EndIf;
   
 End-Proc;
@@ -168,19 +158,19 @@ End-Proc;
 Dcl-Proc ListUsers;
   
   Dcl-S i Int(10);
-  Dcl-S UsrPrf Char(10);
+  Dcl-S TempUsrPrf Char(10);
   
   // Clear user list fields
-  UserMain.User01 = *Blanks;
-  UserMain.User02 = *Blanks;
-  UserMain.User03 = *Blanks;
-  UserMain.User04 = *Blanks;
-  UserMain.User05 = *Blanks;
-  UserMain.User06 = *Blanks;
-  UserMain.User07 = *Blanks;
-  UserMain.User08 = *Blanks;
-  UserMain.User09 = *Blanks;
-  UserMain.User10 = *Blanks;
+  User01 = *Blanks;
+  User02 = *Blanks;
+  User03 = *Blanks;
+  User04 = *Blanks;
+  User05 = *Blanks;
+  User06 = *Blanks;
+  User07 = *Blanks;
+  User08 = *Blanks;
+  User09 = *Blanks;
+  User10 = *Blanks;
   
   i = 0;
   
@@ -190,53 +180,53 @@ Dcl-Proc ListUsers;
   
   Exec SQL OPEN C2;
   
-  Exec SQL FETCH C2 INTO :UsrPrf;
+  Exec SQL FETCH C2 INTO :TempUsrPrf;
   
-  Dow SQLCA.SQLCODE = 0 And i < 10;
+  Dow SQLCODE = 0 And i < 10;
     i += 1;
     Select;
       When i = 1
         ;
-        UserMain.User01 = UsrPrf;
+        User01 = TempUsrPrf;
       When i = 2
         ;
-        UserMain.User02 = UsrPrf;
+        User02 = TempUsrPrf;
       When i = 3
         ;
-        UserMain.User03 = UsrPrf;
+        User03 = TempUsrPrf;
       When i = 4
         ;
-        UserMain.User04 = UsrPrf;
+        User04 = TempUsrPrf;
       When i = 5
         ;
-        UserMain.User05 = UsrPrf;
+        User05 = TempUsrPrf;
       When i = 6
         ;
-        UserMain.User06 = UsrPrf;
+        User06 = TempUsrPrf;
       When i = 7
         ;
-        UserMain.User07 = UsrPrf;
+        User07 = TempUsrPrf;
       When i = 8
         ;
-        UserMain.User08 = UsrPrf;
+        User08 = TempUsrPrf;
       When i = 9
         ;
-        UserMain.User09 = UsrPrf;
+        User09 = TempUsrPrf;
       When i = 10
         ;
-        UserMain.User10 = UsrPrf;
+        User10 = TempUsrPrf;
     EndSl;
-    Exec SQL FETCH C2 INTO :UsrPrf;
+    Exec SQL FETCH C2 INTO :TempUsrPrf;
   EndDo;
   
   Exec SQL CLOSE C2;
   
   If i = 0;
-    UserMain.StsMsg = 'No users found';
+    StsMsg = 'No users found';
   Else;
-    UserMain.StsMsg = %Char(i) + ' user(s) listed';
+    StsMsg = %Char(i) + ' user(s) listed';
   EndIf;
   
-  Clear UserMain.ErrMsg;
+  Clear ErrMsg;
   
 End-Proc;

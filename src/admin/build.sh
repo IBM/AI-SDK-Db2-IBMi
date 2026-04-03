@@ -10,7 +10,7 @@
 # Prerequisites:
 #   - DBSDK_V1 library must exist
 #   - User must have authority to create objects in DBSDK_V1
-#   - IBM i commands must be available (system command)
+#   - IBM i commands must be available (cl command)
 #
 # Author: AI-SDK-Db2-IBMi Project
 # Date: 2026-03-22
@@ -67,7 +67,7 @@ echo ""
 print_header "Step 1: Creating SQL Procedures"
 print_step "Compiling conf_admin.sql..."
 
-system "RUNSQLSTM SRCSTMF('${BASE_DIR}/sql/conf_admin.sql') COMMIT(*NONE) ERRLVL(21)" 2>&1
+cl "RUNSQLSTM SRCSTMF('${BASE_DIR}/sql/conf_admin.sql') COMMIT(*NONE) ERRLVL(21)" 2>&1
 
 if [ $? -eq 0 ]; then
     print_success "SQL procedures created successfully"
@@ -100,7 +100,7 @@ for dspf in "${DISPLAY_FILES[@]}"; do
     print_step "Compiling ${dspf}..."
     
     # Copy from IFS to source member
-    system "CPYFRMSTMF FROMSTMF('${BASE_DIR}/dspf/${dspf}.dspf') TOMBR('/QSYS.LIB/JWOEHR.LIB/QDDSSRC.FILE/${dspf}.MBR') MBROPT(*REPLACE)" 2>&1 > /dev/null
+    cl "CPYFRMSTMF FROMSTMF('${BASE_DIR}/dspf/${dspf}.dspf') TOMBR('/QSYS.LIB/JWOEHR.LIB/QDDSSRC.FILE/${dspf}.MBR') MBROPT(*REPLACE)" 2>&1 > /dev/null
     
     if [ $? -ne 0 ]; then
         print_error "Failed to copy ${dspf} to source member"
@@ -108,7 +108,7 @@ for dspf in "${DISPLAY_FILES[@]}"; do
     fi
     
     # Compile display file with GENLVL(30) to allow warnings
-    system "CRTDSPF FILE(DBSDK_V1/${dspf}) SRCFILE(JWOEHR/QDDSSRC) SRCMBR(${dspf}) GENLVL(30)" 2>&1 > /dev/null
+    cl "CRTDSPF FILE(DBSDK_V1/${dspf}) SRCFILE(JWOEHR/QDDSSRC) SRCMBR(${dspf}) GENLVL(30)" 2>&1 > /dev/null
     
     if [ $? -eq 0 ]; then
         print_success "${dspf} compiled successfully"
@@ -149,7 +149,7 @@ for pgm in "${RPGLE_PROGRAMS[@]}"; do
     # INCDIR specifies library for external file descriptions
     # DFTRDBCOL(DBSDK_V1) sets default collection for unqualified SQL names
     # CURLIB(DBSDK_V1) sets current library for this compile job
-    system "CRTSQLRPGI OBJ(DBSDK_V1/${pgm}) SRCSTMF('${BASE_DIR}/rpgle/${pgm}.rpgle') COMMIT(*NONE) DBGVIEW(*SOURCE) COMPILEOPT('DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)') USRPRF(*OWNER) RDB(*LOCAL) DFTRDBCOL(DBSDK_V1) CVTCCSID(*JOB) SQLPATH(*LIBL)" 2>&1 > /dev/null
+    cl "CRTSQLRPGI OBJ(DBSDK_V1/${pgm}) SRCSTMF('${BASE_DIR}/rpgle/${pgm}.rpgle') COMMIT(*NONE) DBGVIEW(*SOURCE) COMPILEOPT('DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)') USRPRF(*OWNER) RDB(*LOCAL) DFTRDBCOL(DBSDK_V1) CVTCCSID(*JOB) SQLPATH(*LIBL)" 2>&1 > /dev/null
     
     if [ $? -eq 0 ]; then
         print_success "${pgm} compiled successfully"

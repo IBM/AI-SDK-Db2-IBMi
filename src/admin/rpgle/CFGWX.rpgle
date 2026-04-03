@@ -29,7 +29,6 @@ Dcl-Ds Indicators;
 End-Ds;
 
 // Screen fields
-Dcl-Ds WxConfig ExtName('WXCONFIG':*All) Qualified End-Ds;
 
 // Program variables
 Dcl-S FirstTime Ind Inz(*On);
@@ -49,7 +48,7 @@ Dow Not Exit;
   LoadConfiguration();
   
   // Display screen
-  Exfmt WxConfig;
+  Exfmt WXCONFIG;
   
   // Check for exit or cancel
   If Exit Or Cancel;
@@ -73,29 +72,29 @@ Dcl-Proc GetUserProfile;
   
   // For now, prompt for user profile
   // In a full implementation, this would show a selection list
-  WxConfig.UsrPrf = *Blanks;
-  WxConfig.ErrMsg = 'Enter user profile to configure';
+  UsrPrf = *Blanks;
+  ErrMsg = 'Enter user profile to configure';
   
-  Dow WxConfig.UsrPrf = *Blanks;
-    Exfmt WxConfig;
+  Dow UsrPrf = *Blanks;
+    Exfmt WXCONFIG;
     
     If Exit Or Cancel;
       Leave;
     EndIf;
     
-    If WxConfig.UsrPrf <> *Blanks;
+    If UsrPrf <> *Blanks;
       // Verify user exists in configuration table
       Exec SQL
         SELECT USRPRF
-        INTO :WxConfig.UsrPrf
+        INTO :UsrPrf
         FROM DBSDK_V1.CONF
-        WHERE USRPRF = :WxConfig.UsrPrf;
+        WHERE USRPRF = :UsrPrf;
       
       If SQLCODE <> 0;
-        WxConfig.ErrMsg = 'User not found. Add user first.';
-        WxConfig.UsrPrf = *Blanks;
+        ErrMsg = 'User not found. Add user first.';
+        UsrPrf = *Blanks;
       Else;
-        WxConfig.ErrMsg = *Blanks;
+        ErrMsg = *Blanks;
       EndIf;
     EndIf;
   EndDo;
@@ -106,8 +105,8 @@ End-Proc;
 //==============================================================================
 Dcl-Proc LoadConfiguration;
   // Clear messages
-  WxConfig.ErrMsg = *Blanks;
-  WxConfig.StsMsg = *Blanks;
+  ErrMsg = *Blanks;
+  StsMsg = *Blanks;
   
   // Load configuration from database
   Exec SQL
@@ -115,15 +114,15 @@ Dcl-Proc LoadConfiguration;
            watsonx_apiVersion,
            watsonx_apikey,
            watsonx_projectid
-    INTO :WxConfig.WxRegion,
-         :WxConfig.WxApiVer,
-         :WxConfig.WxApiKey,
-         :WxConfig.WxProjId
+    INTO :WxRegion,
+         :WxApiVer,
+         :WxApiKey,
+         :WxProjId
     FROM DBSDK_V1.CONF
-    WHERE USRPRF = :WxConfig.UsrPrf;
+    WHERE USRPRF = :UsrPrf;
   
   If SQLCODE <> 0;
-    WxConfig.ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;
 
@@ -134,16 +133,16 @@ Dcl-Proc SaveConfiguration;
   // Call SQL procedure to update configuration
   Exec SQL
     CALL DBSDK_V1.CONF_UPDATE_WATSONX(
-      :WxConfig.UsrPrf,
-      :WxConfig.WxRegion,
-      :WxConfig.WxApiVer,
-      :WxConfig.WxApiKey,
-      :WxConfig.WxProjId
+      :UsrPrf,
+      :WxRegion,
+      :WxApiVer,
+      :WxApiKey,
+      :WxProjId
     );
   
   If SQLCODE = 0;
-    WxConfig.StsMsg = 'Configuration saved successfully';
+    StsMsg = 'Configuration saved successfully';
   Else;
-    WxConfig.ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;

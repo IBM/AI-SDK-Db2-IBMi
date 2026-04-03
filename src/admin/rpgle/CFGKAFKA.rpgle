@@ -29,7 +29,6 @@ Dcl-Ds Indicators;
 End-Ds;
 
 // Screen fields
-Dcl-Ds KfConfig ExtName('KFCONFIG':*All) Qualified End-Ds;
 
 // Program variables
 Dcl-S FirstTime Ind Inz(*On);
@@ -51,7 +50,7 @@ Dow Not Exit;
   LoadConfiguration();
   
   // Display screen
-  Exfmt KfConfig;
+  Exfmt KFCONFIG;
   
   // Check for exit or cancel
   If Exit Or Cancel;
@@ -69,29 +68,29 @@ Return;
 // Get User Profile to Configure
 //==============================================================================
 Dcl-Proc GetUserProfile;
-  KfConfig.UsrPrf = *Blanks;
-  KfConfig.ErrMsg = 'Enter user profile to configure';
+  UsrPrf = *Blanks;
+  ErrMsg = 'Enter user profile to configure';
   
-  Dow KfConfig.UsrPrf = *Blanks;
-    Exfmt KfConfig;
+  Dow UsrPrf = *Blanks;
+    Exfmt KFCONFIG;
     
     If Exit Or Cancel;
       Leave;
     EndIf;
     
-    If KfConfig.UsrPrf <> *Blanks;
+    If UsrPrf <> *Blanks;
       // Verify user exists in configuration table
       Exec SQL
         SELECT USRPRF
-        INTO :KfConfig.UsrPrf
+        INTO :UsrPrf
         FROM DBSDK_V1.CONF
-        WHERE USRPRF = :KfConfig.UsrPrf;
+        WHERE USRPRF = :UsrPrf;
       
       If SQLCODE <> 0;
-        KfConfig.ErrMsg = 'User not found. Add user first.';
-        KfConfig.UsrPrf = *Blanks;
+        ErrMsg = 'User not found. Add user first.';
+        UsrPrf = *Blanks;
       Else;
-        KfConfig.ErrMsg = *Blanks;
+        ErrMsg = *Blanks;
       EndIf;
     EndIf;
   EndDo;
@@ -102,8 +101,8 @@ End-Proc;
 //==============================================================================
 Dcl-Proc LoadConfiguration;
   // Clear messages
-  KfConfig.ErrMsg = *Blanks;
-  KfConfig.StsMsg = *Blanks;
+  ErrMsg = *Blanks;
+  StsMsg = *Blanks;
   
   // Load configuration from database
   Exec SQL
@@ -111,31 +110,31 @@ Dcl-Proc LoadConfiguration;
            kafka_broker,
            kafka_port,
            kafka_topic
-    INTO :KfConfig.KfProtoc,
+    INTO :KfProtoc,
          :FullBroker,
-         :KfConfig.KfPort,
+         :KfPort,
          :FullTopic
     FROM DBSDK_V1.CONF
-    WHERE USRPRF = :KfConfig.UsrPrf;
+    WHERE USRPRF = :UsrPrf;
   
   If SQLCODE = 0;
     // Split broker into two 50-char fields
-    KfConfig.KfBroker = %Subst(FullBroker:1:50);
+    KfBroker = %Subst(FullBroker:1:50);
     If %Len(FullBroker) > 50;
-      KfConfig.KfBrokr2 = %Subst(FullBroker:51:50);
+      KfBrokr2 = %Subst(FullBroker:51:50);
     Else;
-      KfConfig.KfBrokr2 = *Blanks;
+      KfBrokr2 = *Blanks;
     EndIf;
     
     // Split topic into two 50-char fields
-    KfConfig.KfTopic = %Subst(FullTopic:1:50);
+    KfTopic = %Subst(FullTopic:1:50);
     If %Len(FullTopic) > 50;
-      KfConfig.KfTopic2 = %Subst(FullTopic:51:50);
+      KfTopic2 = %Subst(FullTopic:51:50);
     Else;
-      KfConfig.KfTopic2 = *Blanks;
+      KfTopic2 = *Blanks;
     EndIf;
   Else;
-    KfConfig.ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error loading configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;
 
@@ -144,22 +143,22 @@ End-Proc;
 //==============================================================================
 Dcl-Proc SaveConfiguration;
   // Combine split fields
-  FullBroker = %Trim(KfConfig.KfBroker) + %Trim(KfConfig.KfBrokr2);
-  FullTopic = %Trim(KfConfig.KfTopic) + %Trim(KfConfig.KfTopic2);
+  FullBroker = %Trim(KfBroker) + %Trim(KfBrokr2);
+  FullTopic = %Trim(KfTopic) + %Trim(KfTopic2);
   
   // Call SQL procedure to update configuration
   Exec SQL
     CALL DBSDK_V1.CONF_UPDATE_KAFKA(
-      :KfConfig.UsrPrf,
-      :KfConfig.KfProtoc,
+      :UsrPrf,
+      :KfProtoc,
       :FullBroker,
-      :KfConfig.KfPort,
+      :KfPort,
       :FullTopic
     );
   
   If SQLCODE = 0;
-    KfConfig.StsMsg = 'Configuration saved successfully';
+    StsMsg = 'Configuration saved successfully';
   Else;
-    KfConfig.ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
+    ErrMsg = 'Error saving configuration: ' + %Char(SQLCODE);
   EndIf;
 End-Proc;

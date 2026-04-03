@@ -29,81 +29,9 @@ Dcl-Ds Indicators;
 End-Ds;
 
 // Screen fields
-Dcl-Ds Menu ExtName('MENU':*All) Qualified End-Ds;
 
 // Program variables
 Dcl-S ValidOption Ind;
-
-//==============================================================================
-// Main Processing
-//==============================================================================
-
-Dow Not Exit;
-  // Clear error message
-  Menu.ErrMsg = *Blanks;
-  
-  // Display menu
-  Exfmt Menu;
-  
-  // Check for exit
-  If Exit;
-    Leave;
-  EndIf;
-  
-  // Validate and process option
-  ValidOption = *On;
-  
-  Select;
-    // User Management
-    When Menu.Option = '1';
-      CallP CFGUSER();
-      
-    // WatsonX Configuration
-    When Menu.Option = '2';
-      CallP CFGWX();
-      
-    // Ollama Configuration
-    When Menu.Option = '3';
-      CallP CFGOLLAMA();
-      
-    // OpenAI Compatible Configuration
-    When Menu.Option = '4';
-      CallP CFGOPENAI();
-      
-    // Wallaroo Configuration
-    When Menu.Option = '5';
-      CallP CFGWLROO();
-      
-    // Kafka Configuration
-    When Menu.Option = '6';
-      CallP CFGKAFKA();
-      
-    // Slack Configuration
-    When Menu.Option = '7';
-      CallP CFGSLACK();
-      
-    // Twilio Configuration
-    When Menu.Option = '8';
-      CallP CFGTWILIO();
-      
-    // Exit
-    When Menu.Option = '90';
-      Leave;
-      
-    // Invalid option
-    Other;
-      ValidOption = *Off;
-      Menu.ErrMsg = 'Invalid option. Please select 1-8 or 90.';
-  EndSl;
-  
-  // Clear option field after processing
-  If ValidOption;
-    Menu.Option = *Blanks;
-  EndIf;
-EndDo;
-
-*InLR = *On;
-Return;
 
 //==============================================================================
 // External Program Prototypes
@@ -140,3 +68,74 @@ End-PR;
 // Twilio Configuration
 Dcl-PR CFGTWILIO ExtPgm('CFGTWILIO');
 End-PR;
+
+//==============================================================================
+// Main Processing
+//==============================================================================
+
+Dow Not Exit;
+  // Clear error message
+  ErrMsg = *Blanks;
+  
+  // Display menu
+  Exfmt MENU;
+  
+  // Check for exit
+  If Exit;
+    Leave;
+  EndIf;
+  
+  // Validate and process option
+  ValidOption = *On;
+  
+  Select;
+    // User Management
+    When Option = '1';
+      CallP CFGUSER();
+      
+    // WatsonX Configuration
+    When Option = '2';
+      CallP CFGWX();
+      
+    // Ollama Configuration
+    When Option = '3';
+      CallP CFGOLLAMA();
+      
+    // OpenAI Compatible Configuration
+    When Option = '4';
+      CallP CFGOPENAI();
+      
+    // Wallaroo Configuration
+    When Option = '5';
+      CallP CFGWLROO();
+      
+    // Kafka Configuration
+    When Option = '6';
+      CallP CFGKAFKA();
+      
+    // Slack Configuration
+    When Option = '7';
+      CallP CFGSLACK();
+      
+    // Twilio Configuration
+    When Option = '8';
+      CallP CFGTWILIO();
+      
+    // Exit
+    When Option = '90';
+      Leave;
+      
+    // Invalid option
+    Other;
+      ValidOption = *Off;
+      ErrMsg = 'Invalid option. Please select 1-8 or 90.';
+  EndSl;
+  
+  // Clear option field after processing
+  If ValidOption;
+    Option = *Blanks;
+  EndIf;
+EndDo;
+
+*InLR = *On;
+Return;
