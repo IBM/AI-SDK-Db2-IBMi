@@ -372,7 +372,7 @@ This application is part of the DBSDK project. See the main LICENSE file for det
 
 ## Version History
 
-- **v1.0** (2026-03-22): Initial release
+- **v1.0** (2026-04-04): Initial release
   - User management functionality
   - Configuration screens for 7 services
   - Menu-driven interface
