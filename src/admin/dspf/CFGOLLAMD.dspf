@@ -35,19 +35,20 @@
      A* User Profile Display
      A*=====================================================================
      A                                  4  2'User Profile:'
-     A            USRPRF        10A  O  4 17DSPATR(HI)
+     A            USRPRF        10A  B  4 17DSPATR(UL)
+     A                                      COLOR(WHT)
      A*=====================================================================
      A* Configuration Fields
      A*=====================================================================
      A                                  6  2'Protocol:'
-     A            OLPROTOC      16A  B  6 20
+     A            OLPROTOC      16A  B  6 20CHECK(LC)
      A                                  6 38'(http or https)'
      A                                      COLOR(BLU)
      A                                  8  2'Server:'
-     A            OLSERVER      50A  B  8 20
+     A            OLSERVER      50A  B  8 20CHECK(LC)
      A                                  8 72'(1/2)'
      A                                      COLOR(BLU)
-     A            OLSRVR2       50A  B  9 20
+     A            OLSRVR2       50A  B  9 20CHECK(LC)
      A                                  9 72'(2/2)'
      A                                      COLOR(BLU)
      A                                 11  2'Port:'
@@ -55,20 +56,20 @@
      A                                 11 27'(default: 11434)'
      A                                      COLOR(BLU)
      A                                 13  2'Model:'
-     A            OLMODEL       50A  B 13 20
+     A            OLMODEL       50A  B 13 20CHECK(LC)
      A                                 13 72'(1/2)'
      A                                      COLOR(BLU)
-     A            OLMODL2       50A  B 14 20
+     A            OLMODL2       50A  B 14 20CHECK(LC)
      A                                 14 72'(2/2)'
      A                                      COLOR(BLU)
      A*=====================================================================
      A* Instructions
      A*=====================================================================
-     A                                 17  2'Enter configuration values and -
-     A                                      press Enter to save.'
+     A                                 17  2'Enter User Profile to load config.'
      A                                      COLOR(BLU)
-     A                                 18  2'Press F12 to cancel without sav-
-     A                                      ing.'
+     A                                 18  2'You may type changes at same time.'
+     A                                      COLOR(BLU)
+     A                                 19  2'Press Enter to save or F12 to exit'
      A                                      COLOR(BLU)
      A*=====================================================================
      A* Error Message Area
