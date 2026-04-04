@@ -33,10 +33,10 @@ End-Ds;
 // Main Processing
 //==============================================================================
 
+// Clear screen fields initially
+Clear USERMAIN;
+
 Dow Not Exit;
-  
-  // Clear screen fields
-  Clear USERMAIN;
   
   // Display screen and get user input
   Exfmt USERMAIN;
@@ -45,23 +45,32 @@ Dow Not Exit;
     Leave;
   EndIf;
   
+  // Clear messages from previous iteration
+  Clear ErrMsg;
+  Clear StsMsg;
+  
   // Process action
   Select;
     When Action = '1' // Add user
       ;
       AddUser();
+      Action = *Blanks; // Clear action to prevent accidental re-execution
     When Action = '2' // Change user
       ;
       ChangeUser();
+      Action = *Blanks;
     When Action = '4' // Delete user
       ;
       DeleteUser();
+      Action = *Blanks;
     When Action = '5' // Display user
       ;
       DisplayUser();
+      Action = *Blanks;
     When Action = '9' // List users
       ;
       ListUsers();
+      Action = *Blanks;
   EndSl;
   
 EndDo;
@@ -80,7 +89,7 @@ Dcl-Proc AddUser;
   EndIf;
   
   Exec SQL
-    INSERT INTO CONF (USRPRF) VALUES (:UsrPrfI);
+    CALL DBSDK_V1.CONF_REGISTER_USER(:UsrPrfI);
   
   If SQLCODE = 0;
     StsMsg = 'User added successfully';
@@ -113,7 +122,7 @@ Dcl-Proc DeleteUser;
   EndIf;
   
   Exec SQL
-    DELETE FROM CONF WHERE USRPRF = :UsrPrfI;
+    CALL DBSDK_V1.CONF_REMOVE_USER(:UsrPrfI);
   
   If SQLCODE = 0;
     StsMsg = 'User deleted successfully';
@@ -139,7 +148,7 @@ Dcl-Proc DisplayUser;
   
   Exec SQL
     SELECT USRPRF INTO :FoundUser
-    FROM CONF
+    FROM DBSDK_V1.CONF
     WHERE USRPRF = :UsrPrfI;
   
   If SQLCODE = 0;
@@ -176,7 +185,7 @@ Dcl-Proc ListUsers;
   
   Exec SQL
     DECLARE C2 CURSOR FOR
-      SELECT USRPRF FROM CONF ORDER BY USRPRF;
+      SELECT USRPRF FROM DBSDK_V1.CONF ORDER BY USRPRF;
   
   Exec SQL OPEN C2;
   
