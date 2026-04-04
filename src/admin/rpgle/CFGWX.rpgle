@@ -31,21 +31,17 @@ End-Ds;
 // Screen fields
 
 // Program variables
-Dcl-S FirstTime Ind Inz(*On);
+Dcl-S OldUsrPrf Varchar(10) Inz(*Blanks);
 
 //==============================================================================
 // Main Processing
 //==============================================================================
 
 Dow Not Exit;
-  // Get user profile on first time
-  If FirstTime;
-    GetUserProfile();
-    FirstTime = *Off;
+  // If no user profile, prompt for it
+  If UsrPrf = *Blanks;
+    ErrMsg = 'Enter user profile to configure';
   EndIf;
-  
-  // Load current configuration
-  LoadConfiguration();
   
   // Display screen
   Exfmt WXCONFIG;
@@ -55,50 +51,47 @@ Dow Not Exit;
     Leave;
   EndIf;
   
-  // Save configuration
-  SaveConfiguration();
+  If UsrPrf = *Blanks;
+    Iter;
+  EndIf;
+  
+  // Clear error message if we have a user profile
+  If ErrMsg = 'Enter user profile to configure';
+    ErrMsg = *Blanks;
+  EndIf;
+  
+  // If user profile changed
+  If UsrPrf <> OldUsrPrf;
+    // Verify user exists in configuration table
+    Exec SQL
+      SELECT USRPRF
+      INTO :UsrPrf
+      FROM DBSDK_V1.CONF
+      WHERE USRPRF = :UsrPrf;
+    
+    If SQLCODE <> 0;
+      ErrMsg = 'User not found. Add user first.';
+      UsrPrf = *Blanks;
+      Iter;
+    EndIf;
+    
+    // Check if they entered configuration data along with the new profile
+    If WxRegion <> *Blanks Or WxApiVer <> *Blanks Or WxApiKey <> *Blanks Or WxProjId <> *Blanks;
+      // They entered data, save it
+      SaveConfiguration();
+    EndIf;
+    
+    OldUsrPrf = UsrPrf;
+    LoadConfiguration();
+  Else;
+    // Save configuration
+    SaveConfiguration();
+    LoadConfiguration();
+  EndIf;
 EndDo;
 
 *InLR = *On;
 Return;
-
-//==============================================================================
-// Get User Profile to Configure
-//==============================================================================
-Dcl-Proc GetUserProfile;
-  Dcl-S UserList Char(10) Dim(100);
-  Dcl-S UserCount Int(10);
-  Dcl-S I Int(10);
-  
-  // For now, prompt for user profile
-  // In a full implementation, this would show a selection list
-  UsrPrf = *Blanks;
-  ErrMsg = 'Enter user profile to configure';
-  
-  Dow UsrPrf = *Blanks;
-    Exfmt WXCONFIG;
-    
-    If Exit Or Cancel;
-      Leave;
-    EndIf;
-    
-    If UsrPrf <> *Blanks;
-      // Verify user exists in configuration table
-      Exec SQL
-        SELECT USRPRF
-        INTO :UsrPrf
-        FROM DBSDK_V1.CONF
-        WHERE USRPRF = :UsrPrf;
-      
-      If SQLCODE <> 0;
-        ErrMsg = 'User not found. Add user first.';
-        UsrPrf = *Blanks;
-      Else;
-        ErrMsg = *Blanks;
-      EndIf;
-    EndIf;
-  EndDo;
-End-Proc;
 
 //==============================================================================
 // Load Current Configuration
@@ -110,10 +103,10 @@ Dcl-Proc LoadConfiguration;
   
   // Load configuration from database
   Exec SQL
-    SELECT watsonx_region,
-           watsonx_apiVersion,
-           watsonx_apikey,
-           watsonx_projectid
+    SELECT IFNULL(watsonx_region, ''),
+           IFNULL(watsonx_apiVersion, ''),
+           IFNULL(watsonx_apikey, ''),
+           IFNULL(watsonx_projectid, '')
     INTO :WxRegion,
          :WxApiVer,
          :WxApiKey,
