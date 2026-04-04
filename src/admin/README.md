@@ -16,33 +16,42 @@ This is a 5250 green-screen application for administering the DBSDK_V1 configura
 ## Prerequisites
 
 ### System Requirements
+
 - IBM i operating system (V7R3 or later recommended)
 - DBSDK_V1 library must exist
 - DBSDK_V1.CONF table must be created (run `src/conf.sql` first)
 - Authority to create objects in DBSDK_V1 library
 
 ### User Requirements
+
+- A user profile named `DBSDK_V1` must exist on the system.
+- The administrator running this application must either:
+  - Run the application directly as the `DBSDK_V1` user
+  - Have the ability to adopt the program owner's authority (if the programs are owned by `DBSDK_V1`)
+- This specific user profile (`DBSDK_V1`) is required by the Row and Column Access Control (RCAC) rules to bypass row-level security and manage configurations for all users.
 - Administrator must have:
   - Authority to DBSDK_V1 library
   - Authority to read/write DBSDK_V1.CONF table
-  - Ability to adopt program owner authority
 
 ## Installation
 
 ### Quick Start
 
 1. **Navigate to the admin directory:**
+
    ```bash
    cd /home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin
    ```
 
 2. **Run the build script:**
+
    ```bash
    ./build.sh
    ```
 
 3. **Start the application:**
-   ```
+
+   ```cl
    CALL PGM(DBSDK_V1/CFGMENU)
    ```
 
@@ -51,6 +60,7 @@ This is a 5250 green-screen application for administering the DBSDK_V1 configura
 If you prefer to build components individually, follow these steps:
 
 #### Step 1: Create SQL Procedures
+
 ```bash
 RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_admin.sql') +
           COMMIT(*NONE) +
@@ -62,6 +72,7 @@ RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf
 **Note:** Display files use the JWOEHR/QDDSSRC source file. Ensure QDDSSRC exists in library JWOEHR.
 
 Compile each display file:
+
 ```bash
 # Main Menu
 CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGMENUD.dspf') +
@@ -79,6 +90,7 @@ CRTDSPF FILE(DBSDK_V1/CFGUSERD) SRCFILE(JWOEHR/QDDSSRC) SRCMBR(CFGUSERD)
 ```
 
 If QDDSSRC doesn't exist in JWOEHR, create it:
+
 ```bash
 CRTSRCPF FILE(JWOEHR/QDDSSRC) RCDLEN(112)
 ```
@@ -112,12 +124,14 @@ CRTBNDRPG PGM(DBSDK_V1/CFGUSER) +
 ### Starting the Application
 
 From a 5250 session:
+
 ```
 CALL PGM(DBSDK_V1/CFGMENU)
 ```
 
 Or add to your library list and call directly:
-```
+
+```cl
 ADDLIBLE DBSDK_V1
 CALL CFGMENU
 ```
@@ -126,7 +140,7 @@ CALL CFGMENU
 
 The main menu provides access to all configuration areas:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                    DBSDK Configuration Administration                       │
 │                                                                             │
@@ -170,18 +184,21 @@ Options 2-8 allow you to configure specific services for a selected user:
 ## Configuration Fields
 
 ### WatsonX (Option 2)
+
 - **Region**: WatsonX region (e.g., us-south)
 - **API Version**: API version (e.g., 2023-07-07)
 - **API Key**: WatsonX API key (password protected)
 - **Project ID**: WatsonX project identifier
 
 ### Ollama (Option 3)
+
 - **Protocol**: http or https
 - **Server**: Server hostname or IP address
 - **Port**: Port number (default: 11434)
 - **Model**: Model name (e.g., granite3.2:8b)
 
 ### OpenAI Compatible (Option 4)
+
 - **Protocol**: http or https
 - **Server**: Server hostname or IP address
 - **Port**: Port number (default: 8000)
@@ -190,20 +207,24 @@ Options 2-8 allow you to configure specific services for a selected user:
 - **Base Path**: API base path (default: /v1)
 
 ### Wallaroo (Option 5)
+
 - **Token URL**: OAuth token URL
 - **Confidential Client**: Client identifier
 - **Client Secret**: Client secret (password protected)
 
 ### Kafka (Option 6)
+
 - **Protocol**: http or https
 - **Broker**: Kafka broker address
 - **Port**: Port number (default: 8082)
 - **Topic**: Kafka topic name
 
 ### Slack (Option 7)
+
 - **Webhook URL**: Slack webhook URL (password protected)
 
 ### Twilio (Option 8)
+
 - **Phone Number**: Twilio phone number
 - **Account SID**: Twilio account SID
 - **Auth Token**: Authentication token (password protected)
@@ -217,17 +238,22 @@ Options 2-8 allow you to configure specific services for a selected user:
 ## Security
 
 ### Administrator Access
+
 - Only authorized administrators should run this application
 - Programs use `USRPRF(*OWNER)` to bypass RCAC row-level security
 - This allows administrators to manage configurations for all users
 
 ### Password Fields
+
 Sensitive fields (API keys, secrets, tokens) are displayed as password fields:
+
 - Input is not echoed to the screen
 - Values are stored securely in the database
 
 ### Audit Trail
+
 Consider implementing an audit trail to track:
+
 - Who made configuration changes
 - When changes were made
 - What values were changed
@@ -237,24 +263,29 @@ Consider implementing an audit trail to track:
 ### Common Issues
 
 **Problem**: "Object CFGMENU not found"
+
 - **Solution**: Ensure all programs are compiled to DBSDK_V1 library
 - **Check**: `WRKOBJ OBJ(DBSDK_V1/CFGMENU) OBJTYPE(*PGM)`
 
 **Problem**: "Authority violation"
+
 - **Solution**: Verify programs have `USRPRF(*OWNER)` attribute
 - **Check**: `DSPPGM PGM(DBSDK_V1/CFGMENU)` and look for "User profile"
 
 **Problem**: "SQL error when saving"
+
 - **Solution**: Check job log for specific SQL error
 - **Check**: `DSPJOBLOG` and look for SQL messages
 
 **Problem**: "Display file not found"
+
 - **Solution**: Ensure all display files are compiled
 - **Check**: `WRKOBJ OBJ(DBSDK_V1/CFGMENUD) OBJTYPE(*FILE)`
 
 ### Debug Mode
 
 To debug programs:
+
 1. Start debug session: `STRDBG PGM(DBSDK_V1/CFGMENU)`
 2. Set breakpoints as needed
 3. Run the program: `CALL CFGMENU`
@@ -263,18 +294,20 @@ To debug programs:
 ### Checking Logs
 
 View job log for errors:
-```
+
+```cl
 DSPJOBLOG
 ```
 
 View SQL messages:
-```
+
+```cl
 DSPMSG MSGQ(QSYSOPR)
 ```
 
 ## File Structure
 
-```
+```text
 src/admin/
 ├── README.md                      # This file
 ├── DESIGN.md                      # Architecture documentation
@@ -327,6 +360,7 @@ src/admin/
 ## Support
 
 For issues or questions:
+
 1. Check the troubleshooting section above
 2. Review the DESIGN.md for architecture details
 3. Review the IMPLEMENTATION_PLAN.md for technical details
