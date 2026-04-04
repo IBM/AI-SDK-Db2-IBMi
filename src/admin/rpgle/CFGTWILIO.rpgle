@@ -31,7 +31,7 @@ End-Ds;
 // Screen fields
 
 // Program variables
-Dcl-S FirstTime Ind Inz(*On);
+Dcl-S OldUsrPrf Varchar(10) Inz(*Blanks);
 Dcl-S FullNumber Varchar(1000);
 Dcl-S FullSid Varchar(1000);
 Dcl-S FullAuthToken Varchar(1000);
@@ -41,14 +41,10 @@ Dcl-S FullAuthToken Varchar(1000);
 //==============================================================================
 
 Dow Not Exit;
-  // Get user profile on first time
-  If FirstTime;
-    GetUserProfile();
-    FirstTime = *Off;
+  // If no user profile, prompt for it
+  If UsrPrf = *Blanks;
+    ErrMsg = 'Enter user profile to configure';
   EndIf;
-  
-  // Load current configuration
-  LoadConfiguration();
   
   // Display screen
   Exfmt TWCONFIG;
@@ -58,44 +54,47 @@ Dow Not Exit;
     Leave;
   EndIf;
   
-  // Save configuration
-  SaveConfiguration();
+  If UsrPrf = *Blanks;
+    Iter;
+  EndIf;
+  
+  // Clear error message if we have a user profile
+  If ErrMsg = 'Enter user profile to configure';
+    ErrMsg = *Blanks;
+  EndIf;
+  
+  // If user profile changed
+  If UsrPrf <> OldUsrPrf;
+    // Verify user exists in configuration table
+    Exec SQL
+      SELECT USRPRF
+      INTO :UsrPrf
+      FROM DBSDK_V1.CONF
+      WHERE USRPRF = :UsrPrf;
+    
+    If SQLCODE <> 0;
+      ErrMsg = 'User not found. Add user first.';
+      UsrPrf = *Blanks;
+      Iter;
+    EndIf;
+    
+    // Check if they entered configuration data along with the new profile
+    If TwNumber <> *Blanks Or TwSid <> *Blanks Or TwAuthTn <> *Blanks;
+      // They entered data, save it
+      SaveConfiguration();
+    EndIf;
+    
+    OldUsrPrf = UsrPrf;
+    LoadConfiguration();
+  Else;
+    // Save configuration
+    SaveConfiguration();
+    LoadConfiguration();
+  EndIf;
 EndDo;
 
 *InLR = *On;
 Return;
-
-//==============================================================================
-// Get User Profile to Configure
-//==============================================================================
-Dcl-Proc GetUserProfile;
-  UsrPrf = *Blanks;
-  ErrMsg = 'Enter user profile to configure';
-  
-  Dow UsrPrf = *Blanks;
-    Exfmt TWCONFIG;
-    
-    If Exit Or Cancel;
-      Leave;
-    EndIf;
-    
-    If UsrPrf <> *Blanks;
-      // Verify user exists in configuration table
-      Exec SQL
-        SELECT USRPRF
-        INTO :UsrPrf
-        FROM DBSDK_V1.CONF
-        WHERE USRPRF = :UsrPrf;
-      
-      If SQLCODE <> 0;
-        ErrMsg = 'User not found. Add user first.';
-        UsrPrf = *Blanks;
-      Else;
-        ErrMsg = *Blanks;
-      EndIf;
-    EndIf;
-  EndDo;
-End-Proc;
 
 //==============================================================================
 // Load Current Configuration
@@ -107,9 +106,9 @@ Dcl-Proc LoadConfiguration;
   
   // Load configuration from database
   Exec SQL
-    SELECT twilio_number,
-           twilio_sid,
-           twilio_authtoken
+    SELECT IFNULL(twilio_number, ''),
+           IFNULL(twilio_sid, ''),
+           IFNULL(twilio_authtoken, '')
     INTO :FullNumber,
          :FullSid,
          :FullAuthToken
@@ -118,26 +117,38 @@ Dcl-Proc LoadConfiguration;
   
   If SQLCODE = 0;
     // Split number into two 50-char fields
-    TwNumber = %Subst(FullNumber:1:50);
     If %Len(FullNumber) > 50;
+      TwNumber = %Subst(FullNumber:1:50);
       TwNumbr2 = %Subst(FullNumber:51:50);
+    ElseIf %Len(FullNumber) > 0;
+      TwNumber = FullNumber;
+      TwNumbr2 = *Blanks;
     Else;
+      TwNumber = *Blanks;
       TwNumbr2 = *Blanks;
     EndIf;
     
     // Split SID into two 50-char fields
-    TwSid = %Subst(FullSid:1:50);
     If %Len(FullSid) > 50;
+      TwSid = %Subst(FullSid:1:50);
       TwSid2 = %Subst(FullSid:51:50);
+    ElseIf %Len(FullSid) > 0;
+      TwSid = FullSid;
+      TwSid2 = *Blanks;
     Else;
+      TwSid = *Blanks;
       TwSid2 = *Blanks;
     EndIf;
     
     // Split auth token into two 50-char fields
-    TwAuthTn = %Subst(FullAuthToken:1:50);
     If %Len(FullAuthToken) > 50;
+      TwAuthTn = %Subst(FullAuthToken:1:50);
       TwAuthK2 = %Subst(FullAuthToken:51:50);
+    ElseIf %Len(FullAuthToken) > 0;
+      TwAuthTn = FullAuthToken;
+      TwAuthK2 = *Blanks;
     Else;
+      TwAuthTn = *Blanks;
       TwAuthK2 = *Blanks;
     EndIf;
   Else;

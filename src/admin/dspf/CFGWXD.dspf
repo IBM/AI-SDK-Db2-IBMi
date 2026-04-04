@@ -35,32 +35,36 @@
      A* User Profile Display
      A*=====================================================================
      A                                  4  2'User Profile:'
-     A            USRPRF        10A  O  4 17DSPATR(HI)
+     A            USRPRF        10A  B  4 17DSPATR(UL)
+     A                                      COLOR(WHT)
      A*=====================================================================
      A* Configuration Fields
      A*=====================================================================
      A                                  6  2'WatsonX Region:'
-     A            WXREGION      16A  B  6 20
+     A            WXREGION      16A  B  6 20CHECK(LC)
      A                                  6 38'(e.g., us-south)'
      A                                      COLOR(BLU)
      A                                  8  2'API Version:'
-     A            WXAPIVER      10A  B  8 20
+     A            WXAPIVER      10A  B  8 20CHECK(LC)
      A                                  8 32'(e.g., 2023-07-07)'
      A                                      COLOR(BLU)
      A                                 10  2'API Key:'
-     A            WXAPIKEY     100A  B 10 20DSPATR(ND)
+     A            WXAPIKEY     100A  B 10 20DSPATR(ND UL)
+     A                                      COLOR(WHT)
      A                                 10 38'(password protected)'
      A                                      COLOR(BLU)
-     A                                 12  2'Project ID:'
-     A            WXPROJID     100A  B 12 20
+     A                                 12 20'^ Starts here'
+     A                                      COLOR(BLU)
+     A                                 14  2'Project ID:'
+     A            WXPROJID     100A  B 14 20CHECK(LC)
      A*=====================================================================
      A* Instructions
      A*=====================================================================
-     A                                 16  2'Enter configuration values and -
-     A                                      press Enter to save.'
+     A                                 18  2'Enter User Profile to load config.'
      A                                      COLOR(BLU)
-     A                                 17  2'Press F12 to cancel without sav-
-     A                                      ing.'
+     A                                 19  2'You may type changes at same time.'
+     A                                      COLOR(BLU)
+     A                                 20  2'Press Enter to save or F12 to exit'
      A                                      COLOR(BLU)
      A*=====================================================================
      A* Error Message Area
