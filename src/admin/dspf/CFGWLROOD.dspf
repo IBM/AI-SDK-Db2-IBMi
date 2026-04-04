@@ -35,39 +35,46 @@
      A* User Profile Display
      A*=====================================================================
      A                                  4  2'User Profile:'
-     A            USRPRF        10A  O  4 17DSPATR(HI)
+     A            USRPRF        10A  B  4 17DSPATR(UL)
+     A                                      COLOR(WHT)
      A*=====================================================================
      A* Configuration Fields
      A*=====================================================================
      A                                  6  2'Token URL:'
-     A            WLTKNURL      50A  B  6 20
+     A            WLTKNURL      50A  B  6 20CHECK(LC)
      A                                  6 72'(1/2)'
      A                                      COLOR(BLU)
-     A            WLTKURL2      50A  B  7 20
-     A                                  7 72'(2/2)'
+     A            WLTKURL2      50A  B  8 20CHECK(LC)
+     A                                  8 72'(2/2)'
      A                                      COLOR(BLU)
-     A                                  9  2'Confidential Client:'
-     A            WLCLIENT      50A  B  9 20
-     A                                  9 72'(1/2)'
+     A                                 10  2'Confid. Client:'
+     A            WLCLIENT      50A  B 10 20CHECK(LC)
+     A                                 10 72'(1/2)'
      A                                      COLOR(BLU)
-     A            WLCLINT2      50A  B 10 20
-     A                                 10 72'(2/2)'
+     A            WLCLINT2      50A  B 12 20CHECK(LC)
+     A                                 12 72'(2/2)'
      A                                      COLOR(BLU)
-     A                                 12  2'Client Secret:'
-     A            WLSECRET      50A  B 12 20DSPATR(ND)
-     A                                 12 72'(1/2)'
+     A                                 14  2'Client Secret:'
+     A            WLSECRET      50A  B 14 20DSPATR(ND UL)
+     A                                      COLOR(WHT)
+     A                                 14 72'(1/2)'
      A                                      COLOR(BLU)
-     A            WLSECR2       50A  B 13 20DSPATR(ND)
-     A                                 13 72'(2/2)'
+     A                                 15 20'^ Starts here'
+     A                                      COLOR(BLU)
+     A            WLSECR2       50A  B 16 20DSPATR(ND UL)
+     A                                      COLOR(WHT)
+     A                                 16 72'(2/2)'
+     A                                      COLOR(BLU)
+     A                                 17 20'^ Starts here'
      A                                      COLOR(BLU)
      A*=====================================================================
      A* Instructions
      A*=====================================================================
-     A                                 16  2'Enter configuration values and -
-     A                                      press Enter to save.'
+     A                                 18  2'Enter User Profile to load config.'
      A                                      COLOR(BLU)
-     A                                 17  2'Client Secret is password prote-
-     A                                      cted.'
+     A                                 19  2'You may type changes at same time.'
+     A                                      COLOR(BLU)
+     A                                 20  2'Press Enter to save or F12 to exit'
      A                                      COLOR(BLU)
      A*=====================================================================
      A* Error Message Area
