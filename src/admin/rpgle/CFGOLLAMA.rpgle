@@ -105,10 +105,10 @@ Dcl-Proc LoadConfiguration;
   
   // Load configuration from database
   Exec SQL
-    SELECT ollama_protocol,
-           ollama_server,
-           ollama_port,
-           ollama_model
+    SELECT IFNULL(ollama_protocol, ''),
+           IFNULL(ollama_server, ''),
+           IFNULL(ollama_port, 0),
+           IFNULL(ollama_model, '')
     INTO :OlProtoc,
          :FullServer,
          :OlPort,

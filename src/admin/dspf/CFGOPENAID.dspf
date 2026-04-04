@@ -36,40 +36,48 @@
      A* User Profile Display
      A*=====================================================================
      A                                  4  2'User Profile:'
-     A            USRPRF        10A  O  4 17DSPATR(HI)
+     A            USRPRF        10A  B  4 17DSPATR(UL)
+     A                                      COLOR(WHT)
      A*=====================================================================
      A* Configuration Fields
      A*=====================================================================
      A                                  6  2'Protocol:'
-     A            OAPROTOC      16A  B  6 20
+     A            OAPROTOC      16A  B  6 20CHECK(LC)
      A                                  6 38'(http or https)'
      A                                      COLOR(BLU)
      A                                  7  2'Server:'
-     A            OASERVER      50A  B  7 20
+     A            OASERVER      50A  B  7 20CHECK(LC)
      A                                  8  2'Port:'
      A            OAPORT         5S 0B  8 20EDTCDE(4)
      A                                  8 27'(default: 8000)'
      A                                      COLOR(BLU)
      A                                  9  2'Model:'
-     A            OAMODEL       50A  B  9 20
-     A                                 10  2'API Key:'
-     A            OAAPIKEY      50A  B 10 20DSPATR(ND)
-     A                                 10 72'(1/2)'
+     A            OAMODEL       50A  B  9 20CHECK(LC)
+     A                                 11  2'API Key:'
+     A            OAAPIKEY      50A  B 11 20DSPATR(ND UL)
+     A                                      COLOR(WHT)
+     A                                 11 72'(1/2)'
      A                                      COLOR(BLU)
-     A            OAAPIKY2      50A  B 11 20DSPATR(ND)
-     A                                 11 72'(2/2)'
+     A                                 12 20'^ Starts here'
      A                                      COLOR(BLU)
-     A                                 12  2'Base Path:'
-     A            OABASEPT      50A  B 12 20
-     A                                 12 72'(e.g., /v1)'
+     A            OAAPIKY2      50A  B 13 20DSPATR(ND UL)
+     A                                      COLOR(WHT)
+     A                                 13 72'(2/2)'
+     A                                      COLOR(BLU)
+     A                                 14 20'^ Starts here'
+     A                                      COLOR(BLU)
+     A                                 16  2'Base Path:'
+     A            OABASEPT      50A  B 16 20CHECK(LC)
+     A                                 16 72'(e.g., /v1)'
      A                                      COLOR(BLU)
      A*=====================================================================
      A* Instructions
      A*=====================================================================
-     A                                 15  2'Enter configuration values and -
-     A                                      press Enter to save.'
+     A                                 18  2'Enter User Profile to load config.'
      A                                      COLOR(BLU)
-     A                                 16  2'API Key is password protected.'
+     A                                 19  2'You may type changes at same time.'
+     A                                      COLOR(BLU)
+     A                                 20  2'Press Enter to save or F12 to exit'
      A                                      COLOR(BLU)
      A*=====================================================================
      A* Error Message Area
