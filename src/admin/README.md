@@ -125,7 +125,7 @@ CRTBNDRPG PGM(DBSDK_V1/CFGUSER) +
 
 From a 5250 session:
 
-```
+```cl
 CALL PGM(DBSDK_V1/CFGMENU)
 ```
 
