@@ -57,7 +57,7 @@ This is a 5250 green-screen application for administering the DBSDK_V1 configura
 
 ### Manual Installation
 
-If you prefer to build components individually, follow these steps:
+If you prefer to build components individually, follow these steps (note that I've used my own user profile and own name in the examples, change to match your installation):
 
 #### Step 1: Create SQL Procedures
 
