@@ -37,7 +37,8 @@
      A* Action Input
      A*=====================================================================
      A                                  4  2'Action:'
-     A            ACTION         1A  B  4 11DSPATR(HI)
+     A            ACTION         1A  B  4 11DSPATR(UL)
+     A                                      COLOR(WHT)
      A                                  4 14'(1=Add, 2=Change, 4=Delete, 5=-
      A                                      Display, 9=List)'
      A                                  5  2'User Profile:'
