@@ -82,8 +82,7 @@ begin
         FROM sysibm.sysdummy1
     ) live
     ON tt.usrprf = live.usrprf
-    WHEN NOT MATCHED THEN INSERT (usrprf) VALUES (live.usrprf)
-    WHEN MATCHED THEN UPDATE SET (usrprf) = (live.usrprf);
+    WHEN NOT MATCHED THEN INSERT (usrprf) VALUES (live.usrprf);
 end;
 create or replace procedure dbsdk_v1.conf_initialize(usrprf varchar(10) ccsid 1208 default CURRENT_USER) 
   program type sub
