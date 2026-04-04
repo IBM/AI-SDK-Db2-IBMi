@@ -31,7 +31,7 @@ End-Ds;
 // Screen fields
 
 // Program variables
-Dcl-S FirstTime Ind Inz(*On);
+Dcl-S OldUsrPrf Varchar(10) Inz(*Blanks);
 Dcl-S FullTokenUrl Varchar(1000);
 Dcl-S FullClient Varchar(1000);
 Dcl-S FullSecret Varchar(8000);
@@ -41,14 +41,10 @@ Dcl-S FullSecret Varchar(8000);
 //==============================================================================
 
 Dow Not Exit;
-  // Get user profile on first time
-  If FirstTime;
-    GetUserProfile();
-    FirstTime = *Off;
+  // If no user profile, prompt for it
+  If UsrPrf = *Blanks;
+    ErrMsg = 'Enter user profile to configure';
   EndIf;
-  
-  // Load current configuration
-  LoadConfiguration();
   
   // Display screen
   Exfmt WLCONFIG;
@@ -58,44 +54,47 @@ Dow Not Exit;
     Leave;
   EndIf;
   
-  // Save configuration
-  SaveConfiguration();
+  If UsrPrf = *Blanks;
+    Iter;
+  EndIf;
+  
+  // Clear error message if we have a user profile
+  If ErrMsg = 'Enter user profile to configure';
+    ErrMsg = *Blanks;
+  EndIf;
+  
+  // If user profile changed
+  If UsrPrf <> OldUsrPrf;
+    // Verify user exists in configuration table
+    Exec SQL
+      SELECT USRPRF
+      INTO :UsrPrf
+      FROM DBSDK_V1.CONF
+      WHERE USRPRF = :UsrPrf;
+    
+    If SQLCODE <> 0;
+      ErrMsg = 'User not found. Add user first.';
+      UsrPrf = *Blanks;
+      Iter;
+    EndIf;
+    
+    // Check if they entered configuration data along with the new profile
+    If WlTknUrl <> *Blanks Or WlClient <> *Blanks Or WlSecret <> *Blanks;
+      // They entered data, save it
+      SaveConfiguration();
+    EndIf;
+    
+    OldUsrPrf = UsrPrf;
+    LoadConfiguration();
+  Else;
+    // Save configuration
+    SaveConfiguration();
+    LoadConfiguration();
+  EndIf;
 EndDo;
 
 *InLR = *On;
 Return;
-
-//==============================================================================
-// Get User Profile to Configure
-//==============================================================================
-Dcl-Proc GetUserProfile;
-  UsrPrf = *Blanks;
-  ErrMsg = 'Enter user profile to configure';
-  
-  Dow UsrPrf = *Blanks;
-    Exfmt WLCONFIG;
-    
-    If Exit Or Cancel;
-      Leave;
-    EndIf;
-    
-    If UsrPrf <> *Blanks;
-      // Verify user exists in configuration table
-      Exec SQL
-        SELECT USRPRF
-        INTO :UsrPrf
-        FROM DBSDK_V1.CONF
-        WHERE USRPRF = :UsrPrf;
-      
-      If SQLCODE <> 0;
-        ErrMsg = 'User not found. Add user first.';
-        UsrPrf = *Blanks;
-      Else;
-        ErrMsg = *Blanks;
-      EndIf;
-    EndIf;
-  EndDo;
-End-Proc;
 
 //==============================================================================
 // Load Current Configuration
@@ -118,26 +117,38 @@ Dcl-Proc LoadConfiguration;
   
   If SQLCODE = 0;
     // Split token URL into two 50-char fields
-    WlTknUrl = %Subst(FullTokenUrl:1:50);
     If %Len(FullTokenUrl) > 50;
+      WlTknUrl = %Subst(FullTokenUrl:1:50);
       WlTkUrl2 = %Subst(FullTokenUrl:51:50);
+    ElseIf %Len(FullTokenUrl) > 0;
+      WlTknUrl = FullTokenUrl;
+      WlTkUrl2 = *Blanks;
     Else;
+      WlTknUrl = *Blanks;
       WlTkUrl2 = *Blanks;
     EndIf;
     
     // Split client into two 50-char fields
-    WlClient = %Subst(FullClient:1:50);
     If %Len(FullClient) > 50;
+      WlClient = %Subst(FullClient:1:50);
       WlClint2 = %Subst(FullClient:51:50);
+    ElseIf %Len(FullClient) > 0;
+      WlClient = FullClient;
+      WlClint2 = *Blanks;
     Else;
+      WlClient = *Blanks;
       WlClint2 = *Blanks;
     EndIf;
     
     // Split secret into two 50-char fields
-    WlSecret = %Subst(FullSecret:1:50);
     If %Len(FullSecret) > 50;
+      WlSecret = %Subst(FullSecret:1:50);
       WlSecr2 = %Subst(FullSecret:51:50);
+    ElseIf %Len(FullSecret) > 0;
+      WlSecret = FullSecret;
+      WlSecr2 = *Blanks;
     Else;
+      WlSecret = *Blanks;
       WlSecr2 = *Blanks;
     EndIf;
   Else;
