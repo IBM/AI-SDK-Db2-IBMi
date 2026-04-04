@@ -31,7 +31,7 @@ End-Ds;
 // Screen fields
 
 // Program variables
-Dcl-S FirstTime Ind Inz(*On);
+Dcl-S OldUsrPrf Varchar(10) Inz(*Blanks);
 Dcl-S FullWebhook Varchar(1000);
 
 //==============================================================================
@@ -39,14 +39,10 @@ Dcl-S FullWebhook Varchar(1000);
 //==============================================================================
 
 Dow Not Exit;
-  // Get user profile on first time
-  If FirstTime;
-    GetUserProfile();
-    FirstTime = *Off;
+  // If no user profile, prompt for it
+  If UsrPrf = *Blanks;
+    ErrMsg = 'Enter user profile to configure';
   EndIf;
-  
-  // Load current configuration
-  LoadConfiguration();
   
   // Display screen
   Exfmt SLCONFIG;
@@ -56,44 +52,47 @@ Dow Not Exit;
     Leave;
   EndIf;
   
-  // Save configuration
-  SaveConfiguration();
+  If UsrPrf = *Blanks;
+    Iter;
+  EndIf;
+  
+  // Clear error message if we have a user profile
+  If ErrMsg = 'Enter user profile to configure';
+    ErrMsg = *Blanks;
+  EndIf;
+  
+  // If user profile changed
+  If UsrPrf <> OldUsrPrf;
+    // Verify user exists in configuration table
+    Exec SQL
+      SELECT USRPRF
+      INTO :UsrPrf
+      FROM DBSDK_V1.CONF
+      WHERE USRPRF = :UsrPrf;
+    
+    If SQLCODE <> 0;
+      ErrMsg = 'User not found. Add user first.';
+      UsrPrf = *Blanks;
+      Iter;
+    EndIf;
+    
+    // Check if they entered configuration data along with the new profile
+    If SlWebHok <> *Blanks;
+      // They entered data, save it
+      SaveConfiguration();
+    EndIf;
+    
+    OldUsrPrf = UsrPrf;
+    LoadConfiguration();
+  Else;
+    // Save configuration
+    SaveConfiguration();
+    LoadConfiguration();
+  EndIf;
 EndDo;
 
 *InLR = *On;
 Return;
-
-//==============================================================================
-// Get User Profile to Configure
-//==============================================================================
-Dcl-Proc GetUserProfile;
-  UsrPrf = *Blanks;
-  ErrMsg = 'Enter user profile to configure';
-  
-  Dow UsrPrf = *Blanks;
-    Exfmt SLCONFIG;
-    
-    If Exit Or Cancel;
-      Leave;
-    EndIf;
-    
-    If UsrPrf <> *Blanks;
-      // Verify user exists in configuration table
-      Exec SQL
-        SELECT USRPRF
-        INTO :UsrPrf
-        FROM DBSDK_V1.CONF
-        WHERE USRPRF = :UsrPrf;
-      
-      If SQLCODE <> 0;
-        ErrMsg = 'User not found. Add user first.';
-        UsrPrf = *Blanks;
-      Else;
-        ErrMsg = *Blanks;
-      EndIf;
-    EndIf;
-  EndDo;
-End-Proc;
 
 //==============================================================================
 // Load Current Configuration
@@ -105,17 +104,21 @@ Dcl-Proc LoadConfiguration;
   
   // Load configuration from database
   Exec SQL
-    SELECT slack_webhook
+    SELECT IFNULL(slack_webhook, '')
     INTO :FullWebhook
     FROM DBSDK_V1.CONF
     WHERE USRPRF = :UsrPrf;
   
   If SQLCODE = 0;
     // Split webhook into two 50-char fields
-    SlWebHok = %Subst(FullWebhook:1:50);
     If %Len(FullWebhook) > 50;
+      SlWebHok = %Subst(FullWebhook:1:50);
       SlWebHk2 = %Subst(FullWebhook:51:50);
+    ElseIf %Len(FullWebhook) > 0;
+      SlWebHok = FullWebhook;
+      SlWebHk2 = *Blanks;
     Else;
+      SlWebHok = *Blanks;
       SlWebHk2 = *Blanks;
     EndIf;
   Else;

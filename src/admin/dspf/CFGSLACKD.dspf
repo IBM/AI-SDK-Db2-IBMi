@@ -35,29 +35,32 @@
      A* User Profile Display
      A*=====================================================================
      A                                  4  2'User Profile:'
-     A            USRPRF        10A  O  4 17DSPATR(HI)
+     A            USRPRF        10A  B  4 17DSPATR(UL)
+     A                                      COLOR(WHT)
      A*=====================================================================
      A* Configuration Fields
      A*=====================================================================
      A                                  6  2'Webhook URL:'
-     A            SLWEBHOK      50A  B  6 20DSPATR(ND)
+     A            SLWEBHOK      50A  B  6 20DSPATR(ND UL)
+     A                                      COLOR(WHT)
      A                                  6 72'(1/2)'
      A                                      COLOR(BLU)
-     A            SLWEBHK2      50A  B  7 20DSPATR(ND)
-     A                                  7 72'(2/2)'
+     A                                  7 20'^ Starts here'
+     A                                      COLOR(BLU)
+     A            SLWEBHK2      50A  B  8 20DSPATR(ND UL)
+     A                                      COLOR(WHT)
+     A                                  8 72'(2/2)'
+     A                                      COLOR(BLU)
+     A                                  9 20'^ Starts here'
      A                                      COLOR(BLU)
      A*=====================================================================
      A* Instructions
      A*=====================================================================
-     A                                 10  2'Enter the Slack webhook URL.'
+     A                                 18  2'Enter User Profile to load config.'
      A                                      COLOR(BLU)
-     A                                 11  2'This field is password protecte-
-     A                                      d.'
+     A                                 19  2'You may type changes at same time.'
      A                                      COLOR(BLU)
-     A                                 13  2'Press Enter to save.'
-     A                                      COLOR(BLU)
-     A                                 14  2'Press F12 to cancel without sav-
-     A                                      ing.'
+     A                                 20  2'Press Enter to save or F12 to exit'
      A                                      COLOR(BLU)
      A*=====================================================================
      A* Error Message Area
