@@ -31,7 +31,7 @@ End-Ds;
 // Screen fields
 
 // Program variables
-Dcl-S FirstTime Ind Inz(*On);
+Dcl-S OldUsrPrf Varchar(10) Inz(*Blanks);
 Dcl-S FullApiKey Varchar(8000);
 Dcl-S FullBasePath Varchar(1000);
 
@@ -40,14 +40,10 @@ Dcl-S FullBasePath Varchar(1000);
 //==============================================================================
 
 Dow Not Exit;
-  // Get user profile on first time
-  If FirstTime;
-    GetUserProfile();
-    FirstTime = *Off;
+  // If no user profile, prompt for it
+  If UsrPrf = *Blanks;
+    ErrMsg = 'Enter user profile to configure';
   EndIf;
-  
-  // Load current configuration
-  LoadConfiguration();
   
   // Display screen
   Exfmt OACONFG;
@@ -57,44 +53,47 @@ Dow Not Exit;
     Leave;
   EndIf;
   
-  // Save configuration
-  SaveConfiguration();
+  If UsrPrf = *Blanks;
+    Iter;
+  EndIf;
+  
+  // Clear error message if we have a user profile
+  If ErrMsg = 'Enter user profile to configure';
+    ErrMsg = *Blanks;
+  EndIf;
+  
+  // If user profile changed
+  If UsrPrf <> OldUsrPrf;
+    // Verify user exists in configuration table
+    Exec SQL
+      SELECT USRPRF
+      INTO :UsrPrf
+      FROM DBSDK_V1.CONF
+      WHERE USRPRF = :UsrPrf;
+    
+    If SQLCODE <> 0;
+      ErrMsg = 'User not found. Add user first.';
+      UsrPrf = *Blanks;
+      Iter;
+    EndIf;
+    
+    // Check if they entered configuration data along with the new profile
+    If OaServer <> *Blanks Or OaModel <> *Blanks Or OaApiKey <> *Blanks;
+      // They entered data, save it
+      SaveConfiguration();
+    EndIf;
+    
+    OldUsrPrf = UsrPrf;
+    LoadConfiguration();
+  Else;
+    // Save configuration
+    SaveConfiguration();
+    LoadConfiguration();
+  EndIf;
 EndDo;
 
 *InLR = *On;
 Return;
-
-//==============================================================================
-// Get User Profile to Configure
-//==============================================================================
-Dcl-Proc GetUserProfile;
-  UsrPrf = *Blanks;
-  ErrMsg = 'Enter user profile to configure';
-  
-  Dow UsrPrf = *Blanks;
-    Exfmt OACONFG;
-    
-    If Exit Or Cancel;
-      Leave;
-    EndIf;
-    
-    If UsrPrf <> *Blanks;
-      // Verify user exists in configuration table
-      Exec SQL
-        SELECT USRPRF
-        INTO :UsrPrf
-        FROM DBSDK_V1.CONF
-        WHERE USRPRF = :UsrPrf;
-      
-      If SQLCODE <> 0;
-        ErrMsg = 'User not found. Add user first.';
-        UsrPrf = *Blanks;
-      Else;
-        ErrMsg = *Blanks;
-      EndIf;
-    EndIf;
-  EndDo;
-End-Proc;
 
 //==============================================================================
 // Load Current Configuration
@@ -106,12 +105,12 @@ Dcl-Proc LoadConfiguration;
   
   // Load configuration from database
   Exec SQL
-    SELECT openai_compatible_protocol,
-           openai_compatible_server,
-           openai_compatible_port,
-           openai_compatible_model,
-           openai_compatible_apikey,
-           openai_compatible_basepath
+    SELECT IFNULL(openai_compatible_protocol, ''),
+           IFNULL(openai_compatible_server, ''),
+           IFNULL(openai_compatible_port, 0),
+           IFNULL(openai_compatible_model, ''),
+           IFNULL(openai_compatible_apikey, ''),
+           IFNULL(openai_compatible_basepath, '')
     INTO :OaProtoc,
          :OaServer,
          :OaPort,
@@ -123,10 +122,14 @@ Dcl-Proc LoadConfiguration;
   
   If SQLCODE = 0;
     // Split API key into two 50-char fields
-    OaApiKey = %Subst(FullApiKey:1:50);
     If %Len(FullApiKey) > 50;
+      OaApiKey = %Subst(FullApiKey:1:50);
       OaApiKy2 = %Subst(FullApiKey:51:50);
+    ElseIf %Len(FullApiKey) > 0;
+      OaApiKey = FullApiKey;
+      OaApiKy2 = *Blanks;
     Else;
+      OaApiKey = *Blanks;
       OaApiKy2 = *Blanks;
     EndIf;
     

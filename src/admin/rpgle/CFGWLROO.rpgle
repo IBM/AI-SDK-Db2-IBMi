@@ -106,9 +106,9 @@ Dcl-Proc LoadConfiguration;
   
   // Load configuration from database
   Exec SQL
-    SELECT wallaroo_tokenurl,
-           wallaroo_confidential_client,
-           wallaroo_confidential_client_secret
+    SELECT IFNULL(wallaroo_tokenurl, ''),
+           IFNULL(wallaroo_confidential_client, ''),
+           IFNULL(wallaroo_confidential_client_secret, '')
     INTO :FullTokenUrl,
          :FullClient,
          :FullSecret
