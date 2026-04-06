@@ -51,24 +51,19 @@ Dow Not Exit;
   
   // Process action
   Select;
-    When Action = '1' // Add user
-      ;
+    When Action = '1'; // Add user
       AddUser();
       Action = *Blanks; // Clear action to prevent accidental re-execution
-    When Action = '2' // Change user
-      ;
+    When Action = '2'; // Change user
       ChangeUser();
       Action = *Blanks;
-    When Action = '4' // Delete user
-      ;
+    When Action = '4'; // Delete user
       DeleteUser();
       Action = *Blanks;
-    When Action = '5' // Display user
-      ;
+    When Action = '5'; // Display user
       DisplayUser();
       Action = *Blanks;
-    When Action = '9' // List users
-      ;
+    When Action = '9'; // List users
       ListUsers();
       Action = *Blanks;
   EndSl;
@@ -194,35 +189,25 @@ Dcl-Proc ListUsers;
   Dow SQLCODE = 0 And i < 10;
     i += 1;
     Select;
-      When i = 1
-        ;
+      When i = 1;
         User01 = TempUsrPrf;
-      When i = 2
-        ;
+      When i = 2;
         User02 = TempUsrPrf;
-      When i = 3
-        ;
+      When i = 3;
         User03 = TempUsrPrf;
-      When i = 4
-        ;
+      When i = 4;
         User04 = TempUsrPrf;
-      When i = 5
-        ;
+      When i = 5;
         User05 = TempUsrPrf;
-      When i = 6
-        ;
+      When i = 6;
         User06 = TempUsrPrf;
-      When i = 7
-        ;
+      When i = 7;
         User07 = TempUsrPrf;
-      When i = 8
-        ;
+      When i = 8;
         User08 = TempUsrPrf;
-      When i = 9
-        ;
+      When i = 9;
         User09 = TempUsrPrf;
-      When i = 10
-        ;
+      When i = 10;
         User10 = TempUsrPrf;
     EndSl;
     Exec SQL FETCH C2 INTO :TempUsrPrf;
