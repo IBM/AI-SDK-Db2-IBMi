@@ -295,14 +295,14 @@ To debug programs:
 
 View job log for errors:
 
-```cl
-DSPJOBLOG
+```sql
+SELECT * FROM TABLE(QSYS2.JOBLOG_INFO('*')) X
 ```
 
 View SQL messages:
 
-```cl
-DSPMSG MSGQ(QSYSOPR)
+```sql
+SELECT * FROM TABLE(QSYS2.MESSAGE_QUEUE_INFO(QUEUE_LIBRARY => 'QSYS', QUEUE_NAME => 'QSYSOPR')) X
 ```
 
 ## File Structure
