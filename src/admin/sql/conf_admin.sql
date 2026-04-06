@@ -33,7 +33,7 @@ CALLED ON NULL INPUT
 DYNAMIC RESULT SETS 1
 SET OPTION USRPRF = *OWNER, DYNUSRPRF = *OWNER, COMMIT = *NONE
 BEGIN
-    DECLARE c1 CURSOR WITH RETURN FOR
+    DECLARE USER_CFG_CSR CURSOR WITH RETURN FOR
         SELECT
             USRPRF,
             watsonx_region,
@@ -64,7 +64,7 @@ BEGIN
         FROM DBSDK_V1.CONF
         WHERE USRPRF = p_usrprf;
     
-    OPEN c1;
+    OPEN USER_CFG_CSR;
 END;
 
 -- ============================================================================
@@ -81,12 +81,12 @@ CALLED ON NULL INPUT
 DYNAMIC RESULT SETS 1
 SET OPTION USRPRF = *OWNER, DYNUSRPRF = *OWNER, COMMIT = *NONE
 BEGIN
-    DECLARE c1 CURSOR WITH RETURN FOR
+    DECLARE LIST_USER_CSR CURSOR WITH RETURN FOR
         SELECT USRPRF
         FROM DBSDK_V1.CONF
         ORDER BY USRPRF;
     
-    OPEN c1;
+    OPEN LIST_USER_CSR;
 END;
 
 -- ============================================================================
