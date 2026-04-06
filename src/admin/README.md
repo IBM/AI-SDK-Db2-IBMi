@@ -265,7 +265,7 @@ Consider implementing an audit trail to track:
 **Problem**: "Object CFGMENU not found"
 
 - **Solution**: Ensure all programs are compiled to DBSDK_V1 library
-- **Check**: `WRKOBJ OBJ(DBSDK_V1/CFGMENU) OBJTYPE(*PGM)`
+- **Check**: `SELECT * FROM QSYS2.PROGRAM_INFO WHERE PROGRAM_LIBRARY = 'DBSDK_V1' AND PROGRAM_NAME = 'CFGMENU';`
 
 **Problem**: "Authority violation"
 
