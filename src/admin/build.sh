@@ -65,15 +65,31 @@ echo ""
 #===============================================================================
 
 print_header "Step 1: Creating SQL Procedures"
-print_step "Compiling conf_admin.sql..."
 
-cl "RUNSQLSTM SRCSTMF('${BASE_DIR}/sql/conf_admin.sql') COMMIT(*NONE) ERRLVL(21)" 2>&1
+# Array of SQL procedure files
+SQL_PROCEDURES=(
+    "conf_get_user"
+    "conf_list_users"
+    "conf_update_watsonx"
+    "conf_update_ollama"
+    "conf_update_openai"
+    "conf_update_wallaroo"
+    "conf_update_kafka"
+    "conf_update_slack"
+    "conf_update_twilio"
+)
 
-if [ $? -eq 0 ]; then
-    print_success "SQL procedures created successfully"
-else
-    print_error "Failed to create SQL procedures"
-fi
+for sql_file in "${SQL_PROCEDURES[@]}"; do
+    print_step "Compiling ${sql_file}.sql..."
+    
+    system "RUNSQLSTM SRCSTMF('${BASE_DIR}/sql/${sql_file}.sql') COMMIT(*NONE) ERRLVL(21)" 2>&1 > /dev/null
+    
+    if [ $? -eq 0 ]; then
+        print_success "${sql_file} compiled successfully"
+    else
+        print_error "Failed to compile ${sql_file}"
+    fi
+done
 
 echo ""
 
