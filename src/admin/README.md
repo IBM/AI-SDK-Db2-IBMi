@@ -45,7 +45,19 @@ This is a 5250 green-screen application for administering the DBSDK_V1 configura
    cd /home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin
    ```
 
-2. **Run the build script:**
+2. **Build using Make (recommended):**
+
+   ```bash
+   make
+   ```
+
+   Or with verbose output to see compilation details:
+
+   ```bash
+   make VERBOSE=1
+   ```
+
+   **Alternative: Use the build script:**
 
    ```bash
    ./build.sh
@@ -57,14 +69,70 @@ This is a 5250 green-screen application for administering the DBSDK_V1 configura
    CALL PGM(DBSDK_V1/CFGMENU)
    ```
 
+### Build Options
+
+The Makefile provides several build targets:
+
+- `make` or `make all` - Build all components (default)
+- `make sql` - Build SQL procedures only
+- `make dspf` - Build display files only
+- `make rpgle` - Build RPGLE programs only
+- `make clean` - Remove all compiled objects
+- `make help` - Show available targets and options
+
+**Verbose Mode:**
+
+By default, compilation output is suppressed for cleaner output. To see full compilation details (useful for debugging):
+
+```bash
+make VERBOSE=1
+make rpgle VERBOSE=1  # Verbose output for RPGLE only
+```
+
 ### Manual Installation
 
 If you prefer to build components individually, follow these steps (note that I've used my own user profile and own name in the examples, change to match your installation):
 
 #### Step 1: Create SQL Procedures
 
+The SQL procedures have been modularized into separate files for better maintainability:
+
 ```bash
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_admin.sql') +
+# User management procedures
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_get_user.sql') +
+          COMMIT(*NONE) +
+          ERRLVL(21)
+
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_list_users.sql') +
+          COMMIT(*NONE) +
+          ERRLVL(21)
+
+# Service configuration procedures
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_watsonx.sql') +
+          COMMIT(*NONE) +
+          ERRLVL(21)
+
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_ollama.sql') +
+          COMMIT(*NONE) +
+          ERRLVL(21)
+
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_openai.sql') +
+          COMMIT(*NONE) +
+          ERRLVL(21)
+
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_wallaroo.sql') +
+          COMMIT(*NONE) +
+          ERRLVL(21)
+
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_kafka.sql') +
+          COMMIT(*NONE) +
+          ERRLVL(21)
+
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_slack.sql') +
+          COMMIT(*NONE) +
+          ERRLVL(21)
+
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_twilio.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
 ```
@@ -73,53 +141,71 @@ RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf
 
 **Note:** Display files use the JWOEHR/QDDSSRC source file. Ensure QDDSSRC exists in library JWOEHR.
 
-Compile each display file:
-
-```bash
-# Main Menu
-CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGMENUD.dspf') +
-           TOMBR('/QSYS.LIB/JWOEHR.LIB/QDDSSRC.FILE/CFGMENUD.MBR') +
-           MBROPT(*REPLACE)
-CRTDSPF FILE(DBSDK_V1/CFGMENUD) SRCFILE(JWOEHR/QDDSSRC) SRCMBR(CFGMENUD)
-
-# User Management
-CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGUSERD.dspf') +
-           TOMBR('/QSYS.LIB/JWOEHR.LIB/QDDSSRC.FILE/CFGUSERD.MBR') +
-           MBROPT(*REPLACE)
-CRTDSPF FILE(DBSDK_V1/CFGUSERD) SRCFILE(JWOEHR/QDDSSRC) SRCMBR(CFGUSERD)
-
-# Repeat for all other display files...
-```
-
 If QDDSSRC doesn't exist in JWOEHR, create it:
 
 ```bash
 CRTSRCPF FILE(JWOEHR/QDDSSRC) RCDLEN(112)
 ```
 
-#### Step 3: Compile RPGLE Programs
+Compile each display file (with GENLVL(30) to allow warnings):
 
 ```bash
 # Main Menu
-CRTBNDRPG PGM(DBSDK_V1/CFGMENU) +
-          SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGMENU.rpgle') +
-          DFTACTGRP(*NO) +
-          ACTGRP(*NEW) +
-          DBGVIEW(*SOURCE) +
-          OPTION(*EVENTF) +
-          USRPRF(*OWNER)
+CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGMENUD.dspf') +
+           TOMBR('/QSYS.LIB/JWOEHR.LIB/QDDSSRC.FILE/CFGMENUD.MBR') +
+           MBROPT(*REPLACE)
+CRTDSPF FILE(DBSDK_V1/CFGMENUD) SRCFILE(JWOEHR/QDDSSRC) SRCMBR(CFGMENUD) GENLVL(30)
 
 # User Management
-CRTBNDRPG PGM(DBSDK_V1/CFGUSER) +
-          SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGUSER.rpgle') +
-          DFTACTGRP(*NO) +
-          ACTGRP(*NEW) +
-          DBGVIEW(*SOURCE) +
-          OPTION(*EVENTF) +
-          USRPRF(*OWNER)
+CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGUSERD.dspf') +
+           TOMBR('/QSYS.LIB/JWOEHR.LIB/QDDSSRC.FILE/CFGUSERD.MBR') +
+           MBROPT(*REPLACE)
+CRTDSPF FILE(DBSDK_V1/CFGUSERD) SRCFILE(JWOEHR/QDDSSRC) SRCMBR(CFGUSERD) GENLVL(30)
+
+# Repeat for all other display files...
+```
+
+#### Step 3: Compile RPGLE Programs
+
+**Important:** RPGLE programs contain embedded SQL and must be compiled with CRTSQLRPGI. The library list must include DBSDK_V1 to find display files.
+
+```bash
+# Add DBSDK_V1 to library list
+ADDLIBLE DBSDK_V1
+
+# Main Menu
+CRTSQLRPGI OBJ(DBSDK_V1/CFGMENU) +
+           SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGMENU.rpgle') +
+           COMMIT(*NONE) +
+           DBGVIEW(*SOURCE) +
+           COMPILEOPT('DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)') +
+           USRPRF(*OWNER) +
+           RDB(*LOCAL) +
+           DFTRDBCOL(DBSDK_V1) +
+           CVTCCSID(*JOB) +
+           SQLPATH(*LIBL)
+
+# User Management
+CRTSQLRPGI OBJ(DBSDK_V1/CFGUSER) +
+           SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGUSER.rpgle') +
+           COMMIT(*NONE) +
+           DBGVIEW(*SOURCE) +
+           COMPILEOPT('DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)') +
+           USRPRF(*OWNER) +
+           RDB(*LOCAL) +
+           DFTRDBCOL(DBSDK_V1) +
+           CVTCCSID(*JOB) +
+           SQLPATH(*LIBL)
 
 # Repeat for all other programs...
 ```
+
+**Compilation Notes:**
+- `CRTSQLRPGI` is required for programs with embedded SQL
+- `CVTCCSID(*JOB)` handles UTF-8 (1208) source files
+- `SQLPATH(*LIBL)` uses library list to find SQL procedures
+- `DFTRDBCOL(DBSDK_V1)` sets default collection for unqualified SQL names
+- `USRPRF(*OWNER)` allows programs to bypass RCAC for administration
 
 ## Usage
 
@@ -314,7 +400,8 @@ src/admin/
 ├── README.md                      # This file
 ├── DESIGN.md                      # Architecture documentation
 ├── IMPLEMENTATION_PLAN.md         # Detailed implementation plan
-├── build.sh                       # Build script
+├── build.sh                       # Build script (bash)
+├── Makefile                       # Build automation (make)
 │
 ├── dspf/                          # Display file sources
 │   ├── CFGMENUD.dspf             # Main menu
@@ -339,7 +426,15 @@ src/admin/
 │   └── CFGTWILIO.rpgle           # Twilio config
 │
 └── sql/                           # SQL procedure sources
-    └── conf_admin.sql            # Admin procedures
+    ├── conf_get_user.sql         # Get user configuration
+    ├── conf_list_users.sql       # List all users
+    ├── conf_update_watsonx.sql   # Update WatsonX config
+    ├── conf_update_ollama.sql    # Update Ollama config
+    ├── conf_update_openai.sql    # Update OpenAI config
+    ├── conf_update_wallaroo.sql  # Update Wallaroo config
+    ├── conf_update_kafka.sql     # Update Kafka config
+    ├── conf_update_slack.sql     # Update Slack config
+    └── conf_update_twilio.sql    # Update Twilio config
 ```
 
 ## Maintenance
@@ -349,8 +444,8 @@ src/admin/
 1. Update the database schema in `src/conf.sql`
 2. Update the appropriate display file in `dspf/`
 3. Update the corresponding RPGLE program in `rpgle/`
-4. Update the SQL procedure in `sql/conf_admin.sql`
-5. Recompile affected components
+4. Update the corresponding SQL procedure in `sql/conf_update_*.sql`
+5. Recompile affected components using `make` or `build.sh`
 
 ### Modifying Screen Layouts
 
@@ -373,6 +468,13 @@ For issues or questions:
 This application is part of the DBSDK project. See the main LICENSE file for details.
 
 ## Version History
+
+- **v1.1** (2026-04-06): Build system improvements
+  - Added Makefile for automated builds
+  - Modularized SQL procedures into separate files
+  - Added VERBOSE mode for debugging compilation issues
+  - Updated RPGLE compilation to use CRTSQLRPGI
+  - Improved build documentation
 
 - **v1.0** (2026-04-04): Initial release
   - User management functionality
