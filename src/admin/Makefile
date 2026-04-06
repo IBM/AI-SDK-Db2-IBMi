@@ -4,13 +4,17 @@
 # Purpose: Automated build for compiling all components
 #          Compiles SQL procedures, display files, and RPGLE programs
 #
-# Usage: make [target]
+# Usage: make [target] [VERBOSE=1]
 #   make all     - Build all components (default)
 #   make sql     - Build SQL procedures only
 #   make dspf    - Build display files only
 #   make rpgle   - Build RPGLE programs only
 #   make clean   - Remove all compiled objects
 #   make help    - Show this help message
+#
+# Options:
+#   VERBOSE=1    - Show compilation output (default: suppressed)
+#                  Example: make VERBOSE=1
 #
 # Prerequisites:
 #   - DBSDK_V1 library must exist
@@ -23,6 +27,14 @@
 
 # Use bash as shell for better compatibility
 SHELL := /bin/bash
+
+# Verbose mode control
+VERBOSE ?= 0
+ifeq ($(VERBOSE),1)
+    REDIRECT :=
+else
+    REDIRECT := > /dev/null 2>&1
+endif
 
 # Color codes for output
 RED     := \033[0;31m
@@ -136,7 +148,7 @@ sql:
 
 sql/%:
 	@printf "$(YELLOW)>>> Compiling $*.sql...$(NC)\n"
-	@if system "RUNSQLSTM SRCSTMF('$(BASE_DIR)/sql/$*.sql') COMMIT(*NONE) ERRLVL(21)" > /dev/null 2>&1; then \
+	@if system "RUNSQLSTM SRCSTMF('$(BASE_DIR)/sql/$*.sql') COMMIT(*NONE) ERRLVL(21)" $(REDIRECT); then \
 		printf "$(GREEN)✓ $* compiled successfully$(NC)\n"; \
 	else \
 		printf "$(RED)✗ Failed to compile $*$(NC)\n"; \
@@ -156,8 +168,8 @@ dspf:
 
 dspf/%:
 	@printf "$(YELLOW)>>> Compiling $*...$(NC)\n"
-	@if cl "CPYFRMSTMF FROMSTMF('$(BASE_DIR)/dspf/$*.dspf') TOMBR('/QSYS.LIB/$(SOURCE_LIB).LIB/QDDSSRC.FILE/$*.MBR') MBROPT(*REPLACE)" > /dev/null 2>&1; then \
-		if cl "CRTDSPF FILE($(TARGET_LIB)/$*) SRCFILE($(SOURCE_LIB)/QDDSSRC) SRCMBR($*) GENLVL(30)" > /dev/null 2>&1; then \
+	@if cl "CPYFRMSTMF FROMSTMF('$(BASE_DIR)/dspf/$*.dspf') TOMBR('/QSYS.LIB/$(SOURCE_LIB).LIB/QDDSSRC.FILE/$*.MBR') MBROPT(*REPLACE)" $(REDIRECT); then \
+		if cl "CRTDSPF FILE($(TARGET_LIB)/$*) SRCFILE($(SOURCE_LIB)/QDDSSRC) SRCMBR($*) GENLVL(30)" $(REDIRECT); then \
 			printf "$(GREEN)✓ $* compiled successfully$(NC)\n"; \
 		else \
 			printf "$(RED)✗ Failed to compile $*$(NC)\n"; \
@@ -181,7 +193,7 @@ rpgle:
 
 rpgle/%:
 	@printf "$(YELLOW)>>> Compiling $*...$(NC)\n"
-	@bash -c 'cl "ADDLIBLE $(TARGET_LIB)" > /dev/null 2>&1; cl "CRTSQLRPGI OBJ($(TARGET_LIB)/$*) SRCSTMF('"'"'$(BASE_DIR)/rpgle/$*.rpgle'"'"') COMMIT(*NONE) DBGVIEW(*SOURCE) COMPILEOPT('"'"'DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)'"'"') USRPRF(*OWNER) RDB(*LOCAL) DFTRDBCOL($(TARGET_LIB)) CVTCCSID(*JOB) SQLPATH(*LIBL)"' && \
+	@bash -c 'cl "ADDLIBLE $(TARGET_LIB)" $(REDIRECT); cl "CRTSQLRPGI OBJ($(TARGET_LIB)/$*) SRCSTMF('"'"'$(BASE_DIR)/rpgle/$*.rpgle'"'"') COMMIT(*NONE) DBGVIEW(*SOURCE) COMPILEOPT('"'"'DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)'"'"') USRPRF(*OWNER) RDB(*LOCAL) DFTRDBCOL($(TARGET_LIB)) CVTCCSID(*JOB) SQLPATH(*LIBL)" $(REDIRECT)' && \
 		printf "$(GREEN)✓ $* compiled successfully$(NC)\n" || \
 		(printf "$(RED)✗ Failed to compile $*$(NC)\n"; exit 1)
 
@@ -193,13 +205,13 @@ clean:
 	@printf "$(YELLOW)Cleaning compiled objects from $(TARGET_LIB)...$(NC)\n"
 	@bash -c "for proc in $(SQL_PROCEDURES); do \
 		proc_upper=\$$(echo \$$proc | tr '[:lower:]' '[:upper:]'); \
-		cl \"DLTPRC PRC($(TARGET_LIB)/\$$proc_upper)\" > /dev/null 2>&1 || true; \
+		cl \"DLTPRC PRC($(TARGET_LIB)/\$$proc_upper)\" $(REDIRECT) || true; \
 	done"
 	@bash -c "for dspf in $(DISPLAY_FILES); do \
-		cl \"DLTF FILE($(TARGET_LIB)/\$$dspf)\" > /dev/null 2>&1 || true; \
+		cl \"DLTF FILE($(TARGET_LIB)/\$$dspf)\" $(REDIRECT) || true; \
 	done"
 	@bash -c "for pgm in $(RPGLE_PROGRAMS); do \
-		cl \"DLTPGM PGM($(TARGET_LIB)/\$$pgm)\" > /dev/null 2>&1 || true; \
+		cl \"DLTPGM PGM($(TARGET_LIB)/\$$pgm)\" $(REDIRECT) || true; \
 	done"
 	@printf "$(GREEN)✓ Clean completed$(NC)\n"
 
@@ -210,7 +222,7 @@ clean:
 help:
 	@printf "DBSDK Configuration Administration - Makefile\n"
 	@printf "\n"
-	@printf "Usage: make [target]\n"
+	@printf "Usage: make [target] [VERBOSE=1]\n"
 	@printf "\n"
 	@printf "Targets:\n"
 	@printf "  all     - Build all components (default)\n"
@@ -219,6 +231,11 @@ help:
 	@printf "  rpgle   - Build RPGLE programs only\n"
 	@printf "  clean   - Remove all compiled objects\n"
 	@printf "  help    - Show this help message\n"
+	@printf "\n"
+	@printf "Options:\n"
+	@printf "  VERBOSE=1    - Show compilation output (default: suppressed)\n"
+	@printf "               Example: make VERBOSE=1\n"
+	@printf "               Example: make rpgle VERBOSE=1\n"
 	@printf "\n"
 	@printf "Prerequisites:\n"
 	@printf "  - $(TARGET_LIB) library must exist\n"
