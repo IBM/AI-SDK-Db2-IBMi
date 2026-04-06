@@ -32,6 +32,8 @@ This is a 5250 green-screen application for administering the DBSDK_V1 configura
 - Administrator must have:
   - Authority to DBSDK_V1 library
   - Authority to read/write DBSDK_V1.CONF table
+  - QIBM_DB_SECADM function usage.
+  - Note that RCAC won't work at all if LPP option 47 (IBM Advanced Data Security for i) is not installed.
 
 ## Installation
 
