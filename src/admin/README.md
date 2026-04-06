@@ -270,7 +270,7 @@ Consider implementing an audit trail to track:
 **Problem**: "Authority violation"
 
 - **Solution**: Verify programs have `USRPRF(*OWNER)` attribute
-- **Check**: `DSPPGM PGM(DBSDK_V1/CFGMENU)` and look for "User profile"
+- **Check**: `SELECT USER_PROFILE FROM QSYS2.PROGRAM_INFO WHERE PROGRAM_LIBRARY = 'DBSDK_V1' AND PROGRAM_NAME = 'CFGMENU';`
 
 **Problem**: "SQL error when saving"
 
