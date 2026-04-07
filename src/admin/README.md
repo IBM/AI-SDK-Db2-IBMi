@@ -37,6 +37,37 @@ This is a 5250 green-screen application for administering the DBSDK_V1 configura
 
 ## Installation
 
+### Important: Source Library Configuration
+
+**Before building**, you need to configure the `SOURCE_LIB` variable in the Makefile. This variable specifies the library containing the `QDDSSRC` source physical file where display file source code is temporarily copied during compilation.
+
+By default, `SOURCE_LIB` is set to `JWOEHR` in the Makefile. You should change this to your own library:
+
+**Option 1: Override on the command line (recommended):**
+
+```bash
+make SOURCE_LIB=MYLIB
+```
+
+**Option 2: Edit the Makefile:**
+
+Edit `src/admin/Makefile` and change line 51 from:
+```makefile
+SOURCE_LIB := JWOEHR
+```
+to:
+```makefile
+SOURCE_LIB := YOURLIB
+```
+
+**Ensure the source physical file exists:**
+
+If `QDDSSRC` doesn't exist in your library, create it before building:
+
+```cl
+CRTSRCPF FILE(YOURLIB/QDDSSRC) RCDLEN(112)
+```
+
 ### Quick Start
 
 1. **Navigate to the admin directory:**
@@ -48,13 +79,13 @@ This is a 5250 green-screen application for administering the DBSDK_V1 configura
 2. **Build using Make (recommended):**
 
    ```bash
-   make
+   make SOURCE_LIB=YOURLIB
    ```
 
    Or with verbose output to see compilation details:
 
    ```bash
-   make VERBOSE=1
+   make SOURCE_LIB=YOURLIB VERBOSE=1
    ```
 
    **Alternative: Use the build script:**
