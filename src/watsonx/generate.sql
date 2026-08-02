@@ -1,4 +1,4 @@
--- ## watsonx main functionality 
+-- ## watsonx main functionality
 
 
 -- #### **Function:** `watsonx_generate`
@@ -40,7 +40,7 @@ begin
   end if;
 
   if parameters is null then
-    set parameters = dbsdk_v1.wx_parameters(max_new_tokens => 100, time_limit => 1000);
+    set parameters = dbsdk_v1.parameters(max_new_tokens => 100, time_limit => 1000);
   end if;
 
   -- todo: support this url:
