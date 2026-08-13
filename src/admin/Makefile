@@ -145,7 +145,7 @@ sql:
 
 sql/%:
 	@printf "$(YELLOW)>>> Compiling $*.sql...$(NC)\n"
-	@if system "RUNSQLSTM SRCSTMF('$(BASE_DIR)/sql/$*.sql') COMMIT(*NONE) ERRLVL(21)" $(REDIRECT); then \
+	@if system "QSYS/RUNSQLSTM SRCSTMF('$(BASE_DIR)/sql/$*.sql') COMMIT(*NONE) ERRLVL(21)" $(REDIRECT); then \
 		printf "$(GREEN)✓ $* compiled successfully$(NC)\n"; \
 	else \
 		printf "$(RED)✗ Failed to compile $*$(NC)\n"; \
@@ -165,8 +165,8 @@ dspf:
 
 dspf/%:
 	@printf "$(YELLOW)>>> Compiling $*...$(NC)\n"
-	@if cl "CPYFRMSTMF FROMSTMF('$(BASE_DIR)/dspf/$*.dspf') TOMBR('/QSYS.LIB/$(SOURCE_LIB).LIB/QDDSSRC.FILE/$*.MBR') MBROPT(*REPLACE)" $(REDIRECT); then \
-		if cl "CRTDSPF FILE($(TARGET_LIB)/$*) SRCFILE($(SOURCE_LIB)/QDDSSRC) SRCMBR($*) GENLVL(30)" $(REDIRECT); then \
+	@if cl "QSYS/CPYFRMSTMF FROMSTMF('$(BASE_DIR)/dspf/$*.dspf') TOMBR('/QSYS.LIB/$(SOURCE_LIB).LIB/QDDSSRC.FILE/$*.MBR') MBROPT(*REPLACE)" $(REDIRECT); then \
+		if cl "QSYS/CRTDSPF FILE($(TARGET_LIB)/$*) SRCFILE($(SOURCE_LIB)/QDDSSRC) SRCMBR($*) GENLVL(30)" $(REDIRECT); then \
 			printf "$(GREEN)✓ $* compiled successfully$(NC)\n"; \
 		else \
 			printf "$(RED)✗ Failed to compile $*$(NC)\n"; \
@@ -190,7 +190,7 @@ rpgle:
 
 rpgle/%:
 	@printf "$(YELLOW)>>> Compiling $*...$(NC)\n"
-	@bash -c 'cl "ADDLIBLE $(TARGET_LIB)" $(REDIRECT); cl "CRTSQLRPGI OBJ($(TARGET_LIB)/$*) SRCSTMF('"'"'$(BASE_DIR)/rpgle/$*.rpgle'"'"') COMMIT(*NONE) DBGVIEW(*SOURCE) COMPILEOPT('"'"'DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)'"'"') USRPRF(*OWNER) RDB(*LOCAL) DFTRDBCOL($(TARGET_LIB)) CVTCCSID(*JOB) SQLPATH(*LIBL)" $(REDIRECT)' && \
+	@bash -c 'cl "QSYS/ADDLIBLE $(TARGET_LIB)" $(REDIRECT); cl "QSYS/CRTSQLRPGI OBJ($(TARGET_LIB)/$*) SRCSTMF('"'"'$(BASE_DIR)/rpgle/$*.rpgle'"'"') COMMIT(*NONE) DBGVIEW(*SOURCE) COMPILEOPT('"'"'DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)'"'"') USRPRF(*OWNER) RDB(*LOCAL) DFTRDBCOL($(TARGET_LIB)) CVTCCSID(*JOB) SQLPATH(*LIBL)" $(REDIRECT)' && \
 		printf "$(GREEN)✓ $* compiled successfully$(NC)\n" || \
 		(printf "$(RED)✗ Failed to compile $*$(NC)\n"; exit 1)
 
@@ -202,13 +202,13 @@ clean:
 	@printf "$(YELLOW)Cleaning compiled objects from $(TARGET_LIB)...$(NC)\n"
 	@bash -c "for proc in $(SQL_PROCEDURES); do \
 		proc_upper=\$$(echo \$$proc | tr '[:lower:]' '[:upper:]'); \
-		cl \"DLTPRC PRC($(TARGET_LIB)/\$$proc_upper)\" $(REDIRECT) || true; \
+		system \"QSYS/RUNSQL SQL('DROP PROCEDURE $(TARGET_LIB)/\$$proc_upper') COMMIT(*NONE)\" $(REDIRECT) || true; \
 	done"
 	@bash -c "for dspf in $(DISPLAY_FILES); do \
-		cl \"DLTF FILE($(TARGET_LIB)/\$$dspf)\" $(REDIRECT) || true; \
+		cl \"QSYS/DLTF FILE($(TARGET_LIB)/\$$dspf)\" $(REDIRECT) || true; \
 	done"
 	@bash -c "for pgm in $(RPGLE_PROGRAMS); do \
-		cl \"DLTPGM PGM($(TARGET_LIB)/\$$pgm)\" $(REDIRECT) || true; \
+		cl \"QSYS/DLTPGM PGM($(TARGET_LIB)/\$$pgm)\" $(REDIRECT) || true; \
 	done"
 	@printf "$(GREEN)✓ Clean completed$(NC)\n"
 
