@@ -40,10 +40,9 @@
      A                                  8  7'3. Ollama Configuration'
      A                                  9  7'4. OpenAI Compatible Configura-
      A                                      tion'
-     A                                 10  7'5. Wallaroo Configuration'
-     A                                 11  7'6. Kafka Configuration'
-     A                                 12  7'7. Slack Configuration'
-     A                                 13  7'8. Twilio Configuration'
+     A                                 10  7'5. Kafka Configuration'
+     A                                 11  7'6. Slack Configuration'
+     A                                 12  7'7. Twilio Configuration'
      A                                 15  7'90. Exit'
      A*=====================================================================
      A* Input Fields

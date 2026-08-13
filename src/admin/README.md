@@ -2,7 +2,22 @@
 
 ## Overview
 
-This is a 5250 green-screen application for administering the DBSDK_V1 configuration system. It provides a menu-driven interface for managing user configurations across multiple AI and integration services including WatsonX, Ollama, OpenAI Compatible, Wallaroo, Kafka, Slack, and Twilio.
+This is a 5250 green-screen application for administering the DBSDK_V1 configuration system. It provides a menu-driven interface for managing user configurations across multiple AI and integration services including WatsonX, Ollama, OpenAI Compatible, Kafka, Slack, and Twilio.
+
+### Note on historical files
+
+The following files are merely historical and may be removed at any time:
+
+- `FINAL_STATUS.MD`
+- `IMPLEMENTATION_PLAN.md`
+- `PLAN_SUMMARY.md`
+- `build.sh`
+
+*N.B.* They may reference features which are not part of this project.
+
+### Note on paths
+
+Parts of this document may reference specific paths that were used in development. The Makefile will use correct paths.
 
 ## Features
 
@@ -151,10 +166,6 @@ RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf
           COMMIT(*NONE) +
           ERRLVL(21)
 
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_wallaroo.sql') +
-          COMMIT(*NONE) +
-          ERRLVL(21)
-
 RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_kafka.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
@@ -269,10 +280,9 @@ The main menu provides access to all configuration areas:
 │    2. WatsonX Configuration                                                 │
 │    3. Ollama Configuration                                                  │
 │    4. OpenAI Compatible Configuration                                       │
-│    5. Wallaroo Configuration                                                │
-│    6. Kafka Configuration                                                   │
-│    7. Slack Configuration                                                   │
-│    8. Twilio Configuration                                                  │
+│    5. Kafka Configuration                                                   │
+│    6. Slack Configuration                                                   │
+│    7. Twilio Configuration                                                  │
 │                                                                             │
 │   90. Exit                                                                  │
 │                                                                             │
@@ -293,7 +303,7 @@ Option 1 from the main menu provides user management functions:
 
 ### Service Configuration
 
-Options 2-8 allow you to configure specific services for a selected user:
+Options 2-7 allow you to configure specific services for a selected user:
 
 1. Enter the user profile name
 2. Fill in the configuration fields
@@ -325,24 +335,18 @@ Options 2-8 allow you to configure specific services for a selected user:
 - **API Key**: API key (password protected)
 - **Base Path**: API base path (default: /v1)
 
-### Wallaroo (Option 5)
-
-- **Token URL**: OAuth token URL
-- **Confidential Client**: Client identifier
-- **Client Secret**: Client secret (password protected)
-
-### Kafka (Option 6)
+### Kafka (Option 5)
 
 - **Protocol**: http or https
 - **Broker**: Kafka broker address
 - **Port**: Port number (default: 8082)
 - **Topic**: Kafka topic name
 
-### Slack (Option 7)
+### Slack (Option 6)
 
 - **Webhook URL**: Slack webhook URL (password protected)
 
-### Twilio (Option 8)
+### Twilio (Option 7)
 
 - **Phone Number**: Twilio phone number
 - **Account SID**: Twilio account SID
@@ -440,7 +444,6 @@ src/admin/
 │   ├── CFGWXD.dspf               # WatsonX config
 │   ├── CFGOLLAMD.dspf            # Ollama config
 │   ├── CFGOPENAID.dspf           # OpenAI config
-│   ├── CFGWLROOD.dspf            # Wallaroo config
 │   ├── CFGKAFKAD.dspf            # Kafka config
 │   ├── CFGSLACKD.dspf            # Slack config
 │   └── CFGTWILIOD.dspf           # Twilio config
@@ -451,7 +454,6 @@ src/admin/
 │   ├── CFGWX.rpgle               # WatsonX config
 │   ├── CFGOLLAMA.rpgle           # Ollama config
 │   ├── CFGOPENAI.rpgle           # OpenAI config
-│   ├── CFGWLROO.rpgle            # Wallaroo config
 │   ├── CFGKAFKA.rpgle            # Kafka config
 │   ├── CFGSLACK.rpgle            # Slack config
 │   └── CFGTWILIO.rpgle           # Twilio config
@@ -462,7 +464,6 @@ src/admin/
     ├── conf_update_watsonx.sql   # Update WatsonX config
     ├── conf_update_ollama.sql    # Update Ollama config
     ├── conf_update_openai.sql    # Update OpenAI config
-    ├── conf_update_wallaroo.sql  # Update Wallaroo config
     ├── conf_update_kafka.sql     # Update Kafka config
     ├── conf_update_slack.sql     # Update Slack config
     └── conf_update_twilio.sql    # Update Twilio config
