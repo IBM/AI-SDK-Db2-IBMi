@@ -145,9 +145,91 @@ SELECT dbsdk_v1.openai_compatible_generate_json(
 
 The `generate_json` function returns the complete API response as a JSON object, allowing you to access not only the generated content but also metadata such as token usage statistics.
 
+## Chat Completions (Gemini and strict endpoints)
+
+### Why `openai_compatible_generate` does not work with Gemini
+
+`openai_compatible_generate` (and `openai_compatible_generate_json`) use the **legacy
+text-completion endpoint** — they POST to `/completions` with a top-level `"prompt"`
+field. This is incompatible with Gemini for two reasons:
+
+1. **Wrong endpoint.** Gemini only implements the chat-completion API (`/chat/completions`). It does not expose `/completions` at all.
+2. **Strict field rejection.** Even when targeting `/chat/completions`, Gemini returns HTTP 400 if the request body contains any field it does not recognise — including `n`, `top_p`, `presence_penalty`, and `frequency_penalty` — even when those fields carry standard OpenAI default values.
+
+Use `openai_compatible_chat_generate` for Gemini and any other endpoint that follows
+the chat-completions contract.
+
+### Configuring for Gemini
+
+Gemini exposes its OpenAI-compatible layer under a non-standard base path. Set
+`OPENAI_COMPATIBLE_BASEPATH` to `/v1beta/openai` before calling the function — either
+for the current job or persistently for your user profile:
+
+```sql
+-- For the current job only
+CALL dbsdk_v1.openai_compatible_setserverforjob('generativelanguage.googleapis.com');
+CALL dbsdk_v1.openai_compatible_setportforjob(443);
+CALL dbsdk_v1.openai_compatible_setprotocolforjob('https');
+CALL dbsdk_v1.openai_compatible_setbasepathforjob('/v1beta/openai');
+CALL dbsdk_v1.openai_compatible_setapikeyforjob('your-gemini-api-key');
+CALL dbsdk_v1.openai_compatible_setmodelforjob('gemini-3.6-flash');
+```
+
+If you manage connection settings through the `DBSDK_V1.CONF` data file, set the
+`OPENAI_COMPATIBLE_BASEPATH` key to `/v1beta/openai`.
+
+### `openai_compatible_chat_generate`
+
+```sql
+SELECT dbsdk_v1.openai_compatible_chat_generate(
+  'What is Db2 for i?'
+) FROM sysibm.sysdummy1;
+```
+
+The function wraps the prompt as a `user`-role message inside a `messages` array and
+POSTs to `/chat/completions`. It returns the text content of
+`choices[0].message.content` from the response, or the full JSON body if that path
+cannot be parsed.
+
+**Strict-field safety.** The request body starts with only `model` and `messages`.
+Every other parameter (`max_tokens`, `temperature`, `top_p`, `n`, `presence_penalty`,
+`frequency_penalty`, `stop`, `seed`, `user`) is only appended to the JSON when
+explicitly present in the `options` argument. This makes the function safe for strict
+endpoints like Gemini while remaining fully configurable for permissive ones.
+
+#### Supported Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `model_id` | string | (configured model) | The model to use for generation |
+| `max_tokens` | integer | 256 | Maximum number of tokens to generate |
+| `temperature` | decimal | 1.0 | Controls randomness (0–2). Lower is more deterministic |
+| `top_p` | decimal | 1.0 | Nucleus sampling probability cutoff |
+| `n` | integer | 1 | Number of completions to generate |
+| `presence_penalty` | decimal | 0.0 | Penalty between -2.0 and 2.0 for tokens based on presence |
+| `frequency_penalty` | decimal | 0.0 | Penalty between -2.0 and 2.0 for tokens based on frequency |
+| `stop` | string | null | Sequences where generation should stop |
+| `seed` | integer | null | Seed for deterministic sampling |
+| `user` | string | null | Unique identifier for the end user |
+
+:::note
+Parameters not present in the `options` JSON are **not sent** in the HTTP request
+body at all. Only include parameters that you explicitly want to control.
+:::
+
 ## API Response Format
 
-The OpenAI-compatible API response follows this structure:
+The two generation functions use different response schemas. The regular `generate`
+and `generate_json` functions target the **text-completion** schema, while
+`openai_compatible_chat_generate` targets the **chat-completion** schema.
+
+| | `openai_compatible_generate` / `openai_compatible_generate_json` | `openai_compatible_chat_generate` |
+|---|---|---|
+| Endpoint | `/completions` | `/chat/completions` |
+| Extracted field | `choices[0].text` | `choices[0].message.content` |
+| Response `object` | `"text_completion"` | `"chat.completion"` |
+
+**Text-completion response** (`/completions` — used by `generate` / `generate_json`):
 
 ```json
 {
@@ -161,28 +243,41 @@ The OpenAI-compatible API response follows this structure:
   ],
   "created": 1746039098,
   "model": "llama3",
-  "system_fingerprint": "b5043-c262bedd",
   "object": "text_completion",
   "usage": {
     "completion_tokens": 100,
     "prompt_tokens": 13,
     "total_tokens": 113
   },
-  "id": "chatcmpl-OW6vxJUGFMwUyg6HPGHYO1Uaza3VeXRj",
-  "timings": {
-    "prompt_n": 13,
-    "prompt_ms": 418.129,
-    "prompt_per_token_ms": 32.16376923076923,
-    "prompt_per_second": 31.090883435494785,
-    "predicted_n": 100,
-    "predicted_ms": 14705.362,
-    "predicted_per_token_ms": 147.05362,
-    "predicted_per_second": 6.8002406197140886
-  }
+  "id": "chatcmpl-OW6vxJUGFMwUyg6HPGHYO1Uaza3VeXRj"
 }
 ```
 
-The regular `generate` function extracts just the text content from `choices[0].text`, while the `generate_json` function returns the entire JSON response.
+**Chat-completion response** (`/chat/completions` — used by `openai_compatible_chat_generate`):
+
+```json
+{
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "** GENERATED TEXT HERE **"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "created": 1746039098,
+  "model": "gemini-3.6-flash",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 100,
+    "prompt_tokens": 13,
+    "total_tokens": 113
+  },
+  "id": "chatcmpl-abc123"
+}
+```
 
 ## Authentication
 

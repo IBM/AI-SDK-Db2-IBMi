@@ -272,3 +272,74 @@ SELECT dbsdk_v1.openai_compatible_generate(
 ```
 
 These examples demonstrate the versatility of the OpenAI-compatible endpoints for various use cases in your IBM i applications.
+
+## Using Google Gemini
+
+Gemini requires the `openai_compatible_chat_generate` function because:
+- The standard `openai_compatible_generate` function targets the legacy `/completions` endpoint, which Gemini does not implement.
+- Gemini's OpenAI-compatibility layer rejects requests that contain unsupported fields (`n`, `top_p`, `presence_penalty`, `frequency_penalty`) with HTTP 400, even when those fields carry standard OpenAI default values. `openai_compatible_chat_generate` only sends fields that are explicitly present in the `options` argument.
+
+### Configuration
+
+Gemini's OpenAI-compatible base path is `/v1beta/openai` — this is different from the
+standard `/v1` used by most other providers.
+
+```sql
+-- Configure connection for Gemini
+CALL dbsdk_v1.openai_compatible_setserverforjob('generativelanguage.googleapis.com');
+CALL dbsdk_v1.openai_compatible_setportforjob(443);
+CALL dbsdk_v1.openai_compatible_setprotocolforjob('https');
+CALL dbsdk_v1.openai_compatible_setbasepathforjob('/v1beta/openai');
+CALL dbsdk_v1.openai_compatible_setapikeyforjob('your-gemini-api-key');
+CALL dbsdk_v1.openai_compatible_setmodelforjob('gemini-3.6-flash');
+```
+
+### Simple Prompt
+
+```sql
+-- Use openai_compatible_chat_generate — NOT openai_compatible_generate — for Gemini
+SELECT dbsdk_v1.openai_compatible_chat_generate(
+  'What is Db2 for i?'
+) FROM sysibm.sysdummy1;
+```
+
+### With Optional Parameters
+
+Only include parameters you explicitly want to control. Unspecified parameters are
+omitted from the request body entirely, keeping the request compatible with Gemini's
+strict field validation.
+
+```sql
+SELECT dbsdk_v1.openai_compatible_chat_generate(
+  'Explain the difference between a primary key and a unique constraint in SQL',
+  '{
+    "model_id": "gemini-3.6-flash",
+    "max_tokens": 300,
+    "temperature": 0.4
+  }'
+) FROM sysibm.sysdummy1;
+```
+
+### Generating and Storing Gemini Responses
+
+```sql
+-- Create a table for storing responses
+CREATE TABLE mylib.gemini_responses (
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  prompt VARCHAR(1000),
+  response CLOB(2G),
+  generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Generate a response and store it
+INSERT INTO mylib.gemini_responses (prompt, response)
+SELECT
+  'List three best practices for IBM i database design',
+  dbsdk_v1.openai_compatible_chat_generate(
+    'List three best practices for IBM i database design',
+    '{"max_tokens": 400, "temperature": 0.5}'
+  )
+FROM sysibm.sysdummy1;
+
+SELECT * FROM mylib.gemini_responses;
+```
