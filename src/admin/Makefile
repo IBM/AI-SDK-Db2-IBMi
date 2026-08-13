@@ -57,7 +57,6 @@ SQL_PROCEDURES := \
 	conf_update_watsonx \
 	conf_update_ollama \
 	conf_update_openai \
-	conf_update_wallaroo \
 	conf_update_kafka \
 	conf_update_slack \
 	conf_update_twilio
@@ -69,7 +68,6 @@ DISPLAY_FILES := \
 	CFGWXD \
 	CFGOLLAMD \
 	CFGOPENAID \
-	CFGWLROOD \
 	CFGKAFKAD \
 	CFGSLACKD \
 	CFGTWILIOD
@@ -80,7 +78,6 @@ RPGLE_PROGRAMS := \
 	CFGWX \
 	CFGOLLAMA \
 	CFGOPENAI \
-	CFGWLROO \
 	CFGKAFKA \
 	CFGSLACK \
 	CFGTWILIO \

@@ -53,10 +53,6 @@ End-PR;
 Dcl-PR CFGOPENAI ExtPgm('CFGOPENAI');
 End-PR;
 
-// Wallaroo Configuration
-Dcl-PR CFGWLROO ExtPgm('CFGWLROO');
-End-PR;
-
 // Kafka Configuration
 Dcl-PR CFGKAFKA ExtPgm('CFGKAFKA');
 End-PR;
@@ -105,20 +101,16 @@ Dow Not Exit;
     When Option = '4';
       CallP CFGOPENAI();
       
-    // Wallaroo Configuration
-    When Option = '5';
-      CallP CFGWLROO();
-      
     // Kafka Configuration
-    When Option = '6';
+    When Option = '5';
       CallP CFGKAFKA();
       
     // Slack Configuration
-    When Option = '7';
+    When Option = '6';
       CallP CFGSLACK();
       
     // Twilio Configuration
-    When Option = '8';
+    When Option = '7';
       CallP CFGTWILIO();
       
     // Exit
@@ -128,7 +120,7 @@ Dow Not Exit;
     // Invalid option
     Other;
       ValidOption = *Off;
-      ErrMsg = 'Invalid option. Please select 1-8 or 90.';
+      ErrMsg = 'Invalid option. Please select 1-7 or 90.';
   EndSl;
   
   // Clear option field after processing
