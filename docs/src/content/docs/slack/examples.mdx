@@ -4,10 +4,17 @@ Description: Examples
 sidebar:
     order: 3
 ---
+import { Aside } from '@astrojs/starlight/components';
+
+<Aside type="caution">
+A Slack incoming webhook URL is a credential: anyone who has it can post messages to your
+channel. Never commit one to source control or paste one into documentation. The URLs below
+are placeholders — substitute your own webhook at runtime.
+</Aside>
 
 ### Set a webhook for the current user profile
 ```sql
-call dbsdk_v1.slack_setwebhookforme('https://hooks.slack.com/services/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');
+call dbsdk_v1.slack_setwebhookforme('https://hooks.slack.com/services/<TEAM_ID>/<CHANNEL_ID>/<TOKEN>');
 ```
 
 ### Send a Slack message (using the webhook set for the current user profile)
@@ -18,5 +25,5 @@ values(dbsdk_v1.slack_sendmessage('IBM i rules'));
 ```sql
 values(
     dbsdk_v1.slack_sendmessage( MSG =>'IBM i rules'
-                               WEBHOOK => 'https://hooks.slack.com/services/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'));
+                               WEBHOOK => 'https://hooks.slack.com/services/<TEAM_ID>/<CHANNEL_ID>/<TOKEN>'));
 ```
