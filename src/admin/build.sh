@@ -24,7 +24,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Base directory
-BASE_DIR="/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin"
+BASE_DIR="/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin"
 
 # Error counter
 ERRORS=0

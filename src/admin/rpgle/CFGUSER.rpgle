@@ -7,7 +7,7 @@
 //
 // Compilation:
 //   CRTSQLRPGI PGM(DBSDK_V1/CFGUSER) +
-//             SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGUSER.rpgle') +
+//             SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGUSER.rpgle') +
 //             COMMIT(*NONE) +
 //             DBGVIEW(*SOURCE) +
 //             COMPILEOPT('DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)') +

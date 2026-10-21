@@ -6,7 +6,7 @@
 --          and project ID settings.
 --
 -- Compilation:
---   RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_watsonx.sql') +
+--   RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_watsonx.sql') +
 --             COMMIT(*NONE) +
 --             ERRLVL(21)
 --
