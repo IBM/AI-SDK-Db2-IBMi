@@ -4,12 +4,12 @@ import starlight from '@astrojs/starlight';
 
 export default defineConfig({
 	site: 'https://ibm.github.io',
-	base: '/AI-SDK-Db2-IBMi',
+	base: '/AI-SQL-Toolkit-IBMi',
 	integrations: [
 		starlight({
 			title: 'A Db2 for i SDK for connecting to various services',
 			social: [
-				{ icon: 'github', label: 'GitHub', href: 'https://github.com/IBM/AI-SDK-Db2-IBMi/' },
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/IBM/AI-SQL-Toolkit-IBMi/' },
 			],
 			sidebar: [
 				{ label: 'Home', link: '/' },
