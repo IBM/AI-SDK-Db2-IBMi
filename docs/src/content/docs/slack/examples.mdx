@@ -5,9 +5,15 @@ sidebar:
     order: 3
 ---
 
+:::caution
+A Slack incoming webhook URL is a credential: anyone who has it can post to your channel.
+Replace `<your-slack-webhook-url>` below with your own webhook, and never commit a real one
+to source control or publish it in documentation.
+:::
+
 ### Set a webhook for the current user profile
 ```sql
-call dbsdk_v1.slack_setwebhookforme('https://hooks.slack.com/services/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');
+call dbsdk_v1.slack_setwebhookforme('<your-slack-webhook-url>');
 ```
 
 ### Send a Slack message (using the webhook set for the current user profile)
@@ -17,6 +23,6 @@ values(dbsdk_v1.slack_sendmessage('IBM i rules'));
 ### Send a Slack message (using a specific webhook)
 ```sql
 values(
-    dbsdk_v1.slack_sendmessage( MSG =>'IBM i rules'
-                               WEBHOOK => 'https://hooks.slack.com/services/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'));
+    dbsdk_v1.slack_sendmessage( MSG =>'IBM i rules',
+                               WEBHOOK => '<your-slack-webhook-url>'));
 ```
