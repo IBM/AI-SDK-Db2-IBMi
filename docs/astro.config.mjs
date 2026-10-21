@@ -8,49 +8,49 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'A Db2 for i SDK for connecting to various services',
-			social: {
-				github: 'https://github.com/IBM/AI-SDK-Db2-IBMi/',
-			},
+			social: [
+				{ icon: 'github', label: 'GitHub', href: 'https://github.com/IBM/AI-SDK-Db2-IBMi/' },
+			],
 			sidebar: [
 				{ label: 'Home', link: '/' },
 				{
 					label: 'IBM watsonx',
-					autogenerate: { directory: 'watsonx' }, 
+					items: [{ autogenerate: { directory: 'watsonx' } }],
 					collapsed: true
 				},
 				{
 					label: 'Ollama',
-					autogenerate: { directory: 'ollama' }, 
+					items: [{ autogenerate: { directory: 'ollama' } }],
 					collapsed: true
 				},
 				{
 					label: 'OpenAI-compliant endpoints',
-					autogenerate: { directory: 'openai' }, 
+					items: [{ autogenerate: { directory: 'openai' } }],
 					collapsed: true
 				},
 				{
 					label: 'Wallaroo',
-					autogenerate: { directory: 'wallaroo' }, 
+					items: [{ autogenerate: { directory: 'wallaroo' } }],
 					collapsed: true
 				},
 				{
 					label: 'Kafka',
-					autogenerate: { directory: 'kafka' }, 
+					items: [{ autogenerate: { directory: 'kafka' } }],
 					collapsed: true
 				},
 				{
 					label: 'PASE',
-					autogenerate: { directory: 'pase' }, 
+					items: [{ autogenerate: { directory: 'pase' } }],
 					collapsed: true
 				},
 				{
 					label: 'Slack',
-					autogenerate: { directory: 'slack' }, 
+					items: [{ autogenerate: { directory: 'slack' } }],
 					collapsed: true
 				},
 				{
 					label: 'SMS (Twilio)',
-					autogenerate: { directory: 'twilio' }, 
+					items: [{ autogenerate: { directory: 'twilio' } }],
 					collapsed: true
 				},
 				{
