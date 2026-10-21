@@ -6,7 +6,7 @@
 --          configuration entries.
 --
 -- Compilation:
---   RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_list_users.sql') +
+--   RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_list_users.sql') +
 --             COMMIT(*NONE) +
 --             ERRLVL(21)
 --

@@ -88,7 +88,7 @@ CRTSRCPF FILE(YOURLIB/QDDSSRC) RCDLEN(112)
 1. **Navigate to the admin directory:**
 
    ```bash
-   cd /home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin
+   cd /home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin
    ```
 
 2. **Build using Make (recommended):**
@@ -145,36 +145,36 @@ The SQL procedures have been modularized into separate files for better maintain
 
 ```bash
 # User management procedures
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_get_user.sql') +
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_get_user.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
 
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_list_users.sql') +
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_list_users.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
 
 # Service configuration procedures
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_watsonx.sql') +
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_watsonx.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
 
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_ollama.sql') +
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_ollama.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
 
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_openai.sql') +
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_openai.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
 
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_kafka.sql') +
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_kafka.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
 
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_slack.sql') +
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_slack.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
 
-RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_twilio.sql') +
+RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_update_twilio.sql') +
           COMMIT(*NONE) +
           ERRLVL(21)
 ```
@@ -193,13 +193,13 @@ Compile each display file (with GENLVL(30) to allow warnings):
 
 ```bash
 # Main Menu
-CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGMENUD.dspf') +
+CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/dspf/CFGMENUD.dspf') +
            TOMBR('/QSYS.LIB/JWOEHR.LIB/QDDSSRC.FILE/CFGMENUD.MBR') +
            MBROPT(*REPLACE)
 CRTDSPF FILE(DBSDK_V1/CFGMENUD) SRCFILE(JWOEHR/QDDSSRC) SRCMBR(CFGMENUD) GENLVL(30)
 
 # User Management
-CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGUSERD.dspf') +
+CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/dspf/CFGUSERD.dspf') +
            TOMBR('/QSYS.LIB/JWOEHR.LIB/QDDSSRC.FILE/CFGUSERD.MBR') +
            MBROPT(*REPLACE)
 CRTDSPF FILE(DBSDK_V1/CFGUSERD) SRCFILE(JWOEHR/QDDSSRC) SRCMBR(CFGUSERD) GENLVL(30)
@@ -217,7 +217,7 @@ ADDLIBLE DBSDK_V1
 
 # Main Menu
 CRTSQLRPGI OBJ(DBSDK_V1/CFGMENU) +
-           SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGMENU.rpgle') +
+           SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGMENU.rpgle') +
            COMMIT(*NONE) +
            DBGVIEW(*SOURCE) +
            COMPILEOPT('DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)') +
@@ -229,7 +229,7 @@ CRTSQLRPGI OBJ(DBSDK_V1/CFGMENU) +
 
 # User Management
 CRTSQLRPGI OBJ(DBSDK_V1/CFGUSER) +
-           SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGUSER.rpgle') +
+           SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGUSER.rpgle') +
            COMMIT(*NONE) +
            DBGVIEW(*SOURCE) +
            COMPILEOPT('DFTACTGRP(*NO) ACTGRP(*NEW) TGTCCSID(*JOB)') +

@@ -7,7 +7,7 @@
 --          database.
 --
 -- Compilation:
---   RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/sql/conf_admin.sql') +
+--   RUNSQLSTM SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/sql/conf_admin.sql') +
 --             COMMIT(*NONE) +
 --             ERRLVL(21)
 --

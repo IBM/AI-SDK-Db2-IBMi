@@ -6,7 +6,7 @@
 //
 // Compilation:
 //   CRTBNDRPG PGM(DBSDK_V1/CFGSLACK) +
-//             SRCSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGSLACK.rpgle') +
+//             SRCSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/rpgle/CFGSLACK.rpgle') +
 //             DFTACTGRP(*NO) +
 //             ACTGRP(*NEW) +
 //             DBGVIEW(*SOURCE) +

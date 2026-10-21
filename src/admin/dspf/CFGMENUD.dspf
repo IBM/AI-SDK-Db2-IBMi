@@ -6,7 +6,7 @@
      A*
      A* Compilation:
      A*   CRTSRCPF FILE(QTEMP/QDDSSRC) RCDLEN(112)
-     A*   CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/DbToo/AI-SDK-Db2-IBMi/src/admin/dspf/CFGMENUD.dspf') +
+     A*   CPYFRMSTMF FROMSTMF('/home/jwoehr/work/AI/AI-SQL-Toolkit/AI-SDK-Db2-IBMi/src/admin/dspf/CFGMENUD.dspf') +
      A*              TOMBR('/QSYS.LIB/QTEMP.LIB/QDDSSRC.FILE/CFGMENUD.MBR') +
      A*              MBROPT(*REPLACE)
      A*   CRTDSPF FILE(DBSDK_V1/CFGMENUD) SRCFILE(QTEMP/QDDSSRC) SRCMBR(CFGMENUD)
